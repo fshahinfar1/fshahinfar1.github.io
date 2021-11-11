@@ -8,10 +8,11 @@ body {
 }
 
 .content {
-    display: block;
+    display: flex;
+    flex-direction: row;
     margin-left: 5%;
     margin-right: 5%;
-    margin-bottom: 2%;
+    margin-bottom: 0px;
     text-align: justify;
     /* display: flex;
     flex-direction: column;
@@ -36,12 +37,15 @@ body {
 /* News */
 
 .news-box {
+    display: block;
     padding: 0px;
+    margin: 0px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    
+    align-items: stretch;
+    justify-content: flex-start;
+    max-height: 37%;
+    overflow-y: scroll;
 }
 .news-box li {
     display: inline-block;
@@ -111,4 +115,23 @@ body {
 .footer a {
     color: white;
     text-decoration: none;
+}
+
+.itemize {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.itemize box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    height: 100px;
+    width: 100px;
+    background-color: silver;
+    border-radius: 100%;
+    margin: 1px;
 }
