@@ -15,7 +15,6 @@
                 href="https://github.com/fshahinfar1/my-resume/raw/master/resume.pdf"
                 target="_blank"><span>CV</span></a>
         </div>
-
         <div class="content">
             <!-- Short description -->
             <div>
@@ -39,37 +38,16 @@
                             operating systems and computer networks.
                         </p>
                     </div>
-                        <p>Frame works that I am currently following</p>
-                    <div class="itemize">
-                        <box style="background-color:red"><span>XDP</span></box>
-                        <box style="background-color:#cb83f7"><span>AF-XDP</span></box>
-                        <box style="background-color:#3a70de"><span>DPDK</span></box>
+                    <div style="display:flex;justify-content:center;align-items:center;flex-direction:column">
+                        <p>I am currently hacking the eBPF/XDP for better expression of network functions</p>
+                        <a href="https://dl.acm.org/doi/10.1145/3485983.3493349">The case for Network Functions Decomposition</a>
                     </div>
                 </div>
             </div>
             <!-- News -->
             <div>
-                <h2>Recent Blog Posts</h2><hr/>
-                <ul class="news-box">
-                    <li>Introduction to uBPF</li>
-                    <li>Getting started with PktGen</li>
-                    <li>My impression on Dagger</li>
-                </ul>
                 <h2>News</h2><hr/>
-                <ul class="news-box">
-                    <li>I will be presenting a poster,
-                        <q>The Case for Network Functions Decomposition</q>,
-                        at CoNEXT21.
-                    </li>
-                    <li>I have defined my master's thesis on load balancing of
-                        <i>Serverless Computing</i> platforms - 2021-09-08 </li>
-                    <li>I am now a graduate student at
-                        <a href="http://www.sharif.edu/">Sharif University of Technology</a>.
-                        - 2020-11-11</li>
-                    <li>I have graduated with a Bachelor of Science
-                        in Computer Engineering from
-                        <a href="http://iust.ac.ir/">Iran University of Science and Technology</a>
-                        ! - 2020-09-21</li>
+                <ul id="newsbox" class="news-box">
                 </ul>
             </div>
         </div>
@@ -86,4 +64,5 @@
         </footer>
     </body>
     <script type="module" src="js/fantastic.js"></script>
+    <script type"module" src="js/news.js"></script>
 </html>
