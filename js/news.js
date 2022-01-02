@@ -15,14 +15,29 @@ const newslist = [
     text: 'I will be presenting a poster, <q>The Case for Network Functions Decomposition</q>, at CoNEXT21.',
     date: '2021-12-07',
   },
+  {
+    text: 'I am happy to share that <q>The Case for Network Function Decomposition</q> got the best poster award of CoNEXT\'21',
+    date: '2021-12-09',
+  },
 ];
 
 // console.log('load news!');
-const newsbox = document.getElementById('newsbox');
-const countnews = 3;
-const end = Math.max(0, newslist.length - countnews);
-for (let i = newslist.length - 1; i >= end; i--) {
-  const nelem = document.createElement('li');
-  nelem.innerHTML = newslist[i].text + ' - ' + newslist[i].date;
-  newsbox.appendChild(nelem);
+function load_news(countnews) {
+  console.log('load_news', countnews);
+  const newsbox = document.getElementById('newsbox');
+  if (countnews === undefined) {
+    for (let i = newslist.length - 1; i >= 0; i--) {
+      const nelem = document.createElement('li');
+      nelem.innerHTML = newslist[i].text + ' - ' + newslist[i].date;
+      newsbox.appendChild(nelem);
+    }
+  } else {
+    const end = Math.max(0, newslist.length - countnews);
+    for (let i = newslist.length - 1; i >= end; i--) {
+      const nelem = document.createElement('li');
+      nelem.innerHTML = newslist[i].text + ' - ' + newslist[i].date;
+      newsbox.appendChild(nelem);
+    }
+  }
 }
+
