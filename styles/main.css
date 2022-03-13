@@ -11,6 +11,11 @@ body {
     transition: background-color 0.5s ease;
 }
 
+a {
+	color: #2962ff;
+	text-decoration: none;
+}
+
 .content {
     display: flex;
     flex-direction: column;
