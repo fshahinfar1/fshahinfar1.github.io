@@ -9,7 +9,7 @@ const newslist = [
   },
   {
     text: "I have defined my master's thesis on load balancing of <i>Serverless Computing</i> platforms",
-    date: "2021-09-08" 
+    date: "2021-09-08"
   },
   {
     text: 'I will be presenting a poster, <q>The Case for Network Functions Decomposition</q>, at CoNEXT21.',
@@ -18,6 +18,10 @@ const newslist = [
   {
     text: 'I am happy to share that <q>The Case for Network Function Decomposition</q> got the best poster award of CoNEXT\'21',
     date: '2021-12-09',
+  },
+  {
+    text: 'Our work, led by <a href="https://sarsanaee.github.io/">Alireza Sanaee</a>, <a href="https://www.usenix.org/conference/nsdi22/presentation/sanaee"><q>Backdraft: a Lossless Virtual Switch that Prevents the Slow Receiver Problem</q></a> has been accepted at NSDI\'22</br>',
+    date: '2022-02-28',
   },
 ];
 
@@ -40,4 +44,3 @@ function load_news(countnews) {
     }
   }
 }
-
