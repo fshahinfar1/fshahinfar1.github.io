@@ -1,3 +1,8 @@
+@font-face {
+  font-family: svbasicmanual;
+  src: url(./svbasicmanual.ttf);
+}
+
 html body {
 	min-height: 100vh;
 }
@@ -5,9 +10,10 @@ html body {
 body {
     margin: 0;
     padding: 0;
-    font-family: "Dejavu Sans";
+    font-family: "svbasicmanual";
     /* font-family: "Courier"; */
-    font-size: large;
+    /* font-size: large; */
+    font-size: 18pt;
     transition: background-color 0.5s ease;
 }
 
@@ -148,3 +154,8 @@ a {
     border-radius: 100%;
     margin: 1px;
 }
+
+@media screen and (max-width: 1000px) {
+  body {
+    font-size: 12pt;
+  }
