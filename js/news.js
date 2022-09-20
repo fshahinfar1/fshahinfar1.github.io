@@ -23,6 +23,10 @@ const newslist = [
     text: 'Our work, led by <a href="https://sarsanaee.github.io/">Alireza Sanaee</a>, <a href="https://www.usenix.org/conference/nsdi22/presentation/sanaee"><q>Backdraft: a Lossless Virtual Switch that Prevents the Slow Receiver Problem</q></a> has been accepted at NSDI\'22</br>',
     date: '2022-02-28',
   },
+  {
+    text: 'I have defended my M.Sc. thesis! I will soon graduate from Sharif University of Technology.',
+    date: '2022-09-19',
+  },
 ];
 
 // console.log('load news!');
