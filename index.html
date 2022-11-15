@@ -90,60 +90,24 @@
                 </li>
             </div>
         </footer>
-		<div class="bg-effect">
-		<div class="bg-effect-fix">
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-			<div class="bg-elem"></div>
-		</div>
-		</div>
+        <div class="bg-effect">
+            <div class="bg-effect-fix">
+            </div>
+        </div>
     </body>
     <script type="module" src="js/fantastic.js"></script>
     <script type"module" src="js/news.js"></script>
     <script>load_news(3);</script>
+    <script>
+        const count_triangle = 2022;
+        const list_container = document.getElementsByClassName('bg-effect-fix');
+        if (list_container.length > 0) {
+            const container = list_container[0];
+            for (let i = 0; i < count_triangle; i++) {
+                const tri_elem = document.createElement('div');
+                tri_elem.classList.add('bg-elem');
+                container.appendChild(tri_elem);
+            }
+        }
+    </script>
 </html>
