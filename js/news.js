@@ -24,7 +24,7 @@ const newslist = [
     date: '2022-02-28',
   },
   {
-    text: 'I have defended my M.Sc. thesis! I will soon graduate from Sharif University of Technology.',
+    text: 'I have defended my M.Sc. thesis and have graduated from <a href="http://ce.sharif.edu/">Sharif University of Technology</a>.',
     date: '2022-09-19',
   },
 ];

@@ -52,19 +52,30 @@ a {
 }
 
 #profile_image {
-	border-radius: 50%;
+	border-radius: 2em;
 	vertical-align: top;
-	border: solid 3px black;
+	border: solid 1pt black;
 	overflow: hidden;
-	width: 200px;
-	height: 200px
+	width: 250px;
+	height: 250px
 }
 
 #profile_image img {
 	position: relative;
 	height: 300px;
 	left: -20px;
-	top: -50px;
+	/* top: +10px; */
+}
+
+.section {
+    width: 80%;
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 /* News */
@@ -88,7 +99,7 @@ a {
     border-radius: 10px;
     padding: 1em;
     margin-bottom: 5px;
-	background-color: white;
+    background-color: white;
 }
 
 /* Navigation Bar */
@@ -99,7 +110,7 @@ a {
     flex-direction: row;
     border-bottom: 1px solid black;
     height: 5vh;
-	background-color: white;
+    background-color: white;
 }
 .navbar a {
     display: inline-block;
@@ -156,6 +167,7 @@ a {
     text-decoration: none;
 }
 
+/*  ?  */
 .itemize {
     display: flex;
     flex-direction: row;
@@ -175,6 +187,7 @@ a {
     margin: 1px;
 }
 
+/* Publication card box */
 .cardbox {
   display: flex;
   justify-content: center;
@@ -197,19 +210,7 @@ a {
   background-color: white;
 }
 
-@media screen and (max-width: 1000px) {
-  body {
-    font-size: 12pt;
-  }
-  .cardbox {
-    flex-direction: column;
-  }
-  .card {
-    width: 100%;
-    height: 200px;
-  }
-}
-
+/* Background Triangles */
 .bg-effect {
 	position: absolute;
 	left: 0;
@@ -252,4 +253,18 @@ a {
 	border-top-color: rgba(130, 80, 100, 0.1);
 	border-top-width: 10pt;
 	border-bottom-width: 0;
+}
+
+/* Responsive to display width */
+@media screen and (max-width: 1000px) {
+  body {
+    font-size: 12pt;
+  }
+  .cardbox {
+    flex-direction: column;
+  }
+  .card {
+    width: 100%;
+    height: 200px;
+  }
 }

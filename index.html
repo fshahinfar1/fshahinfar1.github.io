@@ -23,57 +23,72 @@
                     <span style="color: gray;">(MSc. Student)</span>
                 </div>
                 <div class="intro">
-					<div id="profile_image">
+                    <div id="profile_image">
                     <img alt="a picture of me!"
                         src="./resources/farbod_smile.jpg"
                         id="easterEgg" />
-					</div>
+                    </div>
                     <div id="info-box">
                         <p>
-                            I am a graduate student at Computer Department of
-                            <a href="http://ce.sharif.edu/">Sharif University of Technology</a>
-                            advised by
-                            <a href="http://sina.sharif.ac.ir/~movaghar/">Ali Movaghar</a>.
-                            I am interested in system software design and its
-                            implementation, mainly focusing on intersection of
-                            operating systems and computer networks.
+                            I am an incoming Ph.D. student to <a href="https://polimi.it"><i>Politecnico di Milano</i></a>.
+                            I am interested in computer systems and I am
+                            mainly focused on intersection of Operating Systems
+                            and data center networks.
                         </p>
                     </div>
-                    <div style="display:flex;justify-content:center;align-items:center;flex-direction:column">
-                      <p>
-                      I am an incomming Ph.D. student to <a href="https://polimi.it"><i>Politecnico di Milano</i></a>.
-                      <br/>
-                      I will be working toward improving performance of computer networks.
-                      </p>
-                    </div>
+                    <!-- Here is for announcements -->
+                    <!-- <div style="display:flex;justify-content:center;align-items:center;flex-direction:column"> -->
+                    <!--     <p>eBPF is awesome!</p> -->
+                    <!-- </div> -->
+                </div>
+            </div>
+            <!-- Education -->
+            <div class="section">
+                <h2>Educations</h2><hr/>
+                <div class="center">
+                    <ul class="news-box">
+                        <li>
+                            I received M.Sc. in Software Engineering from
+                            <a href="http://ce.sharif.edu/">Sharif University of Technology</a>
+                            advised by <a href="http://sina.sharif.ac.ir/~movaghar/">Ali Movaghar</a>.
+                        </li>
+                        <li>
+                            I received B.Sc. in Computer Engineering from
+                            <a href="http://www.iust.ac.ir/">Iran University of Science and Technology</a>.
+                        </li>
+                    </ul>
                 </div>
             </div>
             <!-- Publications -->
-            <div>
+            <div class="section">
                 <h2>Publications</h2><hr/>
-                <div class="cardbox">
-                    <div class="card">
-                        <img src="./resources/poster.png" width="100" height="100"/>
-                        <p>Poster: The Case for Network Functions Decomposition
-                          [<a href="https://dl.acm.org/doi/abs/10.1145/3485983.3493349">Link</a>]
-                        </p>
-                        <p>CoNEXT'21</p>
-                    </div>
-                    <div class="card">
-                        <img src="./resources/bkdrft.png" width="100" height="100"/>
-                        <p>Backdraft: a Lossless Virtual Switch that Prevents the Slow Receiver Problem
-                          [<a href="https://www.usenix.org/conference/nsdi22/presentation/sanaee">Link</a>]
-                        </p>
-                        <p>NSDI'22</p>
+                <div class="center">
+                    <div class="cardbox">
+                        <div class="card">
+                            <img src="./resources/poster.png" width="100" height="100"/>
+                            <p>Poster: The Case for Network Functions Decomposition
+                              [<a href="https://dl.acm.org/doi/abs/10.1145/3485983.3493349">Link</a>]
+                            </p>
+                            <p>CoNEXT'21</p>
+                        </div>
+                        <div class="card">
+                            <img src="./resources/bkdrft.png" width="100" height="100"/>
+                            <p>Backdraft: a Lossless Virtual Switch that Prevents the Slow Receiver Problem
+                              [<a href="https://www.usenix.org/conference/nsdi22/presentation/sanaee">Link</a>]
+                            </p>
+                            <p>NSDI'22</p>
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- News -->
-            <div>
+            <div class="section">
                 <h2>News</h2><hr/>
-                <ul id="newsbox" class="news-box">
-                </ul>
-                <a href="/news.html">(more)</a>
+                <div class="center">
+                    <ul id="newsbox" class="news-box">
+                    </ul>
+                    <a href="/news.html">(more)</a>
+                </div>
             </div>
         </div>
         <!-- 3d Object -->
@@ -99,7 +114,7 @@
     <script type"module" src="js/news.js"></script>
     <script>load_news(3);</script>
     <script>
-        const count_triangle = 2022;
+        const count_triangle = 1998;
         const list_container = document.getElementsByClassName('bg-effect-fix');
         if (list_container.length > 0) {
             const container = list_container[0];
