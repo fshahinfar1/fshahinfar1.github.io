@@ -27,6 +27,10 @@ const newslist = [
     text: 'I have defended my M.Sc. thesis and have graduated from <a href="http://ce.sharif.edu/">Sharif University of Technology</a>.',
     date: '2022-09-19',
   },
+  {
+    text: 'I started my Ph.D. in Information Technology at <a href="https://www.deib.polimi.it/ita/home">Politecnico di Milano</a>.',
+    date: '2023-02-01',
+  },
 ];
 
 // console.log('load news!');
