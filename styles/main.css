@@ -210,6 +210,10 @@ a {
   background-color: white;
 }
 
+.card p {
+	text-align: center;
+}
+
 /* Background Triangles */
 .bg-effect {
 	position: absolute;

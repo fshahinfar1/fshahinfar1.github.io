@@ -31,6 +31,10 @@ const newslist = [
     text: 'I started my Ph.D. in Information Technology at <a href="https://www.deib.polimi.it/ita/home">Politecnico di Milano</a>.',
     date: '2023-02-01',
   },
+  {
+    text: 'I am happy to anounce that "Automatic Kernel Offload using eBPF" was accepted in HotOS 2023!',
+    date: '2023-04-16',
+  },
 ];
 
 // console.log('load news!');
