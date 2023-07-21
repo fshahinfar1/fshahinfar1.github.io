@@ -76,7 +76,7 @@
                         <div class="card">
                             <img src="./resources/poster.png" width="100" height="100"/>
                             <p>Automatic kernel offload using BPF
-                              [<a href="https://sigops.org/s/conferences/hotos/2023/program.html">Link</a>]
+                              [<a href="https://sigops.org/s/conferences/hotos/2023/papers/shahinfar.pdf">Link</a>]
                             </p>
                             <p>HotOS'23</p>
                         </div>
@@ -130,7 +130,13 @@
     <script type"module" src="js/news.js"></script>
     <script>load_news(3);</script>
     <script>
-        const count_triangle = 1998;
+        const screen_w = window.screen.width
+        // I am that many years old
+        let count_triangle = 25;
+        if (screen_w > 1024) {
+            // I was born in this year
+            count_triangle = 1998;
+        }
         const list_container = document.getElementsByClassName('bg-effect-fix');
         if (list_container.length > 0) {
             const container = list_container[0];
