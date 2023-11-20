@@ -35,6 +35,10 @@ const newslist = [
     text: 'I am happy to anounce that "Automatic Kernel Offload using eBPF" was accepted in HotOS 2023!',
     date: '2023-04-16',
   },
+  {
+    text: 'I will participate in <a href="https://conferences.sigcomm.org/co-next/2023/#!/home">CoNEXT\'23</a> and present my work at its <a href="https://conferences.sigcomm.org/co-next/2023/#!/program-student">student workshop</a>',
+    date: '2023-11-20',
+  },
 ];
 
 // console.log('load news!');
