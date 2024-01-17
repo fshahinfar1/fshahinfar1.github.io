@@ -40,7 +40,7 @@ const newslist = [
     date: '2023-11-20',
   },
   {
-    text: 'I am attending <a href="https://inw2024.disi.unitn.it/">Italian Networking Workshop (INW)</a> this year. I will be happy to chat if you\'re also there.'
+    text: 'I am attending <a href="https://inw2024.disi.unitn.it/">Italian Networking Workshop (INW)</a> this year. I will be happy to chat if you\'re also there.',
     date: '2024-01-17',
   },
 ];
