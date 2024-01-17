@@ -39,6 +39,10 @@ const newslist = [
     text: 'I will participate in <a href="https://conferences.sigcomm.org/co-next/2023/#!/home">CoNEXT\'23</a> and present my work at its <a href="https://conferences.sigcomm.org/co-next/2023/#!/program-student">student workshop</a>',
     date: '2023-11-20',
   },
+  {
+    text: 'I am attending <a href="https://inw2024.disi.unitn.it/">Italian Networking Workshop (INW)</a> this year. I will be happy to chat if you\'re also there.'
+    date: '2024-01-17',
+  },
 ];
 
 // console.log('load news!');
