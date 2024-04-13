@@ -1,5 +1,5 @@
 const triangles = [];
-const vel_cap = 0.001;
+const vel_cap = 0.05;
 let last_render_ts = 0;
 
 // Set the top and left corners (css) for a element
@@ -15,8 +15,8 @@ function createTriangle()
   tri.elem = document.createElement('div');
   tri.elem.classList.add('bg-elem');
 
-  v_x = Math.random() * vel_cap;
-  v_y = Math.random() * vel_cap;
+  v_x = (Math.random() * 2 - 1) * vel_cap;
+  v_y = (Math.random() * 2 - 1) * vel_cap;
   tri.velocity = [v_x, v_y];
 
   // tri.velocity = [0.001, 0];
