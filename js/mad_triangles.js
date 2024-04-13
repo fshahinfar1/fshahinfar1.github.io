@@ -20,7 +20,7 @@ function createTriangle()
   tri.velocity = [v_x, v_y];
 
   // tri.velocity = [0.001, 0];
-  
+
   tri.position = [0, 0];
 
   setElemPos(tri.elem, tri.position)
@@ -48,6 +48,7 @@ function render(timestamp) {
   }
 
   delta_time = timestamp - last_render_ts;
+  last_render_ts = timestamp;
   if (delta_time < 0) {
     console.warn('Timestamp overflow. Did not think it was happening');
     return;
