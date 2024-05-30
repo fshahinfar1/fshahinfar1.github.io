@@ -1,8 +1,0 @@
-\expandafter\ifx\csname doTocEntry\endcsname\relax \expandafter\endinput\fi 
-\doTocEntry\tocsection{1}{\csname a:TocLink\endcsname{1}{x1-10001}{QQ2-1-1}{Stationary Probabilities of $M/M/1/K$}}{3}\relax 
-\doTocEntry\toclof{1}{\csname a:TocLink\endcsname{1}{x1-10011}{}{\ignorespaces This CTMC shows different states of $M/M/1/K$ system and transition rates.}}{figure}\relax 
-\doTocEntry\tocsection{2}{\csname a:TocLink\endcsname{1}{x1-20002}{QQ2-1-3}{Blocking Probability of $M/M/1/K$}}{8}\relax 
-\doTocEntry\tocsection{3}{\csname a:TocLink\endcsname{1}{x1-30003}{QQ2-1-4}{Throughput of $M/M/1/K$}}{9}\relax 
-\doTocEntry\tocsection{4}{\csname a:TocLink\endcsname{1}{x1-40004}{QQ2-1-5}{Expected Queue Size}}{10}\relax 
-\doTocEntry\tocsection{5}{\csname a:TocLink\endcsname{1}{x1-50005}{QQ2-1-6}{Expected Request Response Time}}{11}\relax 
-\par 
