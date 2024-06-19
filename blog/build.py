@@ -3,9 +3,9 @@ import os
 import sys
 import subprocess
 
+build_dir = './build'
 
 def build_latex():
-    build_dir = './build'
     need_rebuild = False
 
     if not os.path.isdir(build_dir):
@@ -23,6 +23,14 @@ def build_latex():
     # bibtex $(OUTDIR)/$(PAPER)
     subprocess.check_output(cmd, shell=True, text=True)
     subprocess.check_output(cmd, shell=True, text=True)
+
+
+def clean_latex():
+    if not os.path.isdir(build_dir):
+        # Nothing to do
+        return
+    cmd = f'rm -r {build_dir}'
+    subprocess.check_output(cmd, shell=True)
 
 
 def read_blog_post_date(path):
@@ -65,6 +73,9 @@ padding-left: 2em;
         f.write('<ol>\n')
         for dir_name in dirs:
             href=f'{dir_name}/build/blog.html'
+            if not os.path.isfile(href):
+                print(f'warning: {dir_name} does not have a blog.html entry')
+                continue
             title = read_blog_post_title(href)
             date = read_blog_post_date(href)
             f.write(f'<li><a href={href} target="_blank">{title}</a><span class="date-tag">{date}</span></li>\n')
@@ -78,6 +89,20 @@ def main():
     file. The content of the blog.tex will be converted to blog.html and placed
     in build directory.
     """
+
+    action = 'build'
+    if len(sys.argv) > 1:
+        action = sys.argv[1]
+
+    actions = {
+            'build': build_latex,
+            'clean': clean_latex,
+            }
+    build_entry_func = actions.get(action)
+    if build_entry_func is None:
+        print('Unsupported requested action')
+        sys.exit(1)
+
     curdir = os.path.dirname(__file__)
     _, dirs, _ = next(os.walk(curdir))
     dirs.sort(reverse=True)
@@ -85,7 +110,7 @@ def main():
         P = os.path.join(curdir, dir_name)
         print(P)
         os.chdir(P)
-        build_latex()
+        build_entry_func()
     os.chdir(curdir)
     update_blog_index(dirs)
 
