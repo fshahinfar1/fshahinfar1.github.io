@@ -95,7 +95,7 @@ function main() {
     }
   }
 
-  window.requestAnimationFrame(render);
+  // window.requestAnimationFrame(render);
 }
 
 main();

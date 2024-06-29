@@ -47,7 +47,7 @@ const newslist = [
 
 // console.log('load news!');
 function load_news(countnews) {
-  console.log('load_news', countnews);
+  // console.log('load_news', countnews);
   const newsbox = document.getElementById('newsbox');
   if (countnews === undefined) {
     for (let i = newslist.length - 1; i >= 0; i--) {

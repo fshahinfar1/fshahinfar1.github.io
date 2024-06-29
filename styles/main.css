@@ -136,6 +136,24 @@ a {
     text-decoration: underline;
 }
 
+/* Gallery */
+.photo-wall {
+    display: flex;
+    padding: 0px;
+    margin: 0px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.photo-wall img {
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-bottom: 0.5em;
+}
+
 /* Footer */
 .footer {
     display: flex;
