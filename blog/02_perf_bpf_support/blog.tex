@@ -1,0 +1,25 @@
+\documentclass{article}
+\usepackage{graphicx}
+
+\title{Build \textit{Perf} with BPF support}
+\begin{document}
+\maketitle
+
+
+\begin{figure}
+  \centering
+  \includegraphics{perf_bpf_err.png}
+  \caption{Perf software complaining for missing libraries to show/annotate internals of BPF program.}
+  \label{fig:perf_bpf_err}
+\end{figure}
+
+I have lost a few hours figuring out why when I build \textit{perf}, it can not annotate BPF programs.
+I solved the issue before; did not document it, and found my self in the same situation again.
+Wasting time, checking all if all the libraries are installed.
+This note is to save my future self some time.
+
+In order to support BPF annotation perf (at the moment) requires \texttt{LIBBFD} and \texttt{LIBBPF}.
+(To find the needed libraries search the error message ``\texttt{enable BPF anno}''. The code is at ``\texttt{utils/annotate.c}'')
+But having the libraries are not enough, you need to define \texttt{BUILD_NONDISTRO} flag when invoking \texttt{make} so that the \texttt{make} actually sets the appropriate flags.
+
+\end{document}
