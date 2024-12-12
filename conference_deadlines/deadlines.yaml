@@ -17,7 +17,7 @@
   fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
   conference_time: March-April 2026
   place: Rotterdam
-  abstract_submission: [23/02/2025, 17/06/2025, 11/10/2025]
+  abstract_submission: [17/06/2025, 18/10/2025]
   guess: true
 - label: EuroSys
   type: conference
@@ -79,7 +79,7 @@
   type: conference
   place:
   conference_time: July 7-9, 2026
-  abstract_submission: 01/01/2025
+  abstract_submission: 01/01/2026
   guess: true
 - label: CoNEXT
   fullname: International Conference on Emerging Networking Experiments and Technologies
