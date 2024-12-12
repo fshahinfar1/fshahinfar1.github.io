@@ -1,0 +1,80 @@
+- label: OSDI
+  type: conference
+  fullname: USENIX Symposium on Operating Systems Design and Implementation
+  conference_time: 2026
+  place:
+  abstract_submission: 3/12/2025
+  guess: true
+- label: NSDI
+  type: conference
+  fullname: USENIX Symposium on Networked Systems Design and Implementation
+  conference_time: April, 2026
+  place:
+  abstract_submission: [30/04/2025, 12/09/2025]
+  guess: true
+- label: ASPLOS
+  type: conference
+  fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
+  conference_time: March-April 2026
+  place: Rotterdam
+  abstract_submission: [23/02/2025, 17/06/2025, 11/10/2025]
+  guess: true
+- label: EuroSys
+  type: conference
+  fullname: Euro/Sys
+  conference_time: "March 30 - April 3 2025"
+  place: Rotterdam
+  abstract_submission: [14/05/2025, 15/10/2025]
+  guess: true
+- label: CCR
+  type: magazine
+  fullname: Computer Communication Review
+  abstract_submission: [01/12/2025, 01/03/2025, 01/06/2025, 01/09/2025]
+- label: JSys
+  type: journal
+  fullname: Journal of Systems Research
+  abstract_submission: [01/03/2025, 01/05/2025, 01/08/2025, 01/10/2025]
+- label: SoCC
+  type: conference
+  fullname: ACM Symposium on Cloud Computing
+  conference_time: November 20-22, 2025
+  place:
+  abstract_submission: 08/07/2025
+  guess: true
+- label: APSys
+  type: conference
+  fullname: ACM SIGOPS Asia-Pacific Workshop on Systems
+  conference_time: eptember 4-5, 2025
+  place: Kyoto, Japan
+  abstract_submission: 25/04/2025
+- label: PODC
+  type: conference
+  fullname: ACM Symposium on Principles of Distributed Computing
+  place:
+  abstract_submission: 11/02/2024
+- label: SEC
+  type: conference
+  fullname: ACM/IEEE Symposium on Edge Computing
+  place: Rome Italy
+  abstract_submission: 14/06/2024
+- label: IISWC
+  type: conference
+  fullname: IEEE International Workshop/Symposium on Workload Characterization
+  place:
+  abstract_submission: 03/06/2024
+- label: ISMM
+  type: conference
+  fullname: International Symposium on Memory Management
+  place: Copenhagen, Denmark
+  abstract_submission: 25/05/2024
+- label: ATC
+  fullname: Annual Technical Conference
+  type: conference
+  place:
+  conference_time: July 7-9, 2026
+  abstract_submission: 01/01/2025
+  guess: true
+- label: CoNEXT
+  fullname: International Conference on Emerging Networking Experiments and Technologies
+  place:
+  abstract_submission: [08/12/2024, 29/05/2025]
