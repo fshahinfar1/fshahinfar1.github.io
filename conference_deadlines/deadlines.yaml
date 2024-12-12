@@ -45,8 +45,15 @@
   type: conference
   fullname: ACM SIGOPS Asia-Pacific Workshop on Systems
   conference_time: eptember 4-5, 2025
-  place: Kyoto, Japan
+  place:
   abstract_submission: 25/04/2025
+  guess: true
+- label: APNet
+  type: conference
+  fullname: Asia-Pacific Workshop on Networking
+  place: Shanghai
+  abstract_submission: 06/03/2025
+  guess: false
 - label: PODC
   type: conference
   fullname: ACM Symposium on Principles of Distributed Computing
