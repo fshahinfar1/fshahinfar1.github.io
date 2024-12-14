@@ -38,10 +38,10 @@ class HTMLFormatter:
         print('<!DOCTYPE html><html><head></head><body><table>', file=OUTPUT_FILE)
 
     def end(self):
-        print('</table></body></html>', file=OUTPUT_FILE)
+        print('</table><script src="conf_deadline.js"></script></body></html>', file=OUTPUT_FILE)
 
     def entry(self, d):
-        base = f'<tr><td class="fancy-lbl">{d.lbl:10}:</td><td class="fancy-deadline">{d.deadline:10}</td><td class="fancy-days">[{d.days} days]</td>'
+        base = f'<tr><td class="fancy-lbl">{d.lbl:10}:</td><td class="fancy-deadline">{d.deadline:10}</td><td class="fancy-days"></td>'
         if d.is_guess:
             print(base + '<td class="fancy-is-guess">(?? THIS IS A GUESS)</td></tr>', file=OUTPUT_FILE)
         else:
