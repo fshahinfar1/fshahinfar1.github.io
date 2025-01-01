@@ -85,3 +85,10 @@
   fullname: International Conference on Emerging Networking Experiments and Technologies
   place:
   abstract_submission: [08/12/2024, 29/05/2025]
+- label: HotCarbon
+  type: workshop
+  fullname: 'HotCarbon: workshop on sustainable computing'
+  place:
+  conference_time: July 10-11, 2025
+  abstract_submission: 08/05/2024
+

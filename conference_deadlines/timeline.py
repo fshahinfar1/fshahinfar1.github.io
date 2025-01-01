@@ -9,11 +9,11 @@ from termcolor import colored
 
 TODAY = time.time()
 
-OUTPUT_FILE = open('./index.html', 'w')
 
 class Data:
     def __init__(self):
         pass
+
 
 class NothingFormatter:
     def begin(self):
@@ -51,25 +51,50 @@ class HTMLFormatter:
         print('<tr><td>-----</td><td>-----</td><td>-----</td><td>-----</td></tr>', file=OUTPUT_FILE)
 
 
+class JSONFormatter:
+
+    def begin(self):
+        print('const deadline_info = [', file=OUTPUT_FILE)
+
+    def end(self):
+        print(']', file=OUTPUT_FILE)
+
+    def entry(self, d):
+        j = json.dumps(vars(d))
+        print('\t' + j + ',', file=OUTPUT_FILE)
+
+    def sep(self):
+        pass
+
+
 formatter = {
         'html': HTMLFormatter(),
         'text': NothingFormatter(),
+        'json': JSONFormatter(),
 }
-terminal = OUTPUT_FILE == sys.stdout
-fmt = formatter['terminal' if terminal else 'html']
 
 
-class Item:
-    @classmethod
-    def from_dict(cls, d):
-        o = Item()
-        pass
+# TODO: make it a command line input
+# OUTPUT_FILE_PATH = './index.html'
+OUTPUT_FILE_PATH = './deadline_info.js'
+# OUTPUT_FILE_PATH = '-'
 
-    def __init__():
-        self.type = None
-        self.abstract_submission = None
-        self.fullname = None
-        self.label = None
+if OUTPUT_FILE_PATH == '-':
+    OUTPUT_FILE = sys.stdout
+    mode = 'text'
+else:
+    OUTPUT_FILE = open(OUTPUT_FILE_PATH, 'w')
+    ext = os.path.splitext(OUTPUT_FILE_PATH)[-1]
+    if ext == '.html':
+        mode = ext
+    elif ext == '.js':
+        mode = 'json'
+        import json
+    else:
+        mode = 'text'
+fmt = formatter[mode]
+print('output =', OUTPUT_FILE_PATH)
+print('mode =', mode)
 
 
 def time_to_ts(s):
@@ -149,5 +174,6 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except:
-        close(OUTPUT_FILE)
+    except Exception as e:
+        print(e)
+        OUTPUT_FILE.close()
