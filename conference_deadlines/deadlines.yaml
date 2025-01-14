@@ -91,4 +91,10 @@
   place:
   conference_time: July 10-11, 2025
   abstract_submission: 08/05/2024
-
+- label: SIGCOMM
+  type: conference
+  fullname: 'ACM Special Interest Group on Data Communication'
+  place: ''
+  conference_time: September 8-11, 2026
+  abstract_submission: 24/01/2026
+  guess: true
