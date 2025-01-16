@@ -98,3 +98,10 @@
   conference_time: September 8-11, 2026
   abstract_submission: 24/01/2026
   guess: true
+- label: DEBS
+  type: conference
+  fullname: 'ACM International Conference on Distributed and Event-based Systems'
+  place: ''
+  conference_time: June 10-13, 2026
+  abstract_submission: 31/01/2026
+  guess: true
