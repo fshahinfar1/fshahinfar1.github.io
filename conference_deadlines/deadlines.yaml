@@ -7,11 +7,12 @@
   guess: true
 - label: NSDI
   type: conference
+  link: https://www.usenix.org/conference/nsdi26
   fullname: USENIX Symposium on Networked Systems Design and Implementation
-  conference_time: April, 2026
-  place:
-  abstract_submission: [30/04/2025, 12/09/2025]
-  guess: true
+  conference_time: May 4-6, 2026
+  place: Renton (WA), USA
+  abstract_submission: [18/04/2025, 11/09/2025]
+  guess: false
 - label: ASPLOS
   type: conference
   fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
@@ -105,3 +106,11 @@
   conference_time: June 10-13, 2026
   abstract_submission: 31/01/2026
   guess: true
+- label: SOSP
+  type: conference
+  link: https://sigops.org/s/conferences/sosp/2025/
+  fullname: Symposium on Operating Systems Principles
+  place: Seoul, Republic of Korea
+  conference_time: October 13–16, 2025
+  abstract_submission: 10/04/2025
+  guess: false

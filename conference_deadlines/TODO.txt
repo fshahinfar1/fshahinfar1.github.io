@@ -1,0 +1,3 @@
+1. Add links to the conference web page
+2. Mark those that have multiple deadlines
+3. Show a tooltip when hovering mouse on an entry with more information
