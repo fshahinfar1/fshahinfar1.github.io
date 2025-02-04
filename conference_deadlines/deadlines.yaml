@@ -9,24 +9,24 @@
   type: conference
   link: https://www.usenix.org/conference/nsdi26
   fullname: USENIX Symposium on Networked Systems Design and Implementation
-  conference_time: May 4-6, 2026
+  conference_time: "May 4-6, 2026"
   place: Renton (WA), USA
   abstract_submission: [18/04/2025, 11/09/2025]
   guess: false
 - label: ASPLOS
   type: conference
   fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
-  conference_time: March-April 2026
+  conference_time: "March-April 2026"
   place: Rotterdam
   abstract_submission: [17/06/2025, 18/10/2025]
   guess: true
 - label: EuroSys
   type: conference
   fullname: Euro/Sys
-  conference_time: "March 30 - April 3 2025"
-  place: Rotterdam
-  abstract_submission: [14/05/2025, 15/10/2025]
-  guess: true
+  conference_time: "April 13-16, 2025"
+  place: Edinburgh
+  abstract_submission: [08/05/2025, 18/09/2025]
+  guess: false
 - label: CCR
   type: magazine
   fullname: Computer Communication Review
@@ -38,14 +38,14 @@
 - label: SoCC
   type: conference
   fullname: ACM Symposium on Cloud Computing
-  conference_time: November 20-22, 2025
+  conference_time: "November 20-22, 2025"
   place:
   abstract_submission: 08/07/2025
   guess: true
 - label: APSys
   type: conference
   fullname: ACM SIGOPS Asia-Pacific Workshop on Systems
-  conference_time: eptember 4-5, 2025
+  conference_time: "September 4-5, 2025"
   place:
   abstract_submission: 25/04/2025
   guess: true
@@ -79,7 +79,7 @@
   fullname: Annual Technical Conference
   type: conference
   place:
-  conference_time: July 7-9, 2026
+  conference_time: "July 7-9, 2026"
   abstract_submission: 01/01/2026
   guess: true
 - label: CoNEXT
@@ -90,20 +90,20 @@
   type: workshop
   fullname: 'HotCarbon: workshop on sustainable computing'
   place:
-  conference_time: July 10-11, 2025
+  conference_time: "July 10-11, 2025"
   abstract_submission: 08/05/2024
 - label: SIGCOMM
   type: conference
   fullname: 'ACM Special Interest Group on Data Communication'
   place: ''
-  conference_time: September 8-11, 2026
+  conference_time: "September 8-11, 2026"
   abstract_submission: 24/01/2026
   guess: true
 - label: DEBS
   type: conference
   fullname: 'ACM International Conference on Distributed and Event-based Systems'
   place: ''
-  conference_time: June 10-13, 2026
+  conference_time: "June 10-13, 2026"
   abstract_submission: 31/01/2026
   guess: true
 - label: SOSP
@@ -111,6 +111,6 @@
   link: https://sigops.org/s/conferences/sosp/2025/
   fullname: Symposium on Operating Systems Principles
   place: Seoul, Republic of Korea
-  conference_time: October 13–16, 2025
+  conference_time: "October 13–16, 2025"
   abstract_submission: 10/04/2025
   guess: false
