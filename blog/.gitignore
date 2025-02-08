@@ -1,0 +1,22 @@
+# skip unfinished posts
+03_*/
+
+# skip intermediate files
+*.4ct
+*.4tc
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.css
+*.dvi
+*.html
+*.idv
+*.lg
+*.log
+*.run.xml
+*.tmp
+*.xref
+
+# Do not skip what ever is in the build directory, that is what we are serving
+!./*/build/*

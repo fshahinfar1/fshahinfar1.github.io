@@ -21,7 +21,10 @@ def build_latex():
     cmd = f'make4ht --output-dir {build_dir} blog'
     subprocess.check_output(cmd, shell=True, text=True)
     # bibtex $(OUTDIR)/$(PAPER)
-    subprocess.check_output(cmd, shell=True, text=True)
+    try:
+        subprocess.check_output('bibtex blog', shell=True, text=True)
+    except:
+        print('bibtex failed!')
     subprocess.check_output(cmd, shell=True, text=True)
 
 
@@ -105,6 +108,17 @@ def main():
 
     curdir = os.path.dirname(__file__)
     _, dirs, _ = next(os.walk(curdir))
+    skip = ['03',]
+    tmp_dirs = []
+    for d in dirs:
+        okay = True
+        for s in skip:
+            if d.startswith(s):
+                okay = False
+                break
+        if okay:
+            tmp_dirs.append(d)
+    dirs = tmp_dirs
     dirs.sort(reverse=True)
     for dir_name in dirs:
         P = os.path.join(curdir, dir_name)

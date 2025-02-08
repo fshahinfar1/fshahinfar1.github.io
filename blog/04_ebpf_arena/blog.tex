@@ -1,0 +1,134 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\title{eBPF Arena: A Tutorial}
+\author{Farbod Shahinfar}
+\begin{document}
+\maketitle
+
+\include{inc.tex}
+
+As part of my research, I spend much time learning about eBPF.
+Recently, I am busy exploring \emph{Arena} --- a new eBPF API that enables
+programs to allocate memory pages; similar functionallity as \C{mmap} and
+\C{munmap}~\cite{arenapatch}.
+
+The eBPF community is doing a great job documenting the system and writing
+tutorials. I felt I could contribute to this effort by writing about Arena.
+
+{
+    \textcolor{red}{At the moment, this blog post is a \emph{work in
+    progress} and I will update it as I learn more about Arena and figure
+    things out.}
+}
+
+\section{Introduction}
+
+The \emph{Arena} is a new MAP type (\bpfmap{arena}) available to eBPF programs
+since kernel version 6.9.
+This map is semantically different than previous ones.
+Unlike data-struture MAPs (e.g., hash, array, bloom, stack, \dots{}) Arena
+provides a direct access to the kernel memory instead of abstracting it away.
+It increases the programs expressivitiy and enables them to implement their own
+data-structures on-demand (e.g, a specific type of tree or a more optimized
+version of hash-map).
+
+Three use-cases have been named for the Arena in its patch introduction
+message~\cite{arenapatch}. I summarize them bellow:
+\begin{itemize}
+    \item User-space can use Arena's memory to implement its own
+        data-structures (it is a normal memory region), while the memory is
+        visible to eBPF programs which can implement a fast-path for operations
+        like packet processing.
+    \item Arena can be used as a communication channel between an eBPF and a
+        user-space program.
+    \item Arena can be used as a \emph{heap} of memory for the eBPF program
+\end{itemize}
+My understanding from these use-cases is that Arena provides access to raw
+pages of memory shareable among eBPF programs and user-sace. Each can decide to
+use it as they see fit with their own responsibility. It is unlike other types
+of data-structure MAPs that enforce certain constraints such as fixed key and
+value sizes while limited the operations to lookups and updates.
+
+In this tutorial, I try to explore Arena's API, and provide an example for each
+use-case in the hope that it facilitates the journey of other in figuring out
+how to use this new capability. The code snippets shown in this text is shared
+on \href{https://github.com/bpf-endeavor/ebpf-arena-tutorial}{this repository}.
+
+\section{Arena APIs}
+
+A program can declare the Arena map as other maps. See Listing~\ref{lst:map_ex}
+for an example. The key size and value sizes must be zero. Max entries define
+the maximum number of pages for the map, and must be non-zero. As any other
+map, the maximum size is limited to 4~GB. At the time of writing this text,
+Arena map declaration supports three flags~\cite{arena_source}:
+\begin{itemize}
+    \item \C{BPF_F_MMAPABLE}: \textbf{Required}. Indicates the map should
+        support memory mapping.
+    \item \C{BPF_F_SEGV_ON_FAULT}: The user-space program will receive a
+        \C{SEGFAULT} signal if the memory is not mapped by the eBPF program
+        (e.g., out of range access on a list created by the eBPF program).
+    \item \C{BPF_F_NO_USER_CONV}: The memory region is private to the eBPF
+        program and user-space program will not access it. This allows the JIT
+        to perform optimizations avoiding address space casting (more about it
+        later).
+\end{itemize}
+\textcolor{gray}{\textit{note: The \C{BPF_F_MMAPABLE} must always be present.}}
+
+\begin{minipage}{\linewidth}
+    \centering
+    \begin{flushleft}
+        \begin{lstlisting}[caption={Example of using Arena map}, label={lst:map_ex}]
+        struct {
+         __uint(type, BPF_MAP_TYPE_ARENA);
+         __uint(map_flags, BPF_F_MMAPABLE);
+         __uint(max_entries, 2); /* number of pages */
+        } arena SEC(".maps");
+        \end{lstlisting}
+    \end{flushleft}
+\end{minipage}
+
+Normal eBPF map helpers such as ``\C{bpf_map_lookup_elem}'' are not
+defined for Arena~\cite{arena_source}. Instead the following pair of functions
+are available:
+\begin{itemize}
+    \item \C{bpf_arena_alloc_pages}: Allocates a memory page
+    \item \C{bpf_arena_free_pages}: Free the memory page
+\end{itemize}
+
+These functions are defined using kfunc~\cite{eunomia_kfunc, ebpf_docs_kfunc}.
+As required by kfunc subsystem, you should declare the signature of these
+helpers in your eBPF program to ues these functions.
+\begin{minipage}{\linewidth}
+    \begin{flushleft}
+            \begin{lstlisting}
+            void __arena* bpf_arena_alloc_pages(void *map, void __arena *addr,
+                __u32 page_cnt, int node_id, __u64 flags) __ksym;
+            void bpf_arena_free_pages(void *map, void __arena *ptr,
+                __u32 page_cnt) __ksym;
+            \end{lstlisting}
+        \end{flushleft}
+\end{minipage}
+
+Calling these functions may put the thread to sleep. For this reason the
+functions are marked with \C{KF_SLEEPABLE}~\cite{arena_source}, and the
+verifier only allows sleepable eBPF programs to use them. An eBPF program has
+sleeping privilege if the \C{BPF_F_SLEEPABLE} flag was set when loading it
+(\href{https://github.com/bpf-endeavor/ebpf-arena-tutorial/blob/9b399ae7784ade572aa213f0ac37fd2d84b7c13a/src/mogu_loader.c\#L91}{an example loader}).
+Not all eBPF hooks support this flag. A list of sleepable
+hooks are provided in \emph{libbpf} documentations~\cite{libbpf_sleepable}.
+
+\textcolor{gray}{\emph{note: The memory pages allocated use following flags: \C{GFP_KERNEL}, \C{__GFP_ZERO}, \C{__GFP_ACCOUNT}.}}
+
+
+\section{Example}
+\dots{}
+
+% \lstinputlisting[caption={a}]{./mogu.bpf.c}
+
+\bibliographystyle{plain}
+\bibliography{ref}
+\end{document}
