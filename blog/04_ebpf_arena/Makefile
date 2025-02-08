@@ -1,4 +1,4 @@
 default:
-	make4ht -u -l --output-dir build blog;
+	make4ht --output-dir build blog;
 	bibtex blog;
-	make4ht -u -l --output-dir build blog;
+	make4ht --output-dir build blog;

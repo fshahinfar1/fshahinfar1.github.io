@@ -1,53 +1,17 @@
  
 /* start css.sty */
-.ec-lmr-17{font-size:170%;}
-.ec-lmr-12{font-size:120%;}
-.ec-lmri-10{ font-style:italic;}
-.ec-lmri-10{ font-style:italic;}
-.ec-lmri-10{ font-style:italic;}
-.ec-lmri-10{ font-style:italic;}
-.ec-lmri-10{ font-style:italic;}
-.ec-lmri-10{ font-style:italic;}
-.ec-lmri-10{ font-style:italic;}
-.ec-lmri-10{ font-style:italic;}
-.ec-lmri-10{ font-style:italic;}
-.ec-lmtt-10{ font-family: monospace,monospace;}
-.ec-lmtt-10{ font-family: monospace,monospace;}
-.ec-lmtt-10{ font-family: monospace,monospace;}
-.ec-lmtt-10{ font-family: monospace,monospace;}
-.ec-lmtt-10{ font-family: monospace,monospace;}
-.ec-lmtt-10{ font-family: monospace,monospace;}
-.ec-lmtt-10{ font-family: monospace,monospace;}
-.ec-lmtt-10{ font-family: monospace,monospace;}
-.ec-lmtt-10{ font-family: monospace,monospace;}
-.ec-lmbx-10{ font-weight: bold;}
-.ec-lmbx-10{ font-weight: bold;}
-.ec-lmbx-10{ font-weight: bold;}
-.ec-lmbx-10{ font-weight: bold;}
-.ec-lmbx-10{ font-weight: bold;}
-.ec-lmbx-10{ font-weight: bold;}
-.ec-lmbx-10{ font-weight: bold;}
-.ec-lmbx-10{ font-weight: bold;}
-.ec-lmbx-10{ font-weight: bold;}
-.ec-lmtti-10{ font-family: monospace,monospace; font-style:italic;}
-.ec-lmtti-10{ font-family: monospace,monospace; font-style:italic;}
-.ec-lmtti-10{ font-family: monospace,monospace; font-style:italic;}
-.ec-lmtti-10{ font-family: monospace,monospace; font-style:italic;}
-.ec-lmtti-10{ font-family: monospace,monospace; font-style:italic;}
-.ec-lmtti-10{ font-family: monospace,monospace; font-style:italic;}
-.ec-lmtti-10{ font-family: monospace,monospace; font-style:italic;}
-.ec-lmtti-10{ font-family: monospace,monospace; font-style:italic;}
-.ec-lmtti-10{ font-family: monospace,monospace; font-style:italic;}
-.ec-lmtt-8{font-size:80%; font-family: monospace,monospace;}
-.ec-lmtt-8{ font-family: monospace,monospace;}
-.ec-lmtt-8{ font-family: monospace,monospace;}
-.ec-lmtt-8{ font-family: monospace,monospace;}
-.ec-lmtt-8{ font-family: monospace,monospace;}
-.ec-lmtt-8{ font-family: monospace,monospace;}
-.ec-lmtt-8{ font-family: monospace,monospace;}
-.ec-lmtt-8{ font-family: monospace,monospace;}
-.ec-lmtt-8{ font-family: monospace,monospace;}
-.ec-lmr-5{font-size:50%;}
+.cmr-5{font-size:50%;}
+.cmr-17{font-size:170%;}
+.cmr-12{font-size:120%;}
+.cmti-10{ font-style: italic;}
+.cmtt-10{font-family: monospace,monospace;}
+.cmtt-10{font-family: monospace,monospace;}
+.cmtt-10{font-family: monospace,monospace;}
+.cmbx-10{ font-weight: bold;}
+.cmitt-10{font-family: monospace,monospace; font-style: italic;}
+.cmtt-8{font-size:80%;font-family: monospace,monospace;}
+.cmtt-8{font-family: monospace,monospace;}
+.cmtt-8{font-family: monospace,monospace;}
 p{margin-top:0;margin-bottom:0}
 p.indent{text-indent:0;}
 p + p{margin-top:1em;}
@@ -174,5 +138,7 @@ div.lstinputlisting{ font-family: monospace,monospace; white-space: nowrap; }
 span#textcolor1{color:#FF0000}
 span#textcolor2{color:#808080}
 span#textcolor3{color:#808080}
+span#textcolor4{color:#808080}
+span#textcolor5{color:#808080}
 /* end css.sty */
 
