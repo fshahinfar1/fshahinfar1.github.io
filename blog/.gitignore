@@ -19,4 +19,4 @@
 *.xref
 
 # Do not skip what ever is in the build directory, that is what we are serving
-!./*/build/*
+!*/build/*

@@ -1,0 +1,243 @@
+<!DOCTYPE html> 
+<html lang="en-US" xml:lang="en-US" > 
+<head><title>eBPF Arena: A Tutorial</title> 
+<meta  charset="utf-8" /> 
+<meta name="generator" content="TeX4ht (https://tug.org/tex4ht/)" /> 
+<meta name="viewport" content="width=device-width,initial-scale=1" /> 
+<link rel="stylesheet" type="text/css" href="blog.css" /> 
+<meta name="src" content="blog.tex" /> 
+</head><body 
+>
+<div class="maketitle">
+                                                                  
+
+                                                                  
+                                                                  
+
+                                                                  
+
+<h2 class="titleHead">eBPF Arena: A Tutorial</h2>
+<div class="author" ><span 
+class="ec-lmr-12">Farbod Shahinfar</span></div><br />
+<div class="date" ><span 
+class="ec-lmr-12">February 8, 2025</span></div>
+</div>
+                                                                  
+
+                                                                  
+<title>eBPF Arena: A Tutorial</title> 
+<meta  charset="utf-8" /> 
+<meta name="generator" content="TeX4ht (https://tug.org/tex4ht/)" /> 
+<meta name="viewport" content="width=device-width,initial-scale=1" /> 
+<link rel="stylesheet" type="text/css" href="blog.css" /> 
+<meta name="src" content="blog.tex" /> 
+</head><body 
+>
+                                                                  
+
+                                                                  
+                                                                  
+
+                                                                  
+<!--l. 14--><p class="indent" >   As part of my research, I spend much time learning about eBPF. Recently, I am
+busy exploring Arena — a new eBPF API that enables programs to allocate memory
+pages; similar functionallity as mmap and munmap <span class="cite">[<a 
+href="#Xarenapatch">5</a>]</span>.
+</p><!--l. 19--><p class="indent" >   The eBPF community is doing a great job documenting the system and
+writing tutorials. I felt I could contribute to this effort by writing about
+Arena.
+</p><!--l. 25--><p class="indent" >   <span id="textcolor1">At the moment, this blog post is a work in progress and I will update it as I learn
+more about Arena and figure things out.</span>
+</p>   
+<h3 class="sectionHead"><span class="titlemark">1   </span> <a 
+ id="x1-10001"></a>Introduction</h3>
+<!--l. 30--><p class="noindent" >The Arena is a new MAP type (BPF_MAP_TYPE_ARENA) available to eBPF programs
+since kernel version 6.9. This map is semantically different than previous
+ones. Unlike data-struture MAPs (e.g., hash, array, bloom, stack, …) Arena
+provides a direct access to the kernel memory instead of abstracting it away. It
+increases the programs expressivitiy and enables them to implement their own
+data-structures on-demand (e.g, a specific type of tree or a more optimized version of
+hash-map).
+</p><!--l. 39--><p class="indent" >   Three use-cases have been named for the Arena in its patch introduction
+message <span class="cite">[<a 
+href="#Xarenapatch">5</a>]</span>. I summarize them bellow: </p>
+<ul class="itemize1">     
+<li class="itemize">
+<!--l. 42--><p class="noindent" >User-space can use Arena’s memory to implement its own data-structures
+(it is a normal memory region), while the memory is visible to eBPF
+programs  which  can  implement  a  fast-path  for  operations  like  packet
+processing.
+</p>     
+</li>
+<li class="itemize">     
+<!--l. 46--><p class="noindent" >Arena can be used as a communication channel between an eBPF and a
+user-space program.
+</p>     
+</li>
+<li class="itemize">     
+<!--l. 48--><p class="noindent" >Arena can be used as a heap of memory for the eBPF program</p></li></ul>
+<!--l. 50--><p class="noindent" >My understanding from these use-cases is that Arena provides access to raw
+pages of memory shareable among eBPF programs and user-sace. Each can
+decide to use it as they see fit with their own responsibility. It is unlike
+other types of data-structure MAPs that enforce certain constraints such
+as fixed key and value sizes while limited the operations to lookups and
+updates.
+                                                                  
+
+                                                                  
+</p><!--l. 56--><p class="indent" >   In this tutorial, I try to explore Arena’s API, and provide an example for each
+use-case in the hope that it facilitates the journey of other in figuring out how to use
+this new capability. The code snippets shown in this text is shared on <a 
+href="https://github.com/bpf-endeavor/ebpf-arena-tutorial" target="_blank" >this
+repository</a>.
+</p><!--l. 61--><p class="noindent" >
+</p>   
+<h3 class="sectionHead"><span class="titlemark">2   </span> <a 
+ id="x1-20002"></a>Arena APIs</h3>
+<!--l. 63--><p class="noindent" >A program can declare the Arena map as other maps. See Listing <a 
+href="#x1-2001r1">1<!--tex4ht:ref: lst:map_ex --></a> for an example.
+The key size and value sizes must be zero. Max entries define the maximum number
+of pages for the map, and must be non-zero. As any other map, the maximum size is
+limited to 4 GB. At the time of writing this text, Arena map declaration supports
+three flags <span class="cite">[<a 
+href="#Xarena_source">2</a>]</span>: </p>
+<ul class="itemize1">     
+<li class="itemize">
+<!--l. 69--><p class="noindent" >BPF_F_MMAPABLE: Required. Indicates the map should support memory
+mapping.
+</p>     
+</li>
+<li class="itemize">     
+<!--l. 71--><p class="noindent" >BPF_F_SEGV_ON_FAULT: The user-space program will receive a SEGFAULT
+signal if the memory is not mapped by the eBPF program (e.g., out of
+range access on a list created by the eBPF program).
+</p>     
+</li>
+<li class="itemize">     
+<!--l. 74--><p class="noindent" >BPF_F_NO_USER_CONV: The memory region is private to the eBPF program
+and user-space program will not access it. This allows the JIT to perform
+optimizations avoiding address space casting (more about it later).</p></li></ul>
+<!--l. 79--><p class="noindent" ><span id="textcolor2">note: The BPF_F_MMAPABLE must always be present.</span>
+</p>   
+<div class="minipage"><div class="flushleft" 
+>
+<!--l. 83--><p class="noindent" >
+ </p>
+ <!--l. 84-->
+<a 
+ id="x1-2001r1"></a>
+<a 
+ id="x1-2002"></a>
+<div class="lstlisting" id="listing-1"><span class="label"><a 
+ id="x1-2003r1"></a>1</span>        struct { <br /> 
+<span class="label"><a 
+ id="x1-2004r2"></a>2</span>         __uint(type, BPF_MAP_TYPE_ARENA); <br /> 
+<span class="label"><a 
+ id="x1-2005r3"></a>3</span>         __uint(map_flags, BPF_F_MMAPABLE); <br /> 
+<span class="label"><a 
+ id="x1-2006r4"></a>4</span>         __uint(max_entries, 2); /* number of pages */ <br /> 
+<span class="label"><a 
+ id="x1-2007r5"></a>5</span>        } arena SEC(&#x0022;.maps&#x0022;);</div>
+<figcaption class="caption" ><span class="id">Listing 1:</span><span  
+class="content">Example of using Arena map</span></figcaption><!--tex4ht:label?: x1-2001r2 -->
+</div></div>
+<!--l. 94--><p class="indent" >   Normal eBPF map helpers such as “bpf_map_lookup_elem” are not
+defined for Arena <span class="cite">[<a 
+href="#Xarena_source">2</a>]</span>. Instead the following pair of functions are available:
+</p>
+                                                                  
+
+                                                                  
+<ul class="itemize1">     
+<li class="itemize">
+<!--l. 98--><p class="noindent" >bpf_arena_alloc_pages: Allocates a memory page
+</p>     
+</li>
+<li class="itemize">     
+<!--l. 99--><p class="noindent" >bpf_arena_free_pages: Free the memory page</p></li></ul>
+<!--l. 102--><p class="indent" >   These functions are defined using kfunc <span class="cite">[<a 
+href="#Xeunomia_kfunc">3</a>, <a 
+href="#Xebpf_docs_kfunc">4</a>]</span>. As required by kfunc subsystem,
+you should declare the signature of these helpers in your eBPF program to ues these
+functions. </p><div class="minipage"><div class="flushleft" 
+>
+<!--l. 106--><p class="noindent" >
+ </p>
+ <!--l. 107-->
+<div class="lstlisting" id="listing-2"><span class="label"><a 
+ id="x1-2008r1"></a>1</span>            void __arena* bpf_arena_alloc_pages(void *map, void __arena *addr, <br /> 
+<span class="label"><a 
+ id="x1-2009r2"></a>2</span>                __u32 page_cnt, int node_id, __u64 flags) __ksym; <br /> 
+<span class="label"><a 
+ id="x1-2010r3"></a>3</span>            void bpf_arena_free_pages(void *map, void __arena *ptr, <br /> 
+<span class="label"><a 
+ id="x1-2011r4"></a>4</span>                __u32 page_cnt) __ksym;</div>
+</div></div>
+<!--l. 116--><p class="indent" >   Calling these functions may put the thread to sleep. For this reason the functions
+are marked with KF_SLEEPABLE <span class="cite">[<a 
+href="#Xarena_source">2</a>]</span>, and the verifier only allows sleepable
+eBPF programs to use them. An eBPF program has sleeping privilege if the
+BPF_F_SLEEPABLE flag was set when loading it (<a 
+href="https://github.com/bpf-endeavor/ebpf-arena-tutorial/blob/9b399ae7784ade572aa213f0ac37fd2d84b7c13a/src/mogu_loader.c#L91" target="_blank" >an example loader</a>). Not all
+eBPF hooks support this flag. A list of sleepable hooks are provided in libbpf
+documentations <span class="cite">[<a 
+href="#Xlibbpf_sleepable">1</a>]</span>.
+</p><!--l. 124--><p class="indent" >   <span id="textcolor3">note: The memory pages allocated use following flags: GFP_KERNEL, __GFP_ZERO,
+__GFP_ACCOUNT.</span>
+</p><!--l. 127--><p class="noindent" >
+</p>   
+<h3 class="sectionHead"><span class="titlemark">3   </span> <a 
+ id="x1-30003"></a>Example</h3>
+<!--l. 128--><p class="noindent" >…
+</p><!--l. 1--><p class="noindent" >
+</p>   
+<h3 class="likesectionHead"><a 
+ id="x1-40003"></a>References</h3>
+<!--l. 1--><p class="noindent" >   
+</p>
+<div class="thebibliography">   
+<p class="bibitem" ><span class="biblabel">
+[1]
+<span class="bibsp">   </span></span><a 
+ id="Xlibbpf_sleepable"></a>libbpf     documentation:     Program     types     and     elf     sections.
+<a 
+href="https://github.com/libbpf/libbpf/blob/master/docs/program_types.rst" class="url" >https://github.com/libbpf/libbpf/blob/master/docs/program_types.rst</a>.
+</p>
+                                                                  
+
+                                                                  
+<p class="bibitem" ><span class="biblabel"> 
+[2]
+<span class="bibsp">   </span></span><a 
+ id="Xarena_source"></a>Linux        source        tree:        Arena        map        implementation.
+<a 
+href="https://elixir.bootlin.com/linux/v6.13.1/source/kernel/bpf/arena.c" class="url" >https://elixir.bootlin.com/linux/v6.13.1/source/kernel/bpf/arena.c</a>.
+</p>   
+<p class="bibitem" ><span class="biblabel">
+[3]
+<span class="bibsp">   </span></span><a 
+ id="Xeunomia_kfunc"></a>Extending  ebpf  beyond  its  limits:  Custom  kfuncs  in  kernel  modules.
+<a 
+href="https://eunomia.dev/tutorials/43-kfuncs/" class="url" >https://eunomia.dev/tutorials/43-kfuncs/</a>, 2024.
+</p>   
+<p class="bibitem" ><span class="biblabel">
+[4]
+<span class="bibsp">   </span></span><a 
+ id="Xebpf_docs_kfunc"></a>Silvano Cirujano Cuesta and Dylan Reimerink.  ebpf documentations:
+kfuncs.     <a 
+href="https://docs.ebpf.io/linux/concepts/kfuncs/" class="url" >https://docs.ebpf.io/linux/concepts/kfuncs/</a>, 2024.
+</p>   
+<p class="bibitem" ><span class="biblabel">
+[5]
+<span class="bibsp">   </span></span><a 
+ id="Xarenapatch"></a>Alex        Starovoitov.                       Introduce        bpf        arena.
+<a 
+href="https://lwn.net/Articles/961594/" class="url" >https://lwn.net/Articles/961594/</a>, 2024.
+</p>   
+</div>
+ 
+</body> 
+</html>
+                                                                  
+
+
