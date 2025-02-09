@@ -56,5 +56,12 @@ function show3DScene() {
   animate();
 }
 
-console.log('Easter Egg Planted :)')
-document.getElementById('easterEgg').addEventListener('click', show3DScene);
+window.addEventListener('load', () => {
+  const elem = document.getElementById('easterEgg');
+  if (elem.offsetParent !== null) {
+    console.log('Easter Egg Planted :)');
+    elem.addEventListener('click', show3DScene);
+  } else {
+    console.log('No easter Egg on small screens');
+  }
+});
