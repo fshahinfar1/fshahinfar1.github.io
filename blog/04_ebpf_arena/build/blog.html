@@ -20,7 +20,7 @@
 <div class="author" ><span 
 class="cmr-12">Farbod Shahinfar</span></div><br />
 <div class="date" ><span 
-class="cmr-12">February 8, 2025</span></div>
+class="cmr-12">February 12, 2025</span></div>
    </div>
                                                                   
 
@@ -42,7 +42,7 @@ class="cmr-12">February 8, 2025</span></div>
 <!--l. 14--><p class="indent" >   As part of my research, I spend much time learning about eBPF. Recently, I am
 busy exploring Arena — a new eBPF API that enables programs to allocate memory
 pages; similar functionality as mmap and munmap <span class="cite">[<a 
-href="#Xarenapatch">9</a>]</span>.
+href="#Xarenapatch">10</a>]</span>.
 </p><!--l. 19--><p class="indent" >   The eBPF community is doing a great job documenting the system and
 writing tutorials. I felt I could contribute to this effort by writing about
 Arena.
@@ -58,70 +58,74 @@ provides a direct access to the kernel memory instead of abstracting it away. It
 increases the programs expressivity and enables them to implement their own
 data-structures on-demand (e.g, a specific type of tree or a more optimized version of
 hash-map).
-</p><!--l. 39--><p class="indent" >   Three use-cases have been named for the Arena in its patch introduction
-message <span class="cite">[<a 
-href="#Xarenapatch">9</a>]</span>. I summarize them bellow: </p>
+</p><!--l. 39--><p class="indent" >   Three use-cases have been named for the Arena in the introduction message <span class="cite">[<a 
+href="#Xarenapatch">10</a>]</span>
+sent along its patch to the Linux mailing list. I summarize them bellow:
+</p>
      <ul class="itemize1">
      <li class="itemize">
-     <!--l. 42--><p class="noindent" >User-space can use Arena’s memory to implement its own data-structures
+     <!--l. 43--><p class="noindent" >User-space can use Arena’s memory to implement its own data-structures
      (it is a normal memory region), while the memory is visible to eBPF
      programs  which  can  implement  a  fast-path  for  operations  like  packet
      processing.
      </p></li>
      <li class="itemize">
-     <!--l. 46--><p class="noindent" >Arena can be used as a communication channel between an eBPF and a
+     <!--l. 47--><p class="noindent" >Arena can be used as a communication channel between an eBPF and a
      user-space program.
      </p></li>
      <li class="itemize">
-     <!--l. 48--><p class="noindent" >Arena can be used as a heap of memory for the eBPF program</p></li></ul>
-<!--l. 50--><p class="noindent" >My understanding from these use-cases is that Arena provides access to raw pages of
+     <!--l. 49--><p class="noindent" >Arena can be used as a heap of memory for the eBPF program</p></li></ul>
+<!--l. 51--><p class="noindent" >My understanding from these use-cases is that Arena provides access to raw pages of
 memory shareable among eBPF programs and user-space. Each can decide to use it
 as they see fit with their own responsibility. It is unlike other types of data-structure
-MAPs that enforce certain constraints such as fixed key and value sizes while limited
+MAPs that enforce certain constraints such as fixed key and value sizes, or limiting
 the operations to lookup and update.
-</p><!--l. 56--><p class="indent" >   In this tutorial, I try to explore Arena’s API, and provide an example for each
-use-case in the hope that it facilitates the journey of other in figuring out how to use
                                                                   
 
                                                                   
-this new capability. The code snippets shown in this text is shared on <a 
-href="https://github.com/bpf-endeavor/ebpf-arena-tutorial" target="_blank" >this
-repository</a>.
-</p><!--l. 61--><p class="noindent" >
+</p><!--l. 57--><p class="indent" >   In this tutorial, I try to explore Arena’s API, and provide some examples using it.
+I hope this document help others explore Arena and facilitate its development. The
+code snippets shown in this text is shared on <a 
+href="https://github.com/bpf-endeavor/ebpf-arena-tutorial" target="_blank" >this repository</a>.
+</p><!--l. 62--><p class="noindent" >
 </p>
    <h3 class="sectionHead"><span class="titlemark">2   </span> <a 
  id="x1-20002"></a>Arena’s API</h3>
-<!--l. 63--><p class="noindent" >
+<!--l. 64--><p class="noindent" >
 </p>
    <h4 class="subsectionHead"><span class="titlemark">2.1   </span> <a 
  id="x1-30002.1"></a>Declare a MAP</h4>
-<!--l. 64--><p class="noindent" >A program can declare the Arena map as other maps. See Listing <a 
-href="#x1-3001r1">1<!--tex4ht:ref: lst:map_ex --></a> for an example.
-The key size and value sizes must be zero. Max entries define the maximum number
-of pages for the map, and must be non-zero. As any other map, the maximum size is
-limited to 4 GB. At the time of writing this text, Arena map declaration supports
-three flags <span class="cite">[<a 
-href="#Xarena_source">4</a>]</span>: </p>
+<!--l. 65--><p class="noindent" >A program can declare the Arena MAP similar to other MAPs. See Listing <a 
+href="#x1-3001r1">1<!--tex4ht:ref: lst:map_ex --></a> for an
+example. Here are some notes to keep in mind. The key size and value sizes must be
+zero. Max entries define the maximum number of pages for the map, and must be
+non-zero. As any other map, the maximum size is limited to 4 GB. At the
+time of writing this text, Arena map declaration supports three flags <span class="cite">[<a 
+href="#Xarena_source">4</a>]</span>:
+</p>
      <ul class="itemize1">
      <li class="itemize">
-     <!--l. 70--><p class="noindent" >BPF_F_MMAPABLE: Required. Indicates the map should support memory
+     <!--l. 72--><p class="noindent" >BPF_F_MMAPABLE: Required. Indicates the map should support memory
      mapping.
      </p></li>
      <li class="itemize">
-     <!--l. 72--><p class="noindent" >BPF_F_SEGV_ON_FAULT: The user-space program will receive a SEGFAULT
+     <!--l. 74--><p class="noindent" >BPF_F_SEGV_ON_FAULT: The user-space program will receive a SEGFAULT
      signal if the memory is not mapped by the eBPF program (e.g., out of
      range access on a list created by the eBPF program).
      </p></li>
      <li class="itemize">
-     <!--l. 75--><p class="noindent" >BPF_F_NO_USER_CONV: The memory region is private to the eBPF program
+     <!--l. 77--><p class="noindent" >BPF_F_NO_USER_CONV: The memory region is private to the eBPF program
      and user-space program will not access it. This allows the JIT to perform
      optimizations avoiding address space casting (more about it later).</p></li></ul>
-<!--l. 80--><p class="noindent" ><span id="textcolor2">note: The BPF_F_MMAPABLE must always be present.</span>
+<!--l. 82--><p class="noindent" ><span id="textcolor2">note: The BPF_F_MMAPABLE must always be present.</span>
 </p>
+                                                                  
+
+                                                                  
    <div class="minipage"><div class="flushleft" 
 >
-<!--l. 84--><p class="noindent" >
- </p><!--l. 85-->
+<!--l. 86--><p class="noindent" >
+ </p><!--l. 87-->
 <a 
  id="x1-3001r1"></a>
 <a 
@@ -139,30 +143,27 @@ href="#Xarena_source">4</a>]</span>: </p>
 <figcaption class="caption" ><span class="id">Listing 1:</span><span  
 class="content">Example of using Arena map.</span></figcaption><!--tex4ht:label?: x1-3001r2 -->
 </div></div>
-                                                                  
-
-                                                                  
-<!--l. 95--><p class="noindent" >
+<!--l. 97--><p class="noindent" >
 </p>
    <h4 class="subsectionHead"><span class="titlemark">2.2   </span> <a 
  id="x1-40002.2"></a>Helper functions</h4>
-<!--l. 96--><p class="noindent" >Normal eBPF map helpers such as “bpf_map_lookup_elem” are not defined for
+<!--l. 98--><p class="noindent" >Normal eBPF MAP helpers such as “bpf_map_lookup_elem” are not defined for
 Arena <span class="cite">[<a 
 href="#Xarena_source">4</a>]</span>. Instead the following pair of functions are available: </p>
      <ul class="itemize1">
      <li class="itemize">
-     <!--l. 100--><p class="noindent" >bpf_arena_alloc_pages: Allocates a memory page
+     <!--l. 102--><p class="noindent" >bpf_arena_alloc_pages: Allocates a memory page
      </p></li>
      <li class="itemize">
-     <!--l. 101--><p class="noindent" >bpf_arena_free_pages: Free the memory page</p></li></ul>
-<!--l. 104--><p class="indent" >   These functions are defined using kfunc <span class="cite">[<a 
+     <!--l. 103--><p class="noindent" >bpf_arena_free_pages: Frees the memory page</p></li></ul>
+<!--l. 106--><p class="indent" >   These functions are defined using kfunc <span class="cite">[<a 
 href="#Xeunomia_kfunc">3</a>, <a 
 href="#Xebpf_docs_kfunc">2</a>]</span>. As required by kfunc subsystem,
-you should declare the signature of these helpers in your eBPF program to hues these
+you should declare the signature of these helpers in your eBPF program to ues these
 functions. </p><div class="minipage"><div class="flushleft" 
 >
-<!--l. 108--><p class="noindent" >
- </p><!--l. 109-->
+<!--l. 110--><p class="noindent" >
+ </p><!--l. 111-->
 <a 
  id="x1-4001r2"></a>
 <a 
@@ -178,22 +179,25 @@ functions. </p><div class="minipage"><div class="flushleft"
 <figcaption class="caption" ><span class="id">Listing 2:</span><span  
 class="content">Functions operating on Arena MAP.</span></figcaption><!--tex4ht:label?: x1-4001r2 -->
 </div></div>
-<!--l. 118--><p class="indent" >   Calling these functions may put the thread to sleep. For this reason the functions
+<!--l. 120--><p class="indent" >   Calling these functions may put the thread to sleep. For this reason the functions
 are marked with KF_SLEEPABLE <span class="cite">[<a 
 href="#Xarena_source">4</a>]</span>, and the verifier only allows sleepable
 eBPF programs to use them. An eBPF program has sleeping privilege if the
 BPF_F_SLEEPABLE flag was set when loading it (see Listing <a 
-href="#x1-7026r4">4<!--tex4ht:ref: lst:loader --></a> for an example). Not all
+href="#x1-7027r4">4<!--tex4ht:ref: lst:loader --></a> for an example). Not all
 eBPF hooks support this flag. A list of sleepable hooks are provided in libbpf
 documentations <span class="cite">[<a 
-href="#Xlibbpf_sleepable">6</a>]</span>.
-</p><!--l. 126--><p class="indent" >   <span id="textcolor3">note: The memory pages allocated use following flags: GFP_KERNEL, __GFP_ZERO,
+href="#Xlibbpf_sleepable">7</a>]</span>.
+</p><!--l. 129--><p class="indent" >   <span id="textcolor3">note: The memory pages allocated use following flags: GFP_KERNEL, __GFP_ZERO,
 __GFP_ACCOUNT.</span>
-</p><!--l. 128--><p class="noindent" >
+                                                                  
+
+                                                                  
+</p><!--l. 131--><p class="noindent" >
 </p>
    <h4 class="subsectionHead"><span class="titlemark">2.3   </span> <a 
  id="x1-50002.3"></a>Managing two address spaces</h4>
-<!--l. 130--><p class="noindent" >Clang compiler, the verifier, the JIT, and the runtime all work together to make sure
+<!--l. 133--><p class="noindent" >Clang compiler, the verifier, the JIT, and the runtime all work together to make sure
 the eBPF program accesses the correct memory address. When using Arena there is a
 translation between the user address space and kernel address space (unless the map
 is declared with “BPF_F_NO_USER_CONV” flag present). The eBPF program must
@@ -201,289 +205,450 @@ mark the pointers with “__attribute__((address_space(1)))” to let the Clang
 know about it and cause the generation of “bpf_arena_cast_user/kern”
 instrucitons. The “__arena” used in declaration of variables and parameters bears
 this purpose.
-                                                                  
-
-                                                                  
-</p><!--l. 141--><p class="indent" >   <span id="textcolor4">note: if this explanation is vague, it is because I need to learn more about
+</p><!--l. 144--><p class="indent" >   <span id="textcolor4">note: if this explanation is vague, it is because I need to learn more about
 it.</span>
-</p><!--l. 145--><p class="noindent" >
+</p><!--l. 147--><p class="noindent" >
 </p>
    <h3 class="sectionHead"><span class="titlemark">3   </span> <a 
  id="x1-60003"></a>Examples</h3>
-<!--l. 147--><p class="noindent" >I try to demonstrate how these APIs can be used to implement the use-cases named
+<!--l. 149--><p class="noindent" >I try to demonstrate how these APIs can be used to implement the use-cases named
 above.
-</p><!--l. 150--><p class="noindent" >
+</p><!--l. 152--><p class="noindent" >
 </p>
    <h4 class="subsectionHead"><span class="titlemark">3.1   </span> <a 
  id="x1-70003.1"></a>Memory shared among eBPF and user-space</h4>
-<!--l. 152--><p class="noindent" >As a first step, I try to share a counter between an eBPF program and the
-user-space. Let us define a eBPF program of type BPF_PROT_TYPE_SYSCALL <span class="cite">[<a 
-href="#Xebpf_docs_prog_syscall">8</a>]</span> which
-does not need to be attached to a hook and instead is invoked using the
+<!--l. 154--><p class="noindent" >As a first step, let us demonstrate how to share a counter between an eBPF and an
+user-space program. Let us define a eBPF program of type BPF_PROT_TYPE_SYSCALL <span class="cite">[<a 
+href="#Xebpf_docs_prog_syscall">9</a>]</span>
+which does not need to be attached to a hook and instead is invoked using the
 BPF_PROG_TEST_RUN system call <span class="cite">[<a 
-href="#Xebpf_docs_bpf_prog_run">7</a>]</span>.
-</p><!--l. 158--><p class="indent" >   Listing <a 
+href="#Xebpf_docs_bpf_prog_run">8</a>]</span>.
+</p><!--l. 160--><p class="indent" >   Listing <a 
 href="#x1-7001r3">3<!--tex4ht:ref: lst:mogu --></a> demonstrates an eBPF program using Arena. In this program, a global
 variable (“flag_initialized”) tracks if it is the first time the program is invoked or
 not. At the first invocation a page is allocated and its address is kept in “mem” global
 variable. The allocated memory will hold a counter keeping the number of
 invocations.
-</p><!--l. 164--><p class="indent" >   <span id="textcolor5">note: The global variable support is available since kernel version 5.2 <span class="cite">[<a 
+</p><!--l. 167--><p class="indent" >   <span id="textcolor5">note: The global variable support is available since kernel version 5.2 <span class="cite">[<a 
 href="#Xglb_var_post">1</a>]</span>.</span>
 </p>
    <div class="minipage"><div class="flushleft" 
 >
-<!--l. 167--><p class="noindent" >
- </p><!--l. 168-->
+<!--l. 170--><p class="noindent" >
+ </p><!--l. 171-->
 <a 
  id="x1-7001r3"></a>
 <a 
  id="x1-7002"></a>
 <div class="lstlisting" id="listing-3"><span class="label"><a 
- id="x1-7003r1"></a>1</span>static bool flag_initialized = false; <br /> 
+ id="x1-7003r1"></a>1</span>/* Declaration of Arena MAP as in Listing 1 ... */ <br /> 
 <span class="label"><a 
- id="x1-7004r2"></a>2</span>__arena void *mem = NULL; <br /> 
+ id="x1-7004r2"></a>2</span>static bool flag_initialized = false; <br /> 
 <span class="label"><a 
- id="x1-7005r3"></a>3</span>SEC(&#x0022;syscall&#x0022;) <br /> 
+ id="x1-7005r3"></a>3</span>__arena void *mem = NULL; <br /> 
 <span class="label"><a 
- id="x1-7006r4"></a>4</span>int mogu_main(void *_) <br /> 
+ id="x1-7006r4"></a>4</span>SEC(&#x0022;syscall&#x0022;) <br /> 
 <span class="label"><a 
- id="x1-7007r5"></a>5</span>{ <br /> 
+ id="x1-7007r5"></a>5</span>int mogu_main(void *_) <br /> 
 <span class="label"><a 
- id="x1-7008r6"></a>6</span>    bpf_printk(&#x0022;mogu: hello\n&#x0022;); <br /> 
+ id="x1-7008r6"></a>6</span>{ <br /> 
 <span class="label"><a 
- id="x1-7009r7"></a>7</span>    if (!flag_initialized) { <br /> 
+ id="x1-7009r7"></a>7</span>    bpf_printk(&#x0022;mogu: hello\n&#x0022;); <br /> 
 <span class="label"><a 
- id="x1-7010r8"></a>8</span>        mem = bpf_arena_alloc_pages(&#x0026;arena, NULL, 1, NUMA_NO_NODE, 0); <br /> 
+ id="x1-7010r8"></a>8</span>    if (!flag_initialized) { <br /> 
 <span class="label"><a 
- id="x1-7011r9"></a>9</span>        if (mem == NULL) { <br /> 
+ id="x1-7011r9"></a>9</span>        mem = bpf_arena_alloc_pages(&#x0026;arena, NULL, 1, NUMA_NO_NODE, 0); <br /> 
 <span class="label"><a 
- id="x1-7012r10"></a>10</span>            bpf_printk(&#x0022;Failed to allocate memory&#x0022;); <br /> 
+ id="x1-7012r10"></a>10</span>        if (mem == NULL) { <br /> 
 <span class="label"><a 
- id="x1-7013r11"></a>11</span>            return 1; <br /> 
+ id="x1-7013r11"></a>11</span>            bpf_printk(&#x0022;Failed to allocate memory&#x0022;); <br /> 
 <span class="label"><a 
- id="x1-7014r12"></a>12</span>        } <br /> 
+ id="x1-7014r12"></a>12</span>            return 1; <br /> 
 <span class="label"><a 
- id="x1-7015r13"></a>13</span>        flag_initialized = true; <br /> 
+ id="x1-7015r13"></a>13</span>        } <br /> 
 <span class="label"><a 
- id="x1-7016r14"></a>14</span>    } <br /> 
+ id="x1-7016r14"></a>14</span>        flag_initialized = true; <br /> 
 <span class="label"><a 
- id="x1-7017r15"></a>15</span>    if (mem == NULL) { <br /> 
+ id="x1-7017r15"></a>15</span>    } <br /> 
 <span class="label"><a 
- id="x1-7018r16"></a>16</span>        /* this branch must never happen! */ <br /> 
+ id="x1-7018r16"></a>16</span>    if (mem == NULL) { <br /> 
 <span class="label"><a 
- id="x1-7019r17"></a>17</span>        return 1; <br /> 
+ id="x1-7019r17"></a>17</span>        /* this branch must never happen! */ <br /> 
 <span class="label"><a 
- id="x1-7020r18"></a>18</span>    } <br /> 
+ id="x1-7020r18"></a>18</span>        return 1; <br /> 
 <span class="label"><a 
- id="x1-7021r19"></a>19</span>    __arena entry_t *e = mem; <br /> 
+ id="x1-7021r19"></a>19</span>    } <br /> 
 <span class="label"><a 
- id="x1-7022r20"></a>20</span>    e-&#x003E;counter += 1; <br /> 
+ id="x1-7022r20"></a>20</span>    __arena entry_t *e = mem; <br /> 
 <span class="label"><a 
- id="x1-7023r21"></a>21</span>    bpf_printk(&#x0022;counter: %lld\n&#x0022;, e-&#x003E;counter); <br /> 
+ id="x1-7023r21"></a>21</span>    e-&#x003E;counter += 1; <br /> 
 <span class="label"><a 
- id="x1-7024r22"></a>22</span>    return 0; <br /> 
+ id="x1-7024r22"></a>22</span>    bpf_printk(&#x0022;counter: %lld\n&#x0022;, e-&#x003E;counter); <br /> 
 <span class="label"><a 
- id="x1-7025r23"></a>23</span>}</div>
+ id="x1-7025r23"></a>23</span>    return 0; <br /> 
+<span class="label"><a 
+ id="x1-7026r24"></a>24</span>}</div>
 <figcaption class="caption" ><span class="id">Listing 3:</span><span  
 class="content">An eBPF program using Arena.</span></figcaption><!--tex4ht:label?: x1-7001r3 -->
 </div></div>
-<!--l. 196--><p class="indent" >   Next, in Listing <a 
-href="#x1-7026r4">4<!--tex4ht:ref: lst:loader --></a>, we see how user-space program loads the eBPF program and
+                                                                  
+
+                                                                  
+<!--l. 200--><p class="indent" >   Next, in Listing <a 
+href="#x1-7027r4">4<!--tex4ht:ref: lst:loader --></a>, we see how user-space program loads the eBPF program and
 Listing <a 
-href="#x1-7067r5">5<!--tex4ht:ref: lst:loader_read --></a> shows it accessing the counter on the Arena memory page. The user-space
+href="#x1-7068r5">5<!--tex4ht:ref: lst:loader_read --></a> shows it accessing the counter on the Arena memory page. The user-space
 program relies on skeleton objects from libbpf <span class="cite">[<a 
 href="#Xlibbpf_skeleton">5</a>]</span>.
 </p>
+   <div class="minipage"><div class="flushleft" 
+>
+<!--l. 206--><p class="noindent" >
+ </p><!--l. 207-->
+<a 
+ id="x1-7027r4"></a>
+<a 
+ id="x1-7028"></a>
+<div class="lstlisting" id="listing-4"><span class="label"><a 
+ id="x1-7029r1"></a>1</span>/* Some global vars */ <br /> 
+<span class="label"><a 
+ id="x1-7030r2"></a>2</span>static volatile int running = 0; <br /> 
+<span class="label"><a 
+ id="x1-7031r3"></a>3</span>static int ebpf_prog_fd = -1; <br /> 
+<span class="label"><a 
+ id="x1-7032r4"></a>4</span>static struct mogu *skel = NULL; <br /> 
+<span class="label"><a 
+ id="x1-7033r5"></a>5</span> <br /> 
+<span class="label"><a 
+ id="x1-7034r6"></a>6</span>int main(int argc, char *argv[]) <br /> 
+<span class="label"><a 
+ id="x1-7035r7"></a>7</span>{ <br /> 
+<span class="label"><a 
+ id="x1-7036r8"></a>8</span>    skel = mogu__open(); <br /> 
+<span class="label"><a 
+ id="x1-7037r9"></a>9</span>    if (!skel) { <br /> 
+<span class="label"><a 
+ id="x1-7038r10"></a>10</span>        fprintf(stderr, &#x0022;Failed to open the skeleton\n&#x0022;); <br /> 
+<span class="label"><a 
+ id="x1-7039r11"></a>11</span>        return EXIT_FAILURE; <br /> 
+<span class="label"><a 
+ id="x1-7040r12"></a>12</span>    } <br /> 
+<span class="label"><a 
+ id="x1-7041r13"></a>13</span>    /* Set sleepable flag */ <br /> 
+<span class="label"><a 
+ id="x1-7042r14"></a>14</span>    bpf_program__set_flags(skel-&#x003E;progs.mogu_main, BPF_F_SLEEPABLE); <br /> 
+<span class="label"><a 
+ id="x1-7043r15"></a>15</span>    if (mogu__load(skel)) { <br /> 
+<span class="label"><a 
+ id="x1-7044r16"></a>16</span>        fprintf(stderr, &#x0022;Failed to load eBPF program\n&#x0022;); <br /> 
+<span class="label"><a 
+ id="x1-7045r17"></a>17</span>        return EXIT_FAILURE; <br /> 
+<span class="label"><a 
+ id="x1-7046r18"></a>18</span>    } <br /> 
+<span class="label"><a 
+ id="x1-7047r19"></a>19</span> <br /> 
+<span class="label"><a 
+ id="x1-7048r20"></a>20</span>    ebpf_prog_fd = bpf_program__fd(skel-&#x003E;progs.mogu_main); <br /> 
+<span class="label"><a 
+ id="x1-7049r21"></a>21</span>    /* It will invoke the eBPF program for the first time */ <br /> 
+<span class="label"><a 
+ id="x1-7050r22"></a>22</span>    handle_invoke_signal(0); <br /> 
+<span class="label"><a 
+ id="x1-7051r23"></a>23</span> <br /> 
+<span class="label"><a 
+ id="x1-7052r24"></a>24</span>    /* Keep running and handle signals */ <br /> 
+<span class="label"><a 
+ id="x1-7053r25"></a>25</span>    running = 1; <br /> 
+<span class="label"><a 
+ id="x1-7054r26"></a>26</span>    signal(SIGINT, handle_signal); <br /> 
+<span class="label"><a 
+ id="x1-7055r27"></a>27</span>    signal(SIGHUP, handle_signal); <br /> 
+<span class="label"><a 
+ id="x1-7056r28"></a>28</span>    signal(SIGUSR1, handle_invoke_signal); <br /> 
+<span class="label"><a 
+ id="x1-7057r29"></a>29</span>    printf(&#x0022;Hit Ctrl+C to terminate ...\n&#x0022;); <br /> 
+<span class="label"><a 
+ id="x1-7058r30"></a>30</span>    printf(&#x0022;Invoke eBPF program:\n&#x0022;); <br /> 
+<span class="label"><a 
+ id="x1-7059r31"></a>31</span>    printf(&#x0022;\tMogu: pkill -SIGUSR1 mogu_loader\n&#x0022;); <br /> 
+<span class="label"><a 
+ id="x1-7060r32"></a>32</span> <br /> 
+<span class="label"><a 
+ id="x1-7061r33"></a>33</span>    while (running) { pause(); } <br /> 
+<span class="label"><a 
+ id="x1-7062r34"></a>34</span> <br /> 
+<span class="label"><a 
+ id="x1-7063r35"></a>35</span>    mogu__detach(skel); <br /> 
+<span class="label"><a 
+ id="x1-7064r36"></a>36</span>    mogu__destroy(skel); <br /> 
+<span class="label"><a 
+ id="x1-7065r37"></a>37</span>    printf(&#x0022;Done!\n&#x0022;); <br /> 
+<span class="label"><a 
+ id="x1-7066r38"></a>38</span>    return 0; <br /> 
+<span class="label"><a 
+ id="x1-7067r39"></a>39</span>}</div>
+<figcaption class="caption" ><span class="id">Listing 4:</span><span  
+class="content">User space program loading the program</span></figcaption><!--tex4ht:label?: x1-7027r3 -->
+</div></div>
+   <div class="minipage"><div class="flushleft" 
+>
+<!--l. 252--><p class="noindent" >
+ </p><!--l. 253-->
+<a 
+ id="x1-7068r5"></a>
+<a 
+ id="x1-7069"></a>
+<div class="lstlisting" id="listing-5"><span class="label"><a 
+ id="x1-7070r1"></a>1</span>entry_t *e = skel-&#x003E;bss-&#x003E;mem; <br /> 
+<span class="label"><a 
+ id="x1-7071r2"></a>2</span>if (e == NULL) { <br /> 
+<span class="label"><a 
+ id="x1-7072r3"></a>3</span>    printf(&#x0022;NOTE: the initialization was not successful!\n&#x0022;); <br /> 
+<span class="label"><a 
+ id="x1-7073r4"></a>4</span>    return; <br /> 
+<span class="label"><a 
+ id="x1-7074r5"></a>5</span>} <br /> 
+<span class="label"><a 
+ id="x1-7075r6"></a>6</span>printf(&#x0022;user: counter=%lld\n&#x0022;, e-&#x003E;counter);</div>
+<figcaption class="caption" ><span class="id">Listing 5:</span><span  
+class="content">User-space accessing the memory page allocated from Arena</span></figcaption><!--tex4ht:label?: x1-7068r3 -->
+</div></div>
+<!--l. 266--><p class="noindent" >
+</p>
+   <h4 class="subsectionHead"><span class="titlemark">3.2   </span> <a 
+ id="x1-80003.2"></a>Using Arena in XDP (or other hooks that can not sleep)</h4>
+<!--l. 268--><p class="noindent" >As was mentioned, Arena helper functions may put the calling thread to sleep. This
+is not acceptable for program attached to hooks such as XDP in which the
+program is running in a NAPI. But, this limitation does not mean that XDP
+programs can not access the arena memory. They just can not allocate or free
+pages.
+</p><!--l. 274--><p class="indent" >   For the next step, Let us share the memory page allocated by the eBPF program
+from the previous example with another eBPF program which does not use the
+Arena helpers.
+</p><!--l. 278--><p class="indent" >   Listing <a 
+href="#x1-8007r6">6<!--tex4ht:ref: lst:aloe --></a> shows the second eBPF program. It does not use the
+bpf_arena_alloc_pages helper for allocating the memory. Instead, it is using the
+memory page allocated before and access the counter value, both reading and writing
+to it.
+</p><!--l. 283--><p class="indent" >   Here are some details that I like to bring to your attention:
+     </p><ol  class="enumerate1" >
+<li 
+  class="enumerate" id="x1-8002x1">
+     <!--l. 285--><p class="noindent" >Notice that both eBPF programs declare an Arena. The loader will make
+     sure both are using the same MAP using the libbpf’s bpf_map__reuse_fd
+     helper.
                                                                   
 
                                                                   
+     </p></li>
+<li 
+  class="enumerate" id="x1-8004x2">
+     <!--l. 288--><p class="noindent" >The second program also expects the loader to pass the address of allocated
+     page through its global variable called “mem”. This address could have
+     been shared among the two program in other ways, e.g. through a shared
+     array MAP.
+     </p></li>
+<li 
+  class="enumerate" id="x1-8006x3">
+     <!--l. 292--><p class="noindent" >The second program is using a helper (my_kfunc_reg_arena) that is not
+     part of the Linux kernel. This function does not perform any operation.
+     Its sole role is to let the verifier recognize that the program is using the
+     Arena. See §<a 
+href="#x1-90003.2.1">3.2.1<!--tex4ht:ref: sec:need_custom --></a> for more detail.</p></li></ol>
    <div class="minipage"><div class="flushleft" 
 >
-<!--l. 202--><p class="noindent" >
- </p><!--l. 203-->
+<!--l. 299--><p class="noindent" >
+ </p><!--l. 300-->
 <a 
- id="x1-7026r4"></a>
+ id="x1-8007r6"></a>
 <a 
- id="x1-7027"></a>
-<div class="lstlisting" id="listing-4"><span class="label"><a 
- id="x1-7028r1"></a>1</span>/* Some global vars */ <br /> 
+ id="x1-8008"></a>
+<div class="lstlisting" id="listing-6"><span class="label"><a 
+ id="x1-8009r1"></a>1</span>/* Declaration of Arena MAP as in Listing 1 ... */ <br /> 
 <span class="label"><a 
- id="x1-7029r2"></a>2</span>static volatile int running = 0; <br /> 
+ id="x1-8010r2"></a>2</span>__arena void *mem = NULL; <br /> 
 <span class="label"><a 
- id="x1-7030r3"></a>3</span>static int ebpf_prog_fd = -1; <br /> 
+ id="x1-8011r3"></a>3</span> <br /> 
 <span class="label"><a 
- id="x1-7031r4"></a>4</span>static struct mogu *skel = NULL; <br /> 
+ id="x1-8012r4"></a>4</span>/* Load the kernel module for adding this kfunc */ <br /> 
 <span class="label"><a 
- id="x1-7032r5"></a>5</span> <br /> 
+ id="x1-8013r5"></a>5</span>long my_kfunc_reg_arena(void *p__map) __ksym; <br /> 
 <span class="label"><a 
- id="x1-7033r6"></a>6</span>int main(int argc, char *argv[]) <br /> 
+ id="x1-8014r6"></a>6</span> <br /> 
 <span class="label"><a 
- id="x1-7034r7"></a>7</span>{ <br /> 
+ id="x1-8015r7"></a>7</span>SEC(&#x0022;syscall&#x0022;) <br /> 
 <span class="label"><a 
- id="x1-7035r8"></a>8</span>    skel = mogu__open(); <br /> 
+ id="x1-8016r8"></a>8</span>int aloe_main(void *_) <br /> 
 <span class="label"><a 
- id="x1-7036r9"></a>9</span>    if (!skel) { <br /> 
+ id="x1-8017r9"></a>9</span>{ <br /> 
 <span class="label"><a 
- id="x1-7037r10"></a>10</span>        fprintf(stderr, &#x0022;Failed to open the skeleton\n&#x0022;); <br /> 
+ id="x1-8018r10"></a>10</span>    my_kfunc_reg_arena(&#x0026;arena_map); <br /> 
 <span class="label"><a 
- id="x1-7038r11"></a>11</span>        return EXIT_FAILURE; <br /> 
+ id="x1-8019r11"></a>11</span>    if (mem == NULL) { <br /> 
 <span class="label"><a 
- id="x1-7039r12"></a>12</span>    } <br /> 
+ id="x1-8020r12"></a>12</span>        bpf_printk(&#x0022;aloe: not seeing the memory!\n&#x0022;); <br /> 
 <span class="label"><a 
- id="x1-7040r13"></a>13</span>    /* Set sleepable flag */ <br /> 
+ id="x1-8021r13"></a>13</span>        return 1; <br /> 
 <span class="label"><a 
- id="x1-7041r14"></a>14</span>    bpf_program__set_flags(skel-&#x003E;progs.mogu_main, BPF_F_SLEEPABLE); <br /> 
+ id="x1-8022r14"></a>14</span>    } <br /> 
 <span class="label"><a 
- id="x1-7042r15"></a>15</span>    if (mogu__load(skel)) { <br /> 
+ id="x1-8023r15"></a>15</span>    __arena entry_t *e = mem; <br /> 
 <span class="label"><a 
- id="x1-7043r16"></a>16</span>        fprintf(stderr, &#x0022;Failed to load eBPF program\n&#x0022;); <br /> 
+ id="x1-8024r16"></a>16</span>    bpf_printk(&#x0022;aloe: counter=%lld\n&#x0022;, e-&#x003E;counter); <br /> 
 <span class="label"><a 
- id="x1-7044r17"></a>17</span>        return EXIT_FAILURE; <br /> 
+ id="x1-8025r17"></a>17</span>    e-&#x003E;counter += 100; <br /> 
 <span class="label"><a 
- id="x1-7045r18"></a>18</span>    } <br /> 
+ id="x1-8026r18"></a>18</span>    return 0; <br /> 
 <span class="label"><a 
- id="x1-7046r19"></a>19</span> <br /> 
-<span class="label"><a 
- id="x1-7047r20"></a>20</span>    ebpf_prog_fd = bpf_program__fd(skel-&#x003E;progs.mogu_main); <br /> 
-<span class="label"><a 
- id="x1-7048r21"></a>21</span>    /* It will invoke the eBPF program for the first time */ <br /> 
-<span class="label"><a 
- id="x1-7049r22"></a>22</span>    handle_invoke_signal(0); <br /> 
-<span class="label"><a 
- id="x1-7050r23"></a>23</span> <br /> 
-<span class="label"><a 
- id="x1-7051r24"></a>24</span>    /* Keep running and handle signals */ <br /> 
-<span class="label"><a 
- id="x1-7052r25"></a>25</span>    running = 1; <br /> 
-<span class="label"><a 
- id="x1-7053r26"></a>26</span>    signal(SIGINT, handle_signal); <br /> 
-<span class="label"><a 
- id="x1-7054r27"></a>27</span>    signal(SIGHUP, handle_signal); <br /> 
-<span class="label"><a 
- id="x1-7055r28"></a>28</span>    signal(SIGUSR1, handle_invoke_signal); <br /> 
-<span class="label"><a 
- id="x1-7056r29"></a>29</span>    printf(&#x0022;Hit Ctrl+C to terminate ...\n&#x0022;); <br /> 
-<span class="label"><a 
- id="x1-7057r30"></a>30</span>    printf(&#x0022;Invoke eBPF program:\n&#x0022;); <br /> 
-<span class="label"><a 
- id="x1-7058r31"></a>31</span>    printf(&#x0022;\tMogu: pkill -SIGUSR1 mogu_loader\n&#x0022;); <br /> 
-<span class="label"><a 
- id="x1-7059r32"></a>32</span> <br /> 
-<span class="label"><a 
- id="x1-7060r33"></a>33</span>    while (running) { pause(); } <br /> 
-<span class="label"><a 
- id="x1-7061r34"></a>34</span> <br /> 
-<span class="label"><a 
- id="x1-7062r35"></a>35</span>    mogu__detach(skel); <br /> 
-<span class="label"><a 
- id="x1-7063r36"></a>36</span>    mogu__destroy(skel); <br /> 
-<span class="label"><a 
- id="x1-7064r37"></a>37</span>    printf(&#x0022;Done!\n&#x0022;); <br /> 
-<span class="label"><a 
- id="x1-7065r38"></a>38</span>    return 0; <br /> 
-<span class="label"><a 
- id="x1-7066r39"></a>39</span>}</div>
-<figcaption class="caption" ><span class="id">Listing 4:</span><span  
-class="content">User space program loading the program</span></figcaption><!--tex4ht:label?: x1-7026r3 -->
+ id="x1-8027r19"></a>19</span>}</div>
+<figcaption class="caption" ><span class="id">Listing 6:</span><span  
+class="content">An  eBPF  program  that  uses  Arena  pages  allocated  from  another
+program</span></figcaption><!--tex4ht:label?: x1-8007r3 -->
 </div></div>
-   <div class="minipage"><div class="flushleft" 
->
-<!--l. 248--><p class="noindent" >
- </p><!--l. 249-->
-<a 
- id="x1-7067r5"></a>
-<a 
- id="x1-7068"></a>
-<div class="lstlisting" id="listing-5"><span class="label"><a 
- id="x1-7069r1"></a>1</span>entry_t *e = skel-&#x003E;bss-&#x003E;mem; <br /> 
-<span class="label"><a 
- id="x1-7070r2"></a>2</span>if (e == NULL) { <br /> 
-<span class="label"><a 
- id="x1-7071r3"></a>3</span>    printf(&#x0022;NOTE: the initialization was not successful!\n&#x0022;); <br /> 
-<span class="label"><a 
- id="x1-7072r4"></a>4</span>    return; <br /> 
-<span class="label"><a 
- id="x1-7073r5"></a>5</span>} <br /> 
-<span class="label"><a 
- id="x1-7074r6"></a>6</span>printf(&#x0022;user: counter=%lld\n&#x0022;, e-&#x003E;counter);</div>
-<figcaption class="caption" ><span class="id">Listing 5:</span><span  
-class="content">User-space accessing the memory page allocated from Arena</span></figcaption><!--tex4ht:label?: x1-7067r3 -->
-</div></div>
-<!--l. 262--><p class="noindent" >
+<!--l. 324--><p class="indent" >   To share the Arena from the first eBPF program (Listing <a 
+href="#x1-7001r3">3<!--tex4ht:ref: lst:mogu --></a>) with the second one
+(Listing <a 
+href="#x1-8007r6">6<!--tex4ht:ref: lst:aloe --></a>), the loader (user-space) program has to mediate and asign the reference.
+Listing <a 
+href="#x1-8028r7">7<!--tex4ht:ref: lst:share-map-ref --></a> is an example of this procedure.
 </p>
-   <h4 class="subsectionHead"><span class="titlemark">3.2   </span> <a 
- id="x1-80003.2"></a>Memory shared among two eBPF programs</h4>
-<!--l. 264--><p class="noindent" >…
+   <div class="minipage"><div class="flushleft" 
+>
+<!--l. 330--><p class="noindent" >
+ </p><!--l. 331-->
+<a 
+ id="x1-8028r7"></a>
+<a 
+ id="x1-8029"></a>
+<div class="lstlisting" id="listing-7"><span class="label"><a 
+ id="x1-8030r1"></a>1</span>int arena_fd = bpf_map__fd(skel1-&#x003E;maps.arena); <br /> 
+<span class="label"><a 
+ id="x1-8031r2"></a>2</span>bpf_map__reuse_fd(skel2-&#x003E;maps.arena_map, arena_fd); <br /> 
+<span class="label"><a 
+ id="x1-8032r3"></a>3</span>/* Pass the pointer to the  second program */ <br /> 
+<span class="label"><a 
+ id="x1-8033r4"></a>4</span>skel2-&#x003E;bss-&#x003E;mem = skel1-&#x003E;bss-&#x003E;mem;</div>
+<figcaption class="caption" ><span class="id">Listing 7:</span><span  
+class="content">Loader program assigning the Arena from the first program to the
+second program</span></figcaption><!--tex4ht:label?: x1-8028r3 -->
+</div></div>
+<!--l. 340--><p class="noindent" >
+</p>
+   <h5 class="subsubsectionHead"><span class="titlemark">3.2.1   </span> <a 
+ id="x1-90003.2.1"></a>Why do we need a custom Arena function?</h5>
+<!--l. 342--><p class="noindent" >If we remove the the call to the my_kfunc_reg_arena in Listing <a 
+href="#x1-8007r6">6<!--tex4ht:ref: lst:aloe --></a>, although
+the program would compile, the verifier will complain with the following
+                                                                  
+
+                                                                  
+message:
+</p>
+   <div class="minipage"><div class="flushleft" 
+>
+<!--l. 347--><p class="noindent" >
+ </p><!--l. 348-->
+<a 
+ id="x1-9001r8"></a>
+<a 
+ id="x1-9002"></a>
+<div class="lstlisting" id="listing-8"><span class="label"><a 
+ id="x1-9003r1"></a>1</span>addr_space_cast insn can only be used in a program that has an associated arena</div>
+<figcaption class="caption" ><span class="id">Listing 8:</span><span  
+class="content">Verifier error message when the Arena is not referenced in the program</span></figcaption><!--tex4ht:label?: x1-9001r3 -->
+</div></div>
+<!--l. 354--><p class="indent" >   Looking at the verifiers source code, the error is raised when the program is not
+associated with an Arena <span class="cite">[<a 
+href="#Xverifier_arena_not_set">6</a>]</span>. This association happens when the MAP is referenced
+(e.g., by using a helper function). In the second program, we deliberately do not want
+to use Arena specific helpers. Other helper functions such as bpf_map_lookup_elem
+also cause other verifier complains (in my test it complained due to attempting a zero
+byte read). Defining a new helper that does nothing but still satisfies the verifier is a
+smart hack, which also show cases the flexibility that kfunc support has brought to
+eBPF.
+</p><!--l. 365--><p class="indent" >   <span id="textcolor6">note: The idea of having a dummy helper was suggested by my labmate <a 
+href="https://github.com/marcomole00/" target="_blank" >Marco
+Mole </a>.</span>
+</p><!--l. 368--><p class="noindent" >
+</p>
+   <h4 class="subsectionHead"><span class="titlemark">3.3   </span> <a 
+ id="x1-100003.3"></a>User-space managed data-structures</h4>
+<!--l. 371--><p class="noindent" >…
 </p><!--l. 1--><p class="noindent" >
 </p>
    <h3 class="likesectionHead"><a 
- id="x1-90003.2"></a>References</h3>
+ id="x1-110003.3"></a>References</h3>
 <!--l. 1--><p class="noindent" >
-   </p><div class="thebibliography">
-   <p class="bibitem" ><span class="biblabel">
- [1]<span class="bibsp">   </span></span><a 
- id="Xglb_var_post"></a>Johannes     Bechberger.             Hello     ebpf:     Global     variables.
-   <a 
+    </p><div class="thebibliography">
+    <p class="bibitem" ><span class="biblabel">
+  [1]<span class="bibsp">   </span></span><a 
+ id="Xglb_var_post"></a>Johannes     Bechberger.            Hello     ebpf:     Global     variables.
+    <a 
 href="https://mostlynerdless.de/blog/2024/05/21/hello-ebpf-global-variables-10/" class="url" >https://mostlynerdless.de/blog/2024/05/21/hello-ebpf-global-variables-10/</a>,
-   2024.
-   </p>
-   <p class="bibitem" ><span class="biblabel">
- [2]<span class="bibsp">   </span></span><a 
+    2024.
+    </p>
+    <p class="bibitem" ><span class="biblabel">
+  [2]<span class="bibsp">   </span></span><a 
  id="Xebpf_docs_kfunc"></a>Silvano Cirujano Cuesta and Dylan Reimerink.  ebpf documentations:
-   kfuncs.     <a 
+    kfuncs.     <a 
 href="https://docs.ebpf.io/linux/concepts/kfuncs/" class="url" >https://docs.ebpf.io/linux/concepts/kfuncs/</a>, 2024.
-   </p>
-   <p class="bibitem" ><span class="biblabel">
- [3]<span class="bibsp">   </span></span><a 
- id="Xeunomia_kfunc"></a>Extending  ebpf  beyond  its  limits:  Custom  kfuncs  in  kernel  modules.
-   <a 
-href="https://eunomia.dev/tutorials/43-kfuncs/" class="url" >https://eunomia.dev/tutorials/43-kfuncs/</a>, 2024.
                                                                   
 
                                                                   
-   </p>
-   <p class="bibitem" ><span class="biblabel">
- [4]<span class="bibsp">   </span></span><a 
- id="Xarena_source"></a>Linux        source        tree:        Arena        map        implementation.
-   <a 
+    </p>
+    <p class="bibitem" ><span class="biblabel">
+  [3]<span class="bibsp">   </span></span><a 
+ id="Xeunomia_kfunc"></a>Extending ebpf beyond its limits: Custom kfuncs in kernel modules.
+    <a 
+href="https://eunomia.dev/tutorials/43-kfuncs/" class="url" >https://eunomia.dev/tutorials/43-kfuncs/</a>, 2024.
+    </p>
+    <p class="bibitem" ><span class="biblabel">
+  [4]<span class="bibsp">   </span></span><a 
+ id="Xarena_source"></a>Linux       source       tree:       Arena       map       implementation.
+    <a 
 href="https://elixir.bootlin.com/linux/v6.13.1/source/kernel/bpf/arena.c" class="url" >https://elixir.bootlin.com/linux/v6.13.1/source/kernel/bpf/arena.c</a>.
-   </p>
-   <p class="bibitem" ><span class="biblabel">
- [5]<span class="bibsp">   </span></span><a 
+    </p>
+    <p class="bibitem" ><span class="biblabel">
+  [5]<span class="bibsp">   </span></span><a 
  id="Xlibbpf_skeleton"></a>Kernel  documentations:  Libbpf  overview:  Bpf  object  skeleton  file.
-   <a 
+    <a 
 href="https://docs.kernel.org/bpf/libbpf/libbpf_overview.html#bpf-object-skeleton-file" class="url" >https://docs.kernel.org/bpf/libbpf/libbpf_overview.html#bpf-object-skeleton-file</a>,
-   2024.
-   </p>
-   <p class="bibitem" ><span class="biblabel">
- [6]<span class="bibsp">   </span></span><a 
- id="Xlibbpf_sleepable"></a>Andrii     Nakryiko,     Donald     Hunter,     and     Daan     De Meyer.
-   libbpf      documentation:      Program      types      and      elf      sections.
-   <a 
+    2024.
+    </p>
+    <p class="bibitem" ><span class="biblabel">
+  [6]<span class="bibsp">   </span></span><a 
+ id="Xverifier_arena_not_set"></a>Linux   source   tree:   ebpf   verifier:   Checking   for   arena   map.
+    <a 
+href="https://elixir.bootlin.com/linux/v6.13.2/source/kernel/bpf/verifier.c#L14569" class="url" >https://elixir.bootlin.com/linux/v6.13.2/source/kernel/bpf/verifier.c#L14569</a>.
+    </p>
+    <p class="bibitem" ><span class="biblabel">
+  [7]<span class="bibsp">   </span></span><a 
+ id="Xlibbpf_sleepable"></a>Andrii    Nakryiko,    Donald    Hunter,    and    Daan    De Meyer.
+    libbpf     documentation:     Program     types     and     elf     sections.
+    <a 
 href="https://github.com/libbpf/libbpf/blob/master/docs/program_types.rst" class="url" >https://github.com/libbpf/libbpf/blob/master/docs/program_types.rst</a>.
-   </p>
-   <p class="bibitem" ><span class="biblabel">
- [7]<span class="bibsp">   </span></span><a 
- id="Xebpf_docs_bpf_prog_run"></a>Dylan
-   Reimerink. ebpf documentations: Bpf syscall bpf_prog_test_run command.
-   <a 
+    </p>
+    <p class="bibitem" ><span class="biblabel">
+  [8]<span class="bibsp">   </span></span><a 
+ id="Xebpf_docs_bpf_prog_run"></a>Dylan Reimerink. ebpf documentations: Bpf syscall bpf_prog_test_run
+    command.
+    <a 
 href="https://docs.ebpf.io/linux/syscall/BPF_PROG_TEST_RUN/" class="url" >https://docs.ebpf.io/linux/syscall/BPF_PROG_TEST_RUN/</a>, 2023.
-   </p>
-   <p class="bibitem" ><span class="biblabel">
- [8]<span class="bibsp">   </span></span><a 
- id="Xebpf_docs_prog_syscall"></a>Dylan   Reimerink.      ebpf   documentations:   Bpf_prog_type_syscall.
-   <a 
+    </p>
+    <p class="bibitem" ><span class="biblabel">
+  [9]<span class="bibsp">   </span></span><a 
+ id="Xebpf_docs_prog_syscall"></a>Dylan  Reimerink.      ebpf  documentations:  Bpf_prog_type_syscall.
+    <a 
 href="https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_SYSCALL/" class="url" >https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_SYSCALL/</a>,
-   2023.
-   </p>
-   <p class="bibitem" ><span class="biblabel">
- [9]<span class="bibsp">   </span></span><a 
- id="Xarenapatch"></a>Alex        Starovoitov.                       Introduce        bpf        arena.
-   <a 
+    2023.
+    </p>
+    <p class="bibitem" ><span class="biblabel">
+ [10]<span class="bibsp">   </span></span><a 
+ id="Xarenapatch"></a>Alex        Starovoitov.                      Introduce        bpf        arena.
+    <a 
 href="https://lwn.net/Articles/961594/" class="url" >https://lwn.net/Articles/961594/</a>, 2024.
 </p>
-   </div>
+    </div>
     
 </body> 
 </html>

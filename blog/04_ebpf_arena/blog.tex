@@ -36,8 +36,9 @@ It increases the programs expressivity and enables them to implement their own
 data-structures on-demand (e.g, a specific type of tree or a more optimized
 version of hash-map).
 
-Three use-cases have been named for the Arena in its patch introduction
-message~\cite{arenapatch}. I summarize them bellow:
+Three use-cases have been named for the Arena in the introduction
+message~\cite{arenapatch} sent along its patch to the Linux mailing list. I
+summarize them bellow:
 \begin{itemize}
     \item User-space can use Arena's memory to implement its own
         data-structures (it is a normal memory region), while the memory is
@@ -48,24 +49,25 @@ message~\cite{arenapatch}. I summarize them bellow:
     \item Arena can be used as a \emph{heap} of memory for the eBPF program
 \end{itemize}
 My understanding from these use-cases is that Arena provides access to raw
-pages of memory shareable among eBPF programs and user-space. Each can decide to
-use it as they see fit with their own responsibility. It is unlike other types
-of data-structure MAPs that enforce certain constraints such as fixed key and
-value sizes while limited the operations to lookup and update.
+pages of memory shareable among eBPF programs and user-space. Each can decide
+to use it as they see fit with their own responsibility. It is unlike other
+types of data-structure MAPs that enforce certain constraints such as fixed key
+and value sizes, or limiting the operations to lookup and update.
 
-In this tutorial, I try to explore Arena's API, and provide an example for each
-use-case in the hope that it facilitates the journey of other in figuring out
-how to use this new capability. The code snippets shown in this text is shared
-on \href{https://github.com/bpf-endeavor/ebpf-arena-tutorial}{this repository}.
+In this tutorial, I try to explore Arena's API, and provide some examples using
+it. I hope this document help others explore Arena and facilitate its
+development. The code snippets shown in this text is shared on
+\href{https://github.com/bpf-endeavor/ebpf-arena-tutorial}{this repository}.
 
 \section{Arena's API}
 
 \subsection{Declare a MAP}
-A program can declare the Arena map as other maps. See Listing~\ref{lst:map_ex}
-for an example. The key size and value sizes must be zero. Max entries define
-the maximum number of pages for the map, and must be non-zero. As any other
-map, the maximum size is limited to 4~GB. At the time of writing this text,
-Arena map declaration supports three flags~\cite{arena_source}:
+A program can declare the Arena MAP similar to other MAPs. See Listing~\ref{lst:map_ex}
+for an example. Here are some notes to keep in mind. The key size and value
+sizes must be zero. Max entries define the maximum number of pages for the map,
+and must be non-zero. As any other map, the maximum size is limited to 4~GB. At
+the time of writing this text, Arena map declaration supports three
+flags~\cite{arena_source}:
 \begin{itemize}
     \item \C{BPF_F_MMAPABLE}: \textbf{Required}. Indicates the map should
         support memory mapping.
@@ -93,17 +95,17 @@ struct {
 \end{minipage}
 
 \subsection{Helper functions}
-Normal eBPF map helpers such as ``\C{bpf_map_lookup_elem}'' are not
+Normal eBPF MAP helpers such as ``\C{bpf_map_lookup_elem}'' are not
 defined for Arena~\cite{arena_source}. Instead the following pair of functions
 are available:
 \begin{itemize}
     \item \C{bpf_arena_alloc_pages}: Allocates a memory page
-    \item \C{bpf_arena_free_pages}: Free the memory page
+    \item \C{bpf_arena_free_pages}: Frees the memory page
 \end{itemize}
 
 These functions are defined using kfunc~\cite{eunomia_kfunc, ebpf_docs_kfunc}.
 As required by kfunc subsystem, you should declare the signature of these
-helpers in your eBPF program to hues these functions.
+helpers in your eBPF program to ues these functions.
 \begin{minipage}{\linewidth}
 \begin{flushleft}
 \begin{lstlisting}[caption={Functions operating on Arena MAP.}, label={lst:arena_kfuncs}]
@@ -123,7 +125,8 @@ sleeping privilege if the \C{BPF_F_SLEEPABLE} flag was set when loading it
 Not all eBPF hooks support this flag. A list of sleepable
 hooks are provided in \emph{libbpf} documentations~\cite{libbpf_sleepable}.
 
-\textcolor{gray}{\emph{note: The memory pages allocated use following flags: \C{GFP_KERNEL}, \C{__GFP_ZERO}, \C{__GFP_ACCOUNT}.}}
+\textcolor{gray}{\emph{note: The memory pages allocated use following flags:
+\C{GFP_KERNEL}, \C{__GFP_ZERO}, \C{__GFP_ACCOUNT}.}}
 
 \subsection{Managing two address spaces}
 
@@ -141,16 +144,15 @@ purpose.
 to learn more about it.}}
 
 
-
 \section{Examples}
 
-I try to demonstrate how these APIs can be used to implement the use-cases named
-above.
+I try to demonstrate how these APIs can be used to implement the use-cases
+named above.
 
 \subsection{Memory shared among eBPF and user-space}
 
-As a first step, I try to share a counter between an eBPF program and the
-user-space. Let us define a eBPF program of type
+As a first step, let us demonstrate how to share a counter between an eBPF
+and an user-space program. Let us define a eBPF program of type
 \C{BPF_PROT_TYPE_SYSCALL}~\cite{ebpf_docs_prog_syscall} which does not need to
 be attached to a hook and instead is invoked using the \C{BPF_PROG_TEST_RUN}
 system call~\cite{ebpf_docs_bpf_prog_run}.
@@ -161,11 +163,13 @@ time the program is invoked or not. At the first invocation a page is allocated
 and its address is kept in ``\C{mem}'' global variable. The allocated memory
 will hold a counter keeping the number of invocations.
 
-\textcolor{gray}{\textit{note: The global variable support is available since kernel version 5.2~\cite{glb_var_post}.}}
+\textcolor{gray}{\textit{note: The global variable support is available since
+kernel version 5.2~\cite{glb_var_post}.}}
 
 \begin{minipage}{\linewidth}
 \begin{flushleft}
 \begin{lstlisting}[caption={An eBPF program using Arena.}, label={lst:mogu}]
+/* Declaration of Arena MAP as in Listing 1 ... */
 static bool flag_initialized = false;
 __arena void *mem = NULL;
 SEC("syscall")
@@ -259,8 +263,111 @@ printf("user: counter=%lld\n", e->counter);
 \end{minipage}
 
 
-\subsection{Memory shared among two eBPF programs}
+\subsection{Using Arena in XDP (or other hooks that can not sleep)}
 
+As was mentioned, Arena helper functions may put the calling thread to sleep.
+This is not acceptable for program attached to hooks such as \emph{XDP} in
+which the program is running in a \C{NAPI}. But, this limitation does not mean
+that XDP programs can not access the arena memory. They just can not allocate or
+free pages.
+
+For the next step, Let us share the memory page allocated by the eBPF program
+from the previous example with another eBPF program which does not use the Arena
+helpers.
+
+Listing~\ref{lst:aloe} shows the second eBPF program. It does not use the
+\C{bpf_arena_alloc_pages} helper for allocating the memory. Instead, it is
+using the memory page allocated before and access the counter value, both
+reading and writing to it.
+
+Here are some details that I like to bring to your attention:
+\begin{enumerate}
+    \item Notice that both eBPF programs declare an Arena. The loader will
+        make sure both are using the same MAP using the libbpf's
+        \C{bpf_map__reuse_fd} helper.
+    \item The second program also expects the loader to pass the address of
+        allocated page through its global variable called ``mem''. This address
+        could have been shared among the two program in other ways, e.g.
+        through a shared array MAP\@.
+    \item The second program is using a helper (\C{my_kfunc_reg_arena}) that is
+        not part of the Linux kernel. This function does not perform any
+        operation. Its sole role is to let the verifier recognize that the
+        program is using the Arena. See \S\ref{sec:need_custom} for more detail.
+\end{enumerate}
+
+\begin{minipage}{\linewidth}
+\begin{flushleft}
+\begin{lstlisting}[caption={An eBPF program that uses Arena pages allocated from another program}, label={lst:aloe}]
+/* Declaration of Arena MAP as in Listing 1 ... */
+__arena void *mem = NULL;
+
+/* Load the kernel module for adding this kfunc */
+long my_kfunc_reg_arena(void *p__map) __ksym;
+
+SEC("syscall")
+int aloe_main(void *_)
+{
+    my_kfunc_reg_arena(&arena_map);
+    if (mem == NULL) {
+        bpf_printk("aloe: not seeing the memory!\n");
+        return 1;
+    }
+    __arena entry_t *e = mem;
+    bpf_printk("aloe: counter=%lld\n", e->counter);
+    e->counter += 100;
+    return 0;
+}
+\end{lstlisting}
+\end{flushleft}
+\end{minipage}
+
+To share the Arena from the first eBPF program (Listing~\ref{lst:mogu})
+with the second one (Listing~\ref{lst:aloe}), the loader (user-space) program
+has to mediate and asign the reference. Listing~\ref{lst:share-map-ref} is an
+example of this procedure.
+
+\begin{minipage}{\linewidth}
+\begin{flushleft}
+\begin{lstlisting}[caption={Loader program assigning the Arena from the first program to the second program}, label={lst:share-map-ref}]
+int arena_fd = bpf_map__fd(skel1->maps.arena);
+bpf_map__reuse_fd(skel2->maps.arena_map, arena_fd);
+/* Pass the pointer to the  second program */
+skel2->bss->mem = skel1->bss->mem;
+\end{lstlisting}
+\end{flushleft}
+\end{minipage}
+
+\subsubsection{Why do we need a custom Arena function?}
+\label{sec:need_custom}
+If we remove the the call to the \C{my_kfunc_reg_arena} in
+Listing~\ref{lst:aloe}, although the program would compile, the verifier will
+complain with the following message:
+
+\begin{minipage}{\linewidth{}}
+\begin{flushleft}
+\begin{lstlisting}[caption={Verifier error message when the Arena is not referenced in the program}]
+addr_space_cast insn can only be used in a program that has an associated arena
+\end{lstlisting}
+\end{flushleft}
+\end{minipage}
+
+Looking at the verifiers source code, the error is raised when the program
+is not associated with an Arena~\cite{verifier_arena_not_set}. This association
+happens when the MAP is referenced (e.g., by using a helper function).
+In the second program, we deliberately do not want to use Arena specific
+helpers. Other helper functions such as \C{bpf_map_lookup_elem} also cause
+other verifier complains (in my test it complained due to attempting a zero
+byte read). Defining a new helper that does nothing but still satisfies the
+verifier is a smart hack, which also show cases the flexibility that kfunc
+support has brought to eBPF.
+
+\textcolor{gray}{\textit{note: The idea of having a dummy helper was suggested
+by my labmate \href{https://github.com/marcomole00/}{Marco Mole }.}}
+
+
+\subsection{User-space managed data-structures}
+
+% \C{bpf_map__initial_value}
 \dots{}
 
 
