@@ -1,6 +1,7 @@
 # skip unfinished posts
 03_*/
 
+_minted-*/
 # skip intermediate files
 *.4ct
 *.4tc

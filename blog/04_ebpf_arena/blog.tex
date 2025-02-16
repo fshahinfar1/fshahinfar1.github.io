@@ -1,8 +1,8 @@
 \documentclass{article}
 \usepackage{graphicx}
-\usepackage{listings}
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage{minted}
 
 \title{eBPF Arena: A Tutorial}
 \author{Farbod Shahinfar}
@@ -81,18 +81,18 @@ flags~\cite{arena_source}:
 \end{itemize}
 \textcolor{gray}{\textit{note: The \C{BPF_F_MMAPABLE} must always be present.}}
 
-\begin{minipage}{\linewidth}
 \centering
-\begin{flushleft}
-\begin{lstlisting}[caption={Example of using Arena map.}, label={lst:map_ex}]
+\begin{listing}
+\begin{minted}{c}
 struct {
     __uint(type, BPF_MAP_TYPE_ARENA);
     __uint(map_flags, BPF_F_MMAPABLE);
     __uint(max_entries, 2); /* number of pages */
 } arena SEC(".maps");
-\end{lstlisting}
-\end{flushleft}
-\end{minipage}
+\end{minted}
+    \caption{Example of using Arena map.}
+    \label{lst:map_ex}
+\end{listing}
 
 \subsection{Helper functions}
 Normal eBPF MAP helpers such as ``\C{bpf_map_lookup_elem}'' are not
@@ -106,16 +106,16 @@ are available:
 These functions are defined using kfunc~\cite{eunomia_kfunc, ebpf_docs_kfunc}.
 As required by kfunc subsystem, you should declare the signature of these
 helpers in your eBPF program to ues these functions.
-\begin{minipage}{\linewidth}
-\begin{flushleft}
-\begin{lstlisting}[caption={Functions operating on Arena MAP.}, label={lst:arena_kfuncs}]
+\begin{listing}
+\begin{minted}{c}
 void __arena* bpf_arena_alloc_pages(void *map, void __arena *addr,
     __u32 page_cnt, int node_id, __u64 flags) __ksym;
 void bpf_arena_free_pages(void *map, void __arena *ptr,
     __u32 page_cnt) __ksym;
-\end{lstlisting}
-\end{flushleft}
-\end{minipage}
+\end{minted}
+\caption{Functions operating on Arena MAP.}
+\label{lst:arena_kfuncs}
+\end{listing}
 
 Calling these functions may put the thread to sleep. For this reason the
 functions are marked with \C{KF_SLEEPABLE}~\cite{arena_source}, and the
@@ -166,9 +166,8 @@ will hold a counter keeping the number of invocations.
 \textcolor{gray}{\textit{note: The global variable support is available since
 kernel version 5.2~\cite{glb_var_post}.}}
 
-\begin{minipage}{\linewidth}
-\begin{flushleft}
-\begin{lstlisting}[caption={An eBPF program using Arena.}, label={lst:mogu}]
+\begin{listing}
+\begin{minted}{c}
 /* Declaration of Arena MAP as in Listing 1 ... */
 static bool flag_initialized = false;
 __arena void *mem = NULL;
@@ -193,18 +192,18 @@ int mogu_main(void *_)
     bpf_printk("counter: %lld\n", e->counter);
     return 0;
 }
-\end{lstlisting}
-\end{flushleft}
-\end{minipage}
+\end{minted}
+\caption{An eBPF program using Arena.}
+\label{lst:mogu}
+\end{listing}
 
 Next, in Listing~\ref{lst:loader}, we see how user-space program loads the eBPF
 program and Listing~\ref{lst:loader_read} shows it accessing the counter on the
 Arena memory page. The user-space program relies on skeleton objects from
 libbpf~\cite{libbpf_skeleton}.
 
-\begin{minipage}{\linewidth}
-\begin{flushleft}
-\begin{lstlisting}[caption={User space program loading the program}, label={lst:loader}]
+\begin{listing}
+\begin{minted}{c}
 /* Some global vars */
 static volatile int running = 0;
 static int ebpf_prog_fd = -1;
@@ -244,23 +243,23 @@ int main(int argc, char *argv[])
     printf("Done!\n");
     return 0;
 }
-\end{lstlisting}
-\end{flushleft}
-\end{minipage}
+\end{minted}
+\caption{User space program loading the program}
+\label{lst:loader}
+\end{listing}
 
-\begin{minipage}{\linewidth}
-\begin{flushleft}
-\begin{lstlisting}[caption={User-space accessing the memory page allocated from
-Arena}, label={lst:loader_read}]
+\begin{listing}
+\begin{minted}{c}
 entry_t *e = skel->bss->mem;
 if (e == NULL) {
     printf("NOTE: the initialization was not successful!\n");
     return;
 }
 printf("user: counter=%lld\n", e->counter);
-\end{lstlisting}
-\end{flushleft}
-\end{minipage}
+\end{minted}
+\caption{User-space accessing the memory page allocated from Arena}
+\label{lst:loader_read}
+\end{listing}
 
 
 \subsection{Using Arena in XDP (or other hooks that can not sleep)}
@@ -295,9 +294,8 @@ Here are some details that I like to bring to your attention:
         program is using the Arena. See \S\ref{sec:need_custom} for more detail.
 \end{enumerate}
 
-\begin{minipage}{\linewidth}
-\begin{flushleft}
-\begin{lstlisting}[caption={An eBPF program that uses Arena pages allocated from another program}, label={lst:aloe}]
+\begin{listing}
+\begin{minted}{c}
 /* Declaration of Arena MAP as in Listing 1 ... */
 __arena void *mem = NULL;
 
@@ -317,25 +315,26 @@ int aloe_main(void *_)
     e->counter += 100;
     return 0;
 }
-\end{lstlisting}
-\end{flushleft}
-\end{minipage}
+\end{minted}
+\caption{An eBPF program that uses Arena pages allocated from another program}
+\label{lst:aloe}
+\end{listing}
 
 To share the Arena from the first eBPF program (Listing~\ref{lst:mogu})
 with the second one (Listing~\ref{lst:aloe}), the loader (user-space) program
 has to mediate and asign the reference. Listing~\ref{lst:share-map-ref} is an
 example of this procedure.
 
-\begin{minipage}{\linewidth}
-\begin{flushleft}
-\begin{lstlisting}[caption={Loader program assigning the Arena from the first program to the second program}, label={lst:share-map-ref}]
+\begin{listing}
+\begin{minted}{c}
 int arena_fd = bpf_map__fd(skel1->maps.arena);
 bpf_map__reuse_fd(skel2->maps.arena_map, arena_fd);
 /* Pass the pointer to the  second program */
 skel2->bss->mem = skel1->bss->mem;
-\end{lstlisting}
-\end{flushleft}
-\end{minipage}
+\end{minted}
+\caption{Loader program assigning the Arena from the first program to the second program}
+\label{lst:share-map-ref}
+\end{listing}
 
 \subsubsection{Why do we need a custom Arena function?}
 \label{sec:need_custom}
@@ -343,13 +342,13 @@ If we remove the the call to the \C{my_kfunc_reg_arena} in
 Listing~\ref{lst:aloe}, although the program would compile, the verifier will
 complain with the following message:
 
-\begin{minipage}{\linewidth{}}
-\begin{flushleft}
-\begin{lstlisting}[caption={Verifier error message when the Arena is not referenced in the program}]
+\begin{listing}
+\begin{minted}{c}
 addr_space_cast insn can only be used in a program that has an associated arena
-\end{lstlisting}
-\end{flushleft}
-\end{minipage}
+\end{minted}
+\caption{Verifier error message when the Arena is not referenced in the program}
+\label{lst:verifier_err_msg}
+\end{listing}
 
 Looking at the verifiers source code, the error is raised when the program
 is not associated with an Arena~\cite{verifier_arena_not_set}. This association
