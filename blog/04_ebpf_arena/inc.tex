@@ -17,8 +17,8 @@
     \fi
 }
 \makeatother
-\newcommand*{\C}[1]{\texttt{\myunderscorehavingstring{#1}}}
-\newcommand*{\bpfmap}[1]{\C{BPF_MAP_TYPE_\uppercase{#1}}}
+\newcommand*{\myC}[1]{\fontfamily{monospace}\selectfont \texttt{\myunderscorehavingstring{#1}}}
+\newcommand*{\bpfmap}[1]{\myC{BPF_MAP_TYPE_\uppercase{#1}}}
 
 \makeatletter
 \renewcommand{\href}[2]{\bgroup\let~\H@tilde%
@@ -26,11 +26,11 @@
   {#2}\egroup\EndLink}%
 
 \makeatother
-\EndPreamble
+%\EndPreamble
 
 \Css{
 body{
-    width: 40em;
+    max-width: 18cm;
     margin: auto;
     display: flex;
     flex-direction: column;
@@ -39,3 +39,18 @@ body{
     font-size: 18pt;
 }
 }
+
+\Css {
+pre {
+    font-size: 14pt;
+}
+}
+
+\Css{
+p {
+    text-align: justify;
+    line-height: 1.5;
+}
+}
+
+\let\emph\textit
