@@ -132,6 +132,7 @@ span#textcolor1{color:#808080}
  pre { font-size: 14pt; } 
  p { text-align: justify; line-height: 1.5; } 
  li { text-align: justify; line-height: 1.5; } 
+ @media screen and (max-width: 1000px) { html { width: 100vw; } body { width: 95%; margin: auto; font-size: 12pt; } figure { max-width: 100%; overflow: scroll; } pre { font-size: 11pt; } } 
 span#textcolor2{color:#808080}
 span#textcolor3{color:rgb(0,127,0)}
 span#textcolor4{color:rgb(186,186,186)}
