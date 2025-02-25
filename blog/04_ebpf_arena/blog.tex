@@ -1,5 +1,4 @@
-\documentclass{article}
-\usepackage{graphicx}
+\documentclass{article} \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{minted}
@@ -17,9 +16,9 @@
 \include{inc.tex}
 
 As part of my research, I spend time learning about eBPF.
-Recently, I am busy exploring \emph{Arena} --- a new eBPF API that enables
-programs to allocate memory pages; similar functionality as \myC{mmap} and
-\myC{munmap}~\cite{arenapatch}.
+Recently, I have been busy exploring \emph{Arena} --- a new eBPF API that
+enables programs to allocate memory pages; similar functionality as \myC{mmap}
+and \myC{munmap}~\cite{arenapatch}.
 
 The eBPF community is doing a great job documenting the system and writing
 tutorials. I felt I could contribute to this effort by writing about Arena.
@@ -42,7 +41,7 @@ data-structures on-demand (e.g, a specific type of tree).
 
 Three use-cases have been named for the Arena in the introduction
 message~\cite{arenapatch} sent along its patch to the Linux mailing list. I
-summarize them bellow:
+summarize them below:
 \begin{itemize}
     \item User-space can use Arena's memory to implement its own
         data-structures (it is a normal memory region), while the memory is
@@ -58,10 +57,13 @@ to use it as they see fit with their own responsibility. It is unlike other
 types of data-structure MAPs that enforce certain constraints such as fixed key
 and value sizes, or limiting the operations to lookup and update.
 
-In this tutorial, I try to explore Arena's API, and provide some examples using
-it. I hope this document help others explore Arena and facilitate its
-development. The code snippets shown in this text is shared on
-\href{https://github.com/bpf-endeavor/ebpf-arena-tutorial}{this repository}.
+In this tutorial, I explore Arena's API, and provide some examples using it. I
+hope this document helps others explore Arena and facilitate its development.
+The example codes in this text are shared with you at
+\href{https://github.com/bpf-endeavor/ebpf-arena-tutorial}{this GitHub  repository}.
+I've only shared excerpts from the codes --- The parts I thought was important.
+You may find and read the full examples in the repository.
+
 
 \section{Arena's API}
 
@@ -129,23 +131,22 @@ sleeping privilege if the \myC{BPF_F_SLEEPABLE} flag was set when loading it
 Not all eBPF hooks support this flag. A list of sleepable
 hooks are provided in \emph{libbpf} documentations~\cite{libbpf_sleepable}.
 
-\textcolor{gray}{\emph{note: The memory pages allocated use following flags:
+\textcolor{gray}{\emph{note: The memory pages allocated use the following flags:
 \myC{GFP_KERNEL}, \myC{__GFP_ZERO}, \myC{__GFP_ACCOUNT}.}}
 
 \subsection{Managing two address spaces}
 
 \emph{Clang} compiler, the verifier, the JIT, and the runtime all work together
 to make sure the eBPF program accesses the correct memory address. When using
-Arena there is a translation between the user address space and kernel address
+Arena, there is a translation between the user address space and kernel address
 space (unless the map is declared with ``\myC{BPF_F_NO_USER_CONV}'' flag
 present). The eBPF program must mark the pointers with
 ``\myC{__attribute__((address_space(1)))}'' to let the Clang know about it and
-cause the generation of ``\myC{bpf_arena_cast_user/kern}'' instrucitons. The
-``\myC{__arena}'' used in the examples (and the acompanying repository),
-especially when declaring variables and parameters is because of this.
+cause the generation of ``\myC{bpf_arena_cast_user/kern}'' instructions. The
+``\myC{__arena}'' tag used in the examples (and the accompanying repository),
+especially when declaring variables and parameters, serves this purpose.
 
-\textcolor{gray}{\emph{note: if this explanation is vague, it is because I need
-to learn more about it.}}
+% \textcolor{gray}{\emph{note: if this explanation is vague, it is because I need to learn more about it.}}
 
 
 \section{Examples}
@@ -156,9 +157,9 @@ named above.
 \subsection{Memory shared among eBPF and user-space}
 
 As a first step, let us demonstrate how to share a counter between an eBPF
-and an user-space program. For the sake of example, I used eBPF program of type
+and an user-space program. For the sake of example, I used an eBPF program of type
 \myC{BPF_PROT_TYPE_SYSCALL}~\cite{ebpf_docs_prog_syscall} which does not need to
-be attached to a hook and can simply invoked using a system call (for more
+be attached to a hook and can simply be invoked using a system call (for more
 information search for \myC{BPF_PROG_TEST_RUN}~\cite{ebpf_docs_bpf_prog_run}).
 
 Listing~\ref{lst:mogu} shows the code for the example program. In this
@@ -403,10 +404,10 @@ data-structures in the Arena which is will be visible to eBPF programs.
 
 The Arena feature is very new. It will probably change and improve. I am sure
 by the time it is mature, eBPF community has written good documentation and
-tutorials on it but mean while I hope this post fill the gap. It is important
+tutorials on it but meanwhile I hope this post fill the gap. It is important
 for me to say that although I tried my best to share correct information, I can
 not claim that I understand every aspect of Arena's implementation. There may
-be misunderstandings on my side. On such a case please let me know and accept
+be misunderstandings on my side. In such a case please let me know and accept
 my apology.
 
 I want to conclude by listing some of the limitations of Arena that I observed
@@ -422,7 +423,7 @@ looking at the verifier and x86 JIT code.
 \item The cast to address-space(1) will generate a ``\myC{dst = (u32)src}''
 \item The cast lets the verifier know that the pointer is to arena
         the cast to address-space (0) turns the value into a scalar.
-\item x86 JIT uses R12 register is used to track the start of Arena virtual
+\item x86 JIT uses the R12 register to track the start of Arena virtual
     address (it was unused before).
 \end{enumerate}
 
