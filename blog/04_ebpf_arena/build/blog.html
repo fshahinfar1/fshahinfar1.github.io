@@ -17,8 +17,8 @@
 
 <h2 class='titleHead'>eBPF Arena: A Tutorial</h2>
 <div class='author'><span class='cmr-12'>Farbod Shahinfar</span></div><br />
-<div class='date'><span class='cmr-12'>February 22, 2025</span></div>
-   </div>
+<div class='date'><span class='cmr-12'>February 25, 2025</span></div>
+   </div> <p><span id='textcolor1'><span class='cmr-9'>Estimated reading time: 10 minutes</span></span></p>
                                                                   
 
                                                                   
@@ -29,23 +29,21 @@
                                                                   
 
                                                                   
-<!-- l. 15 --><p class='indent'>   As part of my research, I spend time learning about eBPF. Recently, I am busy
+<!-- l. 19 --><p class='indent'>   As part of my research, I spend time learning about eBPF. Recently, I am busy
 exploring <span class='cmti-10'>Arena </span>— a new eBPF API that enables programs to allocate memory
 pages; similar functionality as <span class='cmtt-10'>mmap </span>and <span class='cmtt-10'>munmap</span> <span class='cite'>[<a href='#Xarenapatch'>11</a>]</span>.
-</p><!-- l. 20 --><p class='indent'>   The eBPF community is doing a great job documenting the system and
+</p><!-- l. 24 --><p class='indent'>   The eBPF community is doing a great job documenting the system and
 writing tutorials. I felt I could contribute to this effort by writing about
 Arena.
-</p><!-- l. 26 --><p class='indent'>   <span id='textcolor1'>At the moment, this blog post is a work in progress and I will update it as I learn
-more about Arena and figure things out.</span>
 </p>
    <h3 class='sectionHead' id='introduction'><span class='titlemark'>1   </span> <a id='x1-10001'></a>Introduction</h3>
-<!-- l. 31 --><p class='noindent'>The Arena is a new MAP type (<span class='cmtt-10'>BPF_MAP_TYPE_ARENA</span>) available to eBPF programs
+<!-- l. 35 --><p class='noindent'>The Arena is a new MAP type (<span class='cmtt-10'>BPF_MAP_TYPE_ARENA</span>) available to eBPF programs
 since kernel version 6.9. This map is semantically different than previous ones. Unlike
 data-structure MAPs (e.g., hash, array, bloom, stack, …) Arena provides a direct
 access to the kernel memory instead of abstracting it away. It increases the programs
 expressivity and enables them to implement their own data-structures on-demand
 (e.g, a specific type of tree).
-</p><!-- l. 39 --><p class='indent'>   Three use-cases have been named for the Arena in the introduction message <span class='cite'>[<a href='#Xarenapatch'>11</a>]</span>
+</p><!-- l. 43 --><p class='indent'>   Three use-cases have been named for the Arena in the introduction message <span class='cite'>[<a href='#Xarenapatch'>11</a>]</span>
 sent along its patch to the Linux mailing list. I summarize them bellow:
 </p>
      <ul class='itemize1'>
@@ -58,24 +56,24 @@ sent along its patch to the Linux mailing list. I summarize them bellow:
      user-space program.
      </li>
      <li class='itemize'>Arena can be used as a heap of memory for the eBPF program</li></ul>
-<!-- l. 51 --><p class='noindent'>My understanding from these use-cases is that Arena provides access to raw pages of
+<!-- l. 55 --><p class='noindent'>My understanding from these use-cases is that Arena provides access to raw pages of
 memory shareable among eBPF programs and user-space. Each can decide to use it
 as they see fit with their own responsibility. It is unlike other types of data-structure
 MAPs that enforce certain constraints such as fixed key and value sizes, or limiting
 the operations to lookup and update.
-</p><!-- l. 57 --><p class='indent'>   In this tutorial, I try to explore Arena’s API, and provide some examples using it.
+</p><!-- l. 61 --><p class='indent'>   In this tutorial, I try to explore Arena’s API, and provide some examples using it.
 I hope this document help others explore Arena and facilitate its development. The
 code snippets shown in this text is shared on <a href='https://github.com/bpf-endeavor/ebpf-arena-tutorial' target='_blank'>this repository</a>.
                                                                   
 
                                                                   
-</p><!-- l. 62 --><p class='noindent'>
+</p><!-- l. 66 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='arenas-api'><span class='titlemark'>2   </span> <a id='x1-20002'></a>Arena’s API</h3>
-<!-- l. 64 --><p class='noindent'>
+<!-- l. 68 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='declare-a-map'><span class='titlemark'>2.1   </span> <a id='x1-30002.1'></a>Declare a MAP</h4>
-<!-- l. 65 --><p class='noindent'>A program can declare the Arena MAP similar to other MAPs. See Listing <a href='#-example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a> for an
+<!-- l. 69 --><p class='noindent'>A program can declare the Arena MAP similar to other MAPs. See Listing <a href='#-example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a> for an
 example. Here are some notes to keep in mind. The key size and value sizes must be
 zero. The “<span class='cmtt-10'>max_entries</span>” field defines the maximum number of pages for the map,
 and must be non-zero. As any other map, the maximum size is limited to 4 GB. At
@@ -92,11 +90,11 @@ the time of writing this text, Arena map declaration supports three flags <span
      <li class='itemize'><span class='cmtt-10'>BPF_F_NO_USER_CONV</span>: The memory region is private to the eBPF program
      and user-space program will not access it. This allows the JIT to perform
      optimizations avoiding address space casting (more about it later).</li></ul>
-<!-- l. 82 --><p class='noindent'><span id='textcolor2'>note: The <span class='cmitt-10'>BPF_F_MMAPABLE </span>must always be present.</span>
+<!-- l. 86 --><p class='noindent'><span id='textcolor2'>note: The <span class='cmitt-10'>BPF_F_MMAPABLE </span>must always be present.</span>
                                                                   
 
                                                                   
-</p><!-- l. 86 --><p class='noindent' id='-example-of-using-arena-map'><a id='x1-3016r1'></a></p><figure class='float'>
+</p><!-- l. 90 --><p class='noindent' id='-example-of-using-arena-map'><a id='x1-3016r1'></a></p><figure class='float'>
                                                                   
 
                                                                   
@@ -111,19 +109,19 @@ the time of writing this text, Arena map declaration supports three flags <span
                                                                   
 </figure>
 <h4 class='subsectionHead' id='helper-functions'><span class='titlemark'>2.2   </span> <a id='x1-40002.2'></a>Helper functions</h4>
-<!-- l. 98 --><p class='noindent'>Normal eBPF MAP helpers such as “<span class='cmtt-10'>bpf_map_lookup_elem</span>” are not defined for
+<!-- l. 102 --><p class='noindent'>Normal eBPF MAP helpers such as “<span class='cmtt-10'>bpf_map_lookup_elem</span>” are not defined for
 Arena <span class='cite'>[<a href='#Xarena_source'>4</a>]</span>. Instead the following pair of functions are available: </p>
      <ul class='itemize1'>
      <li class='itemize'><span class='cmtt-10'>bpf_arena_alloc_pages</span>: Allocates a memory page
      </li>
      <li class='itemize'><span class='cmtt-10'>bpf_arena_free_pages</span>: Frees the memory page</li></ul>
-<!-- l. 106 --><p class='noindent'>These functions are defined using kfunc <span class='cite'>[<a href='#Xeunomia_kfunc'>3</a>, <a href='#Xebpf_docs_kfunc'>2</a>]</span>. As required by kfunc subsystem, you
-should declare the signature of these helpers in your eBPF program to ues these
+<!-- l. 110 --><p class='noindent'>These functions are defined using kfunc <span class='cite'>[<a href='#Xeunomia_kfunc'>3</a>, <a href='#Xebpf_docs_kfunc'>2</a>]</span>. As required by kfunc subsystem, you
+should declare the signature of these helpers in your eBPF program to use these
 functions.
                                                                   
 
                                                                   
-</p><!-- l. 110 --><p class='noindent' id='-functions-operating-on-arena-map'><a id='x1-4013r2'></a></p><figure class='float'>
+</p><!-- l. 114 --><p class='noindent' id='-functions-operating-on-arena-map'><a id='x1-4013r2'></a></p><figure class='float'>
                                                                   
 
                                                                   
@@ -136,17 +134,17 @@ functions.
 
                                                                   
 </figure>
-<!-- l. 120 --><p class='noindent'>Calling these functions may put the thread to sleep. For this reason the functions
+<!-- l. 124 --><p class='noindent'>Calling these functions may put the thread to sleep. For this reason the functions
 are marked with <span class='cmtt-10'>KF_SLEEPABLE</span> <span class='cite'>[<a href='#Xarena_source'>4</a>]</span>, and the verifier only allows sleepable
 eBPF programs to use them. An eBPF program has sleeping privilege if the
 <span class='cmtt-10'>BPF_F_SLEEPABLE </span>flag was set when loading it (see Listing <a href='#-user-space-program-loading-the-program'>4<!-- tex4ht:ref: lst:loader  --></a> for an example). Not all
 eBPF hooks support this flag. A list of sleepable hooks are provided in libbpf
 documentations <span class='cite'>[<a href='#Xlibbpf_sleepable'>8</a>]</span>.
-</p><!-- l. 129 --><p class='noindent'><span id='textcolor52'>note: The memory pages allocated use following flags: <span class='cmitt-10'>GFP_KERNEL</span>, <span class='cmitt-10'>__GFP_ZERO</span>,
+</p><!-- l. 133 --><p class='noindent'><span id='textcolor52'>note: The memory pages allocated use following flags: <span class='cmitt-10'>GFP_KERNEL</span>, <span class='cmitt-10'>__GFP_ZERO</span>,
 <span class='cmitt-10'>__GFP_ACCOUNT</span>.</span>
 </p>
 <h4 class='subsectionHead' id='managing-two-address-spaces'><span class='titlemark'>2.3   </span> <a id='x1-50002.3'></a>Managing two address spaces</h4>
-<!-- l. 133 --><p class='noindent'>Clang compiler, the verifier, the JIT, and the runtime all work together to make sure
+<!-- l. 137 --><p class='noindent'>Clang compiler, the verifier, the JIT, and the runtime all work together to make sure
 the eBPF program accesses the correct memory address. When using Arena there is a
 translation between the user address space and kernel address space (unless the map
 is declared with “<span class='cmtt-10'>BPF_F_NO_USER_CONV</span>” flag present). The eBPF program must
@@ -155,33 +153,34 @@ know about it and cause the generation of “<span class='cmtt-10'>bpf_arena_cas
 instrucitons. The “<span class='cmtt-10'>__arena</span>” used in the examples (and the acompanying
 repository), especially when declaring variables and parameters is because of
 this.
-</p><!-- l. 144 --><p class='noindent'><span id='textcolor53'>note: if this explanation is vague, it is because I need to learn more about
+</p><!-- l. 148 --><p class='noindent'><span id='textcolor53'>note: if this explanation is vague, it is because I need to learn more about
 it.</span>
-</p><!-- l. 147 --><p class='noindent'>
+</p><!-- l. 151 --><p class='noindent'>
 </p>
 <h3 class='sectionHead' id='examples'><span class='titlemark'>3   </span> <a id='x1-60003'></a>Examples</h3>
-<!-- l. 149 --><p class='noindent'>I try to demonstrate how these APIs can be used to implement the use-cases named
+<!-- l. 153 --><p class='noindent'>I try to demonstrate how these APIs can be used to implement the use-cases named
 above.
-</p><!-- l. 152 --><p class='noindent'>
+</p><!-- l. 156 --><p class='noindent'>
 </p>
 <h4 class='subsectionHead' id='memory-shared-among-ebpf-and-userspace'><span class='titlemark'>3.1   </span> <a id='x1-70003.1'></a>Memory shared among eBPF and user-space</h4>
-<!-- l. 154 --><p class='noindent'>As a first step, let us demonstrate how to share a counter between an
-eBPF and an user-space program. Let us define a eBPF program of type
+<!-- l. 158 --><p class='noindent'>As a first step, let us demonstrate how to share a counter between an eBPF and an
+user-space program. For the sake of example, I used eBPF program of type
 <span class='cmtt-10'>BPF_PROT_TYPE_SYSCALL</span> <span class='cite'>[<a href='#Xebpf_docs_prog_syscall'>10</a>]</span> which does not need to be attached to a hook and
-instead is invoked using the <span class='cmtt-10'>BPF_PROG_TEST_RUN </span>system call <span class='cite'>[<a href='#Xebpf_docs_bpf_prog_run'>9</a>]</span>.
-</p><!-- l. 160 --><p class='noindent'>Listing <a href='#-an-ebpf-program-using-arena'>3<!-- tex4ht:ref: lst:mogu  --></a> demonstrates an eBPF program using Arena. In this program, a global
-variable (“<span class='cmtt-10'>flag_initialized</span>”) tracks if it is the first time the program is invoked or
-not. At the first invocation a page is allocated and its address is kept in “<span class='cmtt-10'>mem</span>” global
-variable. The allocated memory will hold a counter keeping the number of
+can simply invoked using a system call (for more information search for
+<span class='cmtt-10'>BPF_PROG_TEST_RUN</span> <span class='cite'>[<a href='#Xebpf_docs_bpf_prog_run'>9</a>]</span>).
+</p><!-- l. 164 --><p class='noindent'>Listing <a href='#-an-ebpf-program-using-arena'>3<!-- tex4ht:ref: lst:mogu  --></a> shows the code for the example program. In this program, a global variable
+(“<span class='cmtt-10'>flag_initialized</span>”) tracks whether it is the first time the program is executed or
+not. In the first run, a page is allocated (using “<span class='cmtt-10'>bpf_arena_alloc_pages</span>”) and its
                                                                   
 
                                                                   
-invocations.
-</p><!-- l. 167 --><p class='noindent'><span id='textcolor54'>note: The global variable support is available since kernel version 5.2 <span class='cite'>[<a href='#Xglb_var_post'>1</a>]</span>.</span>
+address is kept in “<span class='cmtt-10'>mem</span>” global variable. The allocated memory will hold a counter
+keeping the number of invocations.
+</p><!-- l. 172 --><p class='noindent'><span id='textcolor54'>note: The global variable support is available since kernel version 5.2 <span class='cite'>[<a href='#Xglb_var_post'>1</a>]</span>.</span>
                                                                   
 
                                                                   
-</p><!-- l. 170 --><p class='noindent' id='-an-ebpf-program-using-arena'><a id='x1-7073r3'></a></p><figure class='float'>
+</p><!-- l. 175 --><p class='noindent' id='-an-ebpf-program-using-arena'><a id='x1-7073r3'></a></p><figure class='float'>
                                                                   
 
                                                                   
@@ -214,13 +213,13 @@ invocations.
 
                                                                   
 </figure>
-<!-- l. 200 --><p class='noindent'>Next, in Listing <a href='#-user-space-program-loading-the-program'>4<!-- tex4ht:ref: lst:loader  --></a>, we see how user-space program loads the eBPF program and
-Listing <a href='#-userspace-accessing-the-memory-page-allocated-from-arena'>5<!-- tex4ht:ref: lst:loader_read  --></a> shows it accessing the counter on the Arena memory page. The user-space
-program relies on skeleton objects from libbpf <span class='cite'>[<a href='#Xlibbpf_skeleton'>5</a>]</span>.
+<!-- l. 205 --><p class='noindent'>Next, in Listing <a href='#-user-space-program-loading-the-program'>4<!-- tex4ht:ref: lst:loader  --></a>, we see how user-space program loads the eBPF program and
+Listing <a href='#-userspace-accessing-the-memory-page-allocated-from-arena'>5<!-- tex4ht:ref: lst:loader_read  --></a> shows it accessing the counter on the Arena memory page (The user-space
+relies on libbpf and its skeleton framework <span class='cite'>[<a href='#Xlibbpf_skeleton'>5</a>]</span>).
                                                                   
 
                                                                   
-</p><!-- l. 206 --><p class='noindent' id='-user-space-program-loading-the-program'><a id='x1-7191r4'></a></p><figure class='float'>
+</p><!-- l. 211 --><p class='noindent' id='-user-space-program-loading-the-program'><a id='x1-7191r4'></a></p><figure class='float'>
                                                                   
 
                                                                   
@@ -271,7 +270,7 @@ program relies on skeleton objects from libbpf <span class='cite'>[<a href='#Xl
                                                                   
 
                                                                   
-<!-- l. 252 --><p class='noindent' id='-userspace-accessing-the-memory-page-allocated-from-arena'><a id='x1-7210r5'></a></p><figure class='float'>
+<!-- l. 257 --><p class='noindent' id='-userspace-accessing-the-memory-page-allocated-from-arena'><a id='x1-7210r5'></a></p><figure class='float'>
                                                                   
 
                                                                   
@@ -287,36 +286,33 @@ program relies on skeleton objects from libbpf <span class='cite'>[<a href='#Xl
                                                                   
 </figure>
 <h4 class='subsectionHead' id='using-arena-in-xdp-or-other-hooks-that-can-not-sleep'><span class='titlemark'>3.2   </span> <a id='x1-80003.2'></a>Using Arena in XDP (or other hooks that can not sleep)</h4>
-<!-- l. 267 --><p class='noindent'>As was mentioned, Arena helper functions may put the calling thread to sleep. This
-is not acceptable for program attached to hooks such as XDP in which the
-program is running in a <span class='cmtt-10'>NAPI</span>. But, this limitation does not mean that XDP
-programs can not access the arena memory. They just can not allocate or free
-pages.
-</p><!-- l. 273 --><p class='noindent'>For the next step, Let us share the memory page allocated by the eBPF program
-from the previous example with another eBPF program which does not use the
-Arena helpers.
-</p><!-- l. 277 --><p class='noindent'>Listing <a href='#-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a> shows the second eBPF program. It does not use the <span class='cmtt-10'>bpf_arena_alloc_pages</span>
-helper for allocating the memory. Instead, it is using the memory page allocated
-before and access the counter value, both reading and writing to it.
+<!-- l. 272 --><p class='noindent'>As was mentioned, Arena memory allocation helper functions may put the calling
+thread to sleep. This is not acceptable for programs attached to hooks such as XDP.
+But, this limitation does not mean that XDP programs can not access the arena
+memory. They just can not allocate or free the pages.
+</p><!-- l. 277 --><p class='noindent'>For the next step, Let us share the memory page allocated by the program from the
+previous example with another eBPF program. This allows the second program to
+use Arena backed memory pages without allocating memory itself. Listing <a href='#-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a> shows
+the second eBPF program.
 </p><!-- l. 282 --><p class='noindent'>Here are some details that I like to bring to your attention:
      </p><ol class='enumerate1'>
-<li class='enumerate' id='x1-8002x1'>Notice that both eBPF programs declare an Arena. The loader will make
-     sure both are using the same MAP using the libbpf’s <span class='cmtt-10'>bpf_map__reuse_fd</span>
-     helper.
+<li class='enumerate' id='x1-8002x1'>Notice that both eBPF programs declare an Arena (as shown in Listing <a href='#-example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a>).
+     The loader (will be discussed next) will make sure both are using the same
+     MAP using the libbpf’s <span class='cmtt-10'>bpf_map__reuse_fd </span>helper.
      </li>
-<li class='enumerate' id='x1-8004x2'>The second program also expects the loader to pass the address of allocated
+<li class='enumerate' id='x1-8004x2'>The second program expects the loader to pass the address of allocated
      page through its global variable called “mem”. This address could have
      been shared among the two program in other ways, e.g. through a shared
      array MAP.
      </li>
-<li class='enumerate' id='x1-8006x3'>The second program is using a helper (<span class='cmtt-10'>my_kfunc_reg_arena</span>) that is not
-     part of the Linux kernel. This function does not perform any operation.
-     Its sole role is to let the verifier recognize that the program is using the
-     Arena. See <span class='tcrm-1000'>§</span><a href='#why-do-we-need-a-custom-arena-function'>3.2.1<!-- tex4ht:ref: sec:need_custom  --></a> for more detail.</li></ol>
+<li class='enumerate' id='x1-8006x3'>The   second   program   is   using   a   non-standard   helper   named
+     “<span class='cmtt-10'>my_kfunc_reg_arena</span>”. This function (a kfunc defined by me) does not
+     perform any operation. Its sole role is to let the verifier recognize that the
+     program is using the Arena. See <span class='tcrm-1000'>§</span><a href='#why-do-we-need-a-custom-arena-function'>3.2.1<!-- tex4ht:ref: sec:need_custom  --></a> for more detail.</li></ol>
                                                                   
 
                                                                   
-<!-- l. 298 --><p class='noindent' id='-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'><a id='x1-8064r6'></a></p><figure class='float'>
+<!-- l. 300 --><p class='noindent' id='-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'><a id='x1-8064r6'></a></p><figure class='float'>
                                                                   
 
                                                                   
@@ -345,13 +341,14 @@ program</span></figcaption><!-- tex4ht:label?: x1-8064r6  -->
 
                                                                   
 </figure>
-<!-- l. 323 --><p class='noindent'>To share the Arena from the first eBPF program (Listing <a href='#-an-ebpf-program-using-arena'>3<!-- tex4ht:ref: lst:mogu  --></a>) with the second one
-(Listing <a href='#-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a>), the loader (user-space) program has to mediate and asign the reference.
-Listing <a href='#-loader-program-assigning-the-arena-from-the-first-program-to-the-second-program'>7<!-- tex4ht:ref: lst:share-map-ref  --></a> is an example of this procedure.
+<!-- l. 325 --><p class='noindent'>To share the Arena from the first eBPF program (Listing <a href='#-an-ebpf-program-using-arena'>3<!-- tex4ht:ref: lst:mogu  --></a>) with the second one
+(Listing <a href='#-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a>), the loader (user-space) program has to mediate and pass the
+reference from first program to the second. Listing <a href='#-loader-program-assigning-the-arena-from-the-first-program-to-the-second-program'>7<!-- tex4ht:ref: lst:share-map-ref  --></a> shows an example of this
+procedure.
                                                                   
 
                                                                   
-</p><!-- l. 329 --><p class='noindent' id='-loader-program-assigning-the-arena-from-the-first-program-to-the-second-program'><a id='x1-8077r7'></a></p><figure class='float'>
+</p><!-- l. 331 --><p class='noindent' id='-loader-program-assigning-the-arena-from-the-first-program-to-the-second-program'><a id='x1-8077r7'></a></p><figure class='float'>
                                                                   
 
                                                                   
@@ -366,13 +363,14 @@ second program</span></figcaption><!-- tex4ht:label?: x1-8077r7  -->
                                                                   
 </figure>
 <h5 class='subsubsectionHead' id='why-do-we-need-a-custom-arena-function'><span class='titlemark'>3.2.1   </span> <a id='x1-90003.2.1'></a>Why do we need a custom Arena function?</h5>
-<!-- l. 341 --><p class='noindent'>If we remove the the call to the <span class='cmtt-10'>my_kfunc_reg_arena </span>in Listing <a href='#-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a>, although
-the program would compile, the verifier will complain with the following
-message:
+<!-- l. 343 --><p class='noindent'>If we remove the call to the non-standard <span class='cmtt-10'>my_kfunc_reg_arena </span>in Listing <a href='#-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a>,
+although the program would compile, the verifier will complain that the program
+does not have any associated Arena map, but is trying to use Arena memory
+addressing. The error message from verifier is as follows:
                                                                   
 
                                                                   
-</p><!-- l. 346 --><p class='noindent' id='-verifier-error-message-when-the-arena-is-not-referenced-in-the-program'><a id='x1-9004r8'></a></p><figure class='float'>
+</p><!-- l. 349 --><p class='noindent' id='-verifier-error-message-when-the-arena-is-not-referenced-in-the-program'><a id='x1-9004r8'></a></p><figure class='float'>
                                                                   
 
                                                                   
@@ -382,47 +380,87 @@ message:
 
                                                                   
 </figure>
-<!-- l. 353 --><p class='noindent'>Looking at the verifiers source code, the error is raised when the program is not
-associated with an Arena <span class='cite'>[<a href='#Xverifier_arena_not_set'>6</a>]</span>. This association happens when the MAP is referenced
-(e.g., by using a helper function). In the second program, we deliberately do not want
-to use Arena specific helpers. Other helper functions such as <span class='cmtt-10'>bpf_map_lookup_elem</span>
-also cause other verifier complains (in my test it complained due to attempting a zero
-byte read). Defining a new helper that does nothing but still satisfies the verifier is a
-smart hack, which also show cases the flexibility that kfunc support has brought to
-eBPF.
-</p><!-- l. 364 --><p class='noindent'><span id='textcolor381'>note: The idea of having a dummy helper was suggested by my labmate <a href='https://github.com/marcomole00/' target='_blank'>Marco
+<!-- l. 356 --><p class='noindent'>Looking at the verifiers source code to decipher the error message, we see that the
+error is raised when the program is not associated with an Arena while the program
+has an address space cast instruction <span class='cite'>[<a href='#Xverifier_arena_not_set'>6</a>]</span> (exactly as written in the error
+message).
+</p><!-- l. 361 --><p class='noindent'>The association of an Arena MAP to a program happens when the it is referenced
+(e.g., by using a helper function). Unfortunately, in the second program we
+deliberately do not want to use Arena specific helpers. Other helper functions such
+as <span class='cmtt-10'>bpf_map_lookup_elem </span>also cause other complains from the verifier (in
+my test it complained due to attempting a zero byte read). Defining a new
+helper that does nothing but still satisfies the verifier is a smart hack around
+the situation. It show cases the flexibility that kfunc has brought to eBPF
+ecosystem.
+</p><!-- l. 371 --><p class='noindent'><span id='textcolor381'>note: The idea of having a dummy helper was suggested by my lab-mate <a href='https://github.com/marcomole00/' target='_blank'>Marco
 Mole</a>.</span>
 </p>
 <h4 class='subsectionHead' id='userspace-managed-datastructures'><span class='titlemark'>3.3   </span> <a id='x1-100003.3'></a>User-space managed data-structures</h4>
-<!-- l. 369 --><p class='noindent'>In the third example, I demonstrate how user-space program can allocate pages of
-Arena map and implement its own custom data-structure. Since these data-structures
-are on Arena pages, they will be accessible through eBPF programs (e.g., an XDP
-program).
-</p><!-- l. 374 --><p class='noindent'>We can use libbpf to get access to the Arena memory. The library has an API named
+<!-- l. 376 --><p class='noindent'>In the third example, I demonstrate how user-space program can allocate pages of
+Arena map (useful to implement its own custom data-structure). Since these
+data-structures are on Arena pages, they will be accessible to eBPF programs sharing
+the same Arena.
+</p><!-- l. 381 --><p class='noindent'>We can use libbpf to get access to the Arena memory. The library has an API named
 <span class='cmtt-10'>bpf_map__initial_value </span>(not well documented at the moment). As input, this
 function receive a pointer to a MAP and a pointer to a 64-bit variable. The return
-value is the address for the begining of Arena memory region (mapped to the
+value is the address for the beginning of Arena memory region (mapped to the
 user-space program memory address), also the 64-bit variable will be set to the size of
-the allocated memory <span class='cite'>[<a href='#Xlibbpf_initial_value'>7</a>]</span>.
-</p><!-- l. 382 --><p class='noindent'>To allocate memory pages, the user-space can cause page-faults by accessing memory
+the currently allocated memory <span class='cite'>[<a href='#Xlibbpf_initial_value'>7</a>]</span>.
+</p><!-- l. 389 --><p class='noindent'>To allocate memory pages, the user-space can cause page-faults by accessing memory
 addresses in Arena. The page fault will notify the kernel to allocate the memory
-page. For example, in Listing <a href='#-example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a> the Arena has two pages. Assuming size of each page
-is 4KB, the program can access the Arena memory (the address we found using
-<span class='cmtt-10'>bpf_map__initial_value</span>) at offset 0 and 4096 to allocate the two pages. Accessing
-the memory outside of the Arena region will cause a <span class='cmtt-10'>SIGSEGV </span>(Address boundary
-error).
-</p><!-- l. 390 --><p class='noindent'>The user-space program can implement its own data-structures in the Arena which is
-will be visible to eBPF programs.
-</p><!-- l. 1 --><p class='noindent'>
+page. For example, in our previous examples the Arena has two pages (see Listing <a href='#-example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a>).
+Assuming size of each page is 4 KB, the program can access the Arena memory (the
+address we found using <span class='cmtt-10'>bpf_map__initial_value</span>) at offset 0 and 4096 to allocate
+the two pages. Accessing the memory outside of the Arena region will cause a
+<span class='cmtt-10'>SIGSEGV </span>(Address boundary error).
+</p><!-- l. 398 --><p class='noindent'>The user-space program can use these memory pages to implement its own
+data-structures in the Arena which is will be visible to eBPF programs.
+</p><!-- l. 402 --><p class='noindent'>
 </p>
-<h3 class='likesectionHead' id='references'><a id='x1-110003.3'></a>References</h3>
+<h3 class='sectionHead' id='final-notes'><span class='titlemark'>4   </span> <a id='x1-110004'></a>Final Notes</h3>
+<!-- l. 404 --><p class='noindent'>The Arena feature is very new. It will probably change and improve. I am sure by the
+                                                                  
+
+                                                                  
+time it is mature, eBPF community has written good documentation and tutorials on
+it but mean while I hope this post fill the gap. It is important for me to say
+that although I tried my best to share correct information, I can not claim
+that I understand every aspect of Arena’s implementation. There may be
+misunderstandings on my side. On such a case please let me know and accept my
+apology.
+</p><!-- l. 412 --><p class='noindent'>I want to conclude by listing some of the limitations of Arena that I observed looking
+at the verifier and x86 JIT code.
+</p><!-- l. 415 --><p class='noindent'>
+     </p><ol class='enumerate1'>
+<li class='enumerate' id='x1-11002x1'>The atomic reads/writes are not supported in Arena memory region.
+     </li>
+<li class='enumerate' id='x1-11004x2'>Arena pointer arithmetics are converted to 32 bit operations.
+     </li>
+<li class='enumerate' id='x1-11006x3'>There can be only one Arena map per program of maximum size of 4 GB.
+     </li>
+<li class='enumerate' id='x1-11008x4'>Program must be JIT compiled (it is almost always the case)
+     </li>
+<li class='enumerate' id='x1-11010x5'><span class='cmtt-10'>BPF_CAP </span>and <span class='cmtt-10'>CAP_PERFMON </span>is needed for loading a program with Arena
+     </li>
+<li class='enumerate' id='x1-11012x6'>Sign extending load instruction is not supported for Arena memory region
+     </li>
+<li class='enumerate' id='x1-11014x7'>The cast to address-space(1) will generate a “<span class='cmtt-10'>dst = (u32)src</span>”
+                                                                  
+
+                                                                  
+     </li>
+<li class='enumerate' id='x1-11016x8'>The cast lets the verifier know that the pointer is to arena the cast to
+     address-space (0) turns the value into a scalar.
+     </li>
+<li class='enumerate' id='x1-11018x9'>x86 JIT uses R12 register is used to track the start of Arena virtual address
+     (it was unused before).</li></ol>
+<!-- l. 1 --><p class='noindent'>
+</p>
+<h3 class='likesectionHead' id='references'><a id='x1-120004'></a>References</h3>
 <!-- l. 1 --><p class='noindent'>
     </p><div class='thebibliography'>
     <p class='bibitem'><span class='biblabel'>
   [1]<span class='bibsp'>   </span></span><a id='Xglb_var_post'></a>Johannes     Bechberger.            Hello     ebpf:     Global     variables.
-                                                                  
-
-                                                                  
     <a class='url' href='https://mostlynerdless.de/blog/2024/05/21/hello-ebpf-global-variables-10/'><span class='cmtt-10'>https://mostlynerdless.de/blog/2024/05/21/hello-ebpf-global-variables-10/</span></a>,
     2024.
     </p>
@@ -442,6 +480,9 @@ will be visible to eBPF programs.
   [5]<span class='bibsp'>   </span></span><a id='Xlibbpf_skeleton'></a>Kernel  documentations:  Libbpf  overview:  Bpf  object  skeleton  file.
     <a class='url' href='https://docs.kernel.org/bpf/libbpf/libbpf_overview.html#bpf-object-skeleton-file'><span class='cmtt-10'>https://docs.kernel.org/bpf/libbpf/libbpf_overview.html#bpf-object-skeleton-file</span></a>,
     2024.
+                                                                  
+
+                                                                  
     </p>
     <p class='bibitem'><span class='biblabel'>
   [6]<span class='bibsp'>   </span></span><a id='Xverifier_arena_not_set'></a>Linux   source   tree:   ebpf   verifier:   Checking   for   arena   map.
@@ -461,9 +502,6 @@ will be visible to eBPF programs.
   [9]<span class='bibsp'>   </span></span><a id='Xebpf_docs_bpf_prog_run'></a>Dylan Reimerink. ebpf documentations: Bpf syscall bpf_prog_test_run
     command.
     <a class='url' href='https://docs.ebpf.io/linux/syscall/BPF_PROG_TEST_RUN/'><span class='cmtt-10'>https://docs.ebpf.io/linux/syscall/BPF_PROG_TEST_RUN/</span></a>, 2023.
-                                                                  
-
-                                                                  
     </p>
     <p class='bibitem'><span class='biblabel'>
  [10]<span class='bibsp'>   </span></span><a id='Xebpf_docs_prog_syscall'></a>Dylan  Reimerink.      ebpf  documentations:  Bpf_prog_type_syscall.

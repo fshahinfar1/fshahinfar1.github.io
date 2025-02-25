@@ -2,6 +2,7 @@
 /* start css.sty */
 .cmr-17{font-size:170%;}
 .cmr-12{font-size:120%;}
+.cmr-9{font-size:90%;}
 .cmti-10{ font-style: italic;}
 .cmtt-10{font-family: monospace,monospace;}
 .cmtt-10{font-family: monospace,monospace;}
@@ -126,10 +127,10 @@ p + figcaption, img + figcaption{margin-top: 1em;}
 .rotatebox{display: inline-block;}
 pre.fancyvrb {white-space: pre-wrap; margin:0em;font-family:monospace,monospace;}
 .framedenv{border: 1px solid black;}
+span#textcolor1{color:#808080}
  body{ max-width: 18cm; margin: auto; display: flex; flex-direction: column; adjust-contenct: center; justify-content: center; font-size: 18pt; } 
  pre { font-size: 14pt; } 
  p { text-align: justify; line-height: 1.5; } 
-span#textcolor1{color:#FF0000}
 span#textcolor2{color:#808080}
 span#textcolor3{color:rgb(0,127,0)}
 span#textcolor4{color:rgb(186,186,186)}
