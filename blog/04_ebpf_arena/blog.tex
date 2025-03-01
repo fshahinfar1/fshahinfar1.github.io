@@ -2,6 +2,7 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{minted}
+\usepackage{ulem}
 
 
 \title{eBPF Arena: A Tutorial}
@@ -273,7 +274,7 @@ printf("user: counter=%lld\n", e->counter);
 As was mentioned, Arena memory allocation helper functions may put the calling
 thread to sleep. This is not acceptable for programs attached to hooks such as
 \emph{XDP}. But, this limitation does not mean that XDP programs can not access
-the arena memory. They just can not allocate or free the pages.
+the Arena memory. They just can not allocate or free the pages.
 
 For the next step, Let us share the memory page allocated by the program
 from the previous example with another eBPF program. This allows the second
@@ -365,7 +366,7 @@ deliberately do not want to use Arena specific helpers. Other helper functions
 such as \myC{bpf_map_lookup_elem} also cause other complains from the verifier
 (in my test it complained due to attempting a zero byte read). Defining a new
 helper that does nothing but still satisfies the verifier is a smart hack
-around the situation. It show cases the flexibility that kfunc has brought to
+around the situation. It showcases the flexibility that kfunc has brought to
 eBPF ecosystem.
 
 \textcolor{gray}{\textit{note: The idea of having a dummy helper was suggested
@@ -414,7 +415,7 @@ I want to conclude by listing some of the limitations of Arena that I observed
 looking at the verifier and x86 JIT code.
 
 \begin{enumerate}
-\item The atomic reads/writes are not supported in Arena memory region.
+  \item \sout{The atomic reads/writes are not supported in Arena memory region.} At the moment, in Arena memory region, limited atomic operations are support from eBPF side~\cite{arena_atomic}.
 \item Arena pointer arithmetics are converted to 32 bit operations.
 \item There can be only one Arena map per program of maximum size of 4 GB.
 \item Program must be JIT compiled (it is almost always the case)
@@ -426,6 +427,15 @@ looking at the verifier and x86 JIT code.
 \item x86 JIT uses the R12 register to track the start of Arena virtual
     address (it was unused before).
 \end{enumerate}
+
+\subsection{Updates}
+\begin{itemize}
+  \item $1^{st}$ March, 2025:
+    \begin{enumerate}
+      \item Correction: There some \emph{atomic} instructions are available to eBPF programs to access Arena
+      \item New information: There are on going work to support memory allocation in non-sleepable programs (e.g., XDP)~\cite{slub,try_alloc}. Thanks to \href{https://kkdwivedi.in/}{Kumar Kartikeya Dwivedi}
+    \end{enumerate}
+\end{itemize}
 
 \bibliographystyle{plain}
 \bibliography{ref}
