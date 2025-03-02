@@ -30,11 +30,11 @@
 - label: CCR
   type: magazine
   fullname: Computer Communication Review
-  abstract_submission: [01/12/2025, 01/03/2025, 01/06/2025, 01/09/2025]
+  abstract_submission: [01/12/2026, 01/03/2026, 01/06/2025, 01/09/2025]
 - label: JSys
   type: journal
   fullname: Journal of Systems Research
-  abstract_submission: [01/03/2025, 01/05/2025, 01/08/2025, 01/10/2025]
+  abstract_submission: [01/03/2026, 01/05/2025, 01/08/2025, 01/10/2025]
 - label: SoCC
   type: conference
   fullname: ACM Symposium on Cloud Computing

@@ -43,6 +43,10 @@ const newslist = [
     text: 'I am attending <a href="https://inw2024.disi.unitn.it/">Italian Networking Workshop (INW)</a> this year. I will be happy to chat if you\'re also there.',
     date: '2024-01-17',
   },
+  {
+    text: 'I\'ve written a tutorial on eBPF Arena API that I would like to share with you. <a target="_blank" href="/blog/04_ebpf_arena/build/blog.html">Link</a>',
+    date: '2024-02-28',
+  },
 ];
 
 // console.log('load news!');

@@ -1,18 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head>
-<style>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Conferences</title>
+    <link rel="stylesheet" type="text/css" href="/styles/main.css"/>
+    <style>
 .conf-deadline-table {
   margin: auto;
   width: 50%;
 }
-</style>
-</head>
-<body>
-<table class="conf-deadline-table"></table>
-<span>Something is wrong? please <a id="mail" href="mailto:farbod.shahinfar@polimi.it">contact me</a></span>
-<script src="deadline_info.js"></script>
-<script src="conf_deadline.js"></script>
-</body>
+    </style>
+  </head>
+  <body>
+    <!-- Navigation bar -->
+    <div class="navbar">
+      <a href="/"><span>Home</span></a>
+      <a href="blog/index.html"><span>Blog</span></a>
+      <a
+          href="https://github.com/fshahinfar1/my-resume/raw/master/resume.pdf"
+          target="_blank"><span>CV</span></a>
+    </div>
+    <div class="content">
+      <table class="conf-deadline-table"></table>
+      <span>Something is wrong? please <a id="mail" href="mailto:farbod.shahinfar@polimi.it">contact me</a></span>
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+      <div id="footer-content">
+        <li><a href="https://github.com/fshahinfar1/my-resume/raw/master/resume.pdf" target="_blank">CV</a></li>
+        <li><a href="https://github.com/fshahinfar1" target="_blank">Github</a></li>
+        <li>farbod.shahinfar [AT] polimi.it</li>
+        <li>
+          <a href="https://scholar.google.com/citations?hl=en&user=ItK0oysAAAAJ" target="_blank">Scholar</a>
+        </li>
+      </div>
+    </footer>
+    <script src="deadline_info.js"></script>
+    <script src="conf_deadline.js"></script>
+  </body>
 </html>
 <!-- vim: set et ts=2 sw=2: -->
