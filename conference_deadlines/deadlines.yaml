@@ -47,8 +47,9 @@
   fullname: ACM SIGOPS Asia-Pacific Workshop on Systems
   conference_time: "September 4-5, 2025"
   place:
-  abstract_submission: 25/04/2025
-  guess: true
+  abstract_submission: 29/04/2025
+  webpage: 'https://apsys2025.github.io/'
+  guess: false
 - label: APNet
   type: conference
   fullname: Asia-Pacific Workshop on Networking
