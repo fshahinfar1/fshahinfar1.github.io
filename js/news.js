@@ -45,7 +45,7 @@ const newslist = [
   },
   {
     text: 'I\'ve written a tutorial on eBPF Arena API that I would like to share with you. <a target="_blank" href="/blog/04_ebpf_arena/build/blog.html">Link</a>',
-    date: '2024-02-28',
+    date: '2025-02-28',
   },
 ];
 
