@@ -44,11 +44,11 @@
   guess: true
 - label: APSys
   type: conference
+  link: https://apsys2025.github.io/
   fullname: ACM SIGOPS Asia-Pacific Workshop on Systems
   conference_time: "September 4-5, 2025"
   place:
   abstract_submission: 29/04/2025
-  webpage: 'https://apsys2025.github.io/'
   guess: false
 - label: APNet
   type: conference
@@ -115,3 +115,11 @@
   conference_time: "October 13–16, 2025"
   abstract_submission: 10/04/2025
   guess: false
+- label: eBPF
+  type: workshop
+  link: https://conferences.sigcomm.org/sigcomm/2024/workshop/ebpf/
+  fullname: Workshop on eBPF and Kernel Extensions Program
+  place: "Coimbra, Portugal"
+  conference_time: 4/08/2025
+  abstract_submission: 25/05/2025
+  guess: true
