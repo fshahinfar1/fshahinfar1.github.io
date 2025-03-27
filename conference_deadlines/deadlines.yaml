@@ -117,9 +117,9 @@
   guess: false
 - label: eBPF
   type: workshop
-  link: https://conferences.sigcomm.org/sigcomm/2024/workshop/ebpf/
+  link: https://conferences.sigcomm.org/sigcomm/2025/workshop/ebpf/
   fullname: Workshop on eBPF and Kernel Extensions Program
   place: "Coimbra, Portugal"
   conference_time: 4/08/2025
-  abstract_submission: 25/05/2025
-  guess: true
+  abstract_submission: 08/05/2025
+  guess: false
