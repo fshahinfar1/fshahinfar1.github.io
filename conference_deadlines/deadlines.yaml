@@ -15,26 +15,27 @@
   guess: false
 - label: ASPLOS
   type: conference
+  link: https://www.asplos-conference.org/asplos2026/cfp/
   fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
-  conference_time: "March-April 2026"
-  place: Rotterdam
-  abstract_submission: [17/06/2025, 18/10/2025]
+  conference_time: '??'
+  place: '??'
+  abstract_submission: [05/03/2025, 13/06/2025]
   guess: true
 - label: EuroSys
   type: conference
   fullname: Euro/Sys
-  conference_time: "April 13-16, 2025"
+  conference_time: "April 13-16, 2026"
   place: Edinburgh
   abstract_submission: [08/05/2025, 18/09/2025]
   guess: false
-- label: CCR
-  type: magazine
-  fullname: Computer Communication Review
-  abstract_submission: [01/12/2026, 01/03/2026, 01/06/2025, 01/09/2025]
-- label: JSys
-  type: journal
-  fullname: Journal of Systems Research
-  abstract_submission: [01/03/2026, 01/05/2025, 01/08/2025, 01/10/2025]
+# - label: CCR
+#   type: magazine
+#   fullname: Computer Communication Review
+#   abstract_submission: [01/12/2026, 01/03/2026, 01/06/2025, 01/09/2025]
+# - label: JSys
+#   type: journal
+#   fullname: Journal of Systems Research
+#   abstract_submission: [01/03/2026, 01/05/2025, 01/08/2025, 01/10/2025]
 - label: SoCC
   type: conference
   fullname: ACM Symposium on Cloud Computing
@@ -61,21 +62,21 @@
   fullname: ACM Symposium on Principles of Distributed Computing
   place:
   abstract_submission: 11/02/2024
-- label: SEC
-  type: conference
-  fullname: ACM/IEEE Symposium on Edge Computing
-  place: Rome Italy
-  abstract_submission: 14/06/2024
-- label: IISWC
-  type: conference
-  fullname: IEEE International Workshop/Symposium on Workload Characterization
-  place:
-  abstract_submission: 03/06/2024
-- label: ISMM
-  type: conference
-  fullname: International Symposium on Memory Management
-  place: Copenhagen, Denmark
-  abstract_submission: 25/05/2024
+# - label: SEC
+#   type: conference
+#   fullname: ACM/IEEE Symposium on Edge Computing
+#   place: Rome Italy
+#   abstract_submission: 14/06/2024
+# - label: IISWC
+#   type: conference
+#   fullname: IEEE International Workshop/Symposium on Workload Characterization
+#   place:
+#   abstract_submission: 03/06/2024
+# - label: ISMM
+#   type: conference
+#   fullname: International Symposium on Memory Management
+#   place: Copenhagen, Denmark
+#   abstract_submission: 25/05/2024
 - label: ATC
   fullname: Annual Technical Conference
   type: conference
@@ -87,12 +88,12 @@
   fullname: International Conference on Emerging Networking Experiments and Technologies
   place:
   abstract_submission: [08/12/2024, 29/05/2025]
-- label: HotCarbon
-  type: workshop
-  fullname: 'HotCarbon: workshop on sustainable computing'
-  place:
-  conference_time: "July 10-11, 2025"
-  abstract_submission: 08/05/2024
+# - label: HotCarbon
+#   type: workshop
+#   fullname: 'HotCarbon: workshop on sustainable computing'
+#   place:
+#   conference_time: "July 10-11, 2025"
+#   abstract_submission: 08/05/2024
 - label: SIGCOMM
   type: conference
   fullname: 'ACM Special Interest Group on Data Communication'
