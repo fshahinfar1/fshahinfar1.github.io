@@ -147,6 +147,7 @@ def report(c):
     d.deadline = get_closest_deadline(deadline)
     ts = time_to_ts(d.deadline)
     d.days = int((ts - TODAY) // (24 * 3600))
+    d.link = c.get('link', '#')
 
     fmt.entry(d)
 

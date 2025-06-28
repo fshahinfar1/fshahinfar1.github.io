@@ -1,5 +1,12 @@
 const now = new Date();
 
+function make_a_link(el, link) {
+  const a = document.createElement('a')
+  a.href = link
+  a.appendChild(el)
+  return a
+}
+
 function get_remaining_days(deadline) {
   const splits = deadline.split('/');
   if (splits.length != 3) {
@@ -24,41 +31,66 @@ function get_remaining_days(deadline) {
 }
 
 function insert_entry(table, d) {
-    const tr = document.createElement('tr')
-    // <td class="fancy-lbl">{d.lbl:10}:</td>
-    // <td class="fancy-deadline">{d.deadline:10}</td>
-    // <td class="fancy-days"></td>'
+  const tr = document.createElement('tr')
+  // <td class="fancy-lbl">{d.lbl:10}:</td>
+  // <td class="fancy-deadline">{d.deadline:10}</td>
+  // <td class="fancy-days"></td>'
 
-    //
-    let td = document.createElement('td')
-    td.className = 'fancy-lbl'
-    td.innerHTML = d.lbl
+  //
+  let td = document.createElement('td')
+  td.className = 'fancy-lbl'
+  td.innerHTML = d.lbl
+  // if (d.fullname !== undefined) {
+  //   o = wrap_in_tooltip(o, d.fullname)
+  // }
+  if (d.link !== undefined && d.link !== '#') {
+    const a = make_a_link(td, d.link)
+    tr.appendChild(a);
+  } else {
     tr.appendChild(td);
-    //
-    td = document.createElement('td')
-    td.className = 'fancy-deadline'
-    td.innerHTML = d.deadline
-    tr.appendChild(td)
-    //
-    td = document.createElement('td')
-    td.className = 'fancy-days'
-    td.innerHTML = d.remaining
-    tr.appendChild(td)
-    //
-    td = document.createElement('td')
-    td.className = 'fancy-days'
-    td.innerHTML = d.is_guess ? '(?? THIS IS A GUESS)' : ''
-    tr.appendChild(td)
-    //
-    table.appendChild(tr)
+  }
+  //
+  td = document.createElement('td')
+  td.className = 'fancy-deadline'
+  td.innerHTML = d.deadline
+  tr.appendChild(td)
+  //
+  td = document.createElement('td')
+  td.className = 'fancy-days'
+  td.innerHTML = d.remaining
+  tr.appendChild(td)
+  //
+  td = document.createElement('td')
+  td.className = 'fancy-days'
+  td.innerHTML = d.is_guess ? '(x)' : ''
+  tr.appendChild(td)
+
+  table.appendChild(tr)
 }
 
 function insert_sep_line(table) {
   insert_entry(table, {
-    lbl: '--', 
-    deadline: '--', 
-    remaining: '--'
+    lbl: '------', 
+    deadline: '------', 
+    remaining: '------'
   })
+}
+
+function insert_header(table) {
+  const fields = [
+    'Conf. Abbrv.',
+    'Abstract Registration',
+    'Remaining days',
+    'Is it a guess?',
+  ];
+  const tr = document.createElement('tr')
+  for (let i = 0; i < fields.length; i++) {
+    const th = document.createElement('th')
+    th.className = 'fancy-hdr'
+    th.innerHTML = fields[i];
+    tr.appendChild(th);
+  }
+  table.appendChild(tr)
 }
 
 function on_document_load() {
@@ -69,6 +101,7 @@ function on_document_load() {
     return
   }
   const table = tbls[0]
+  insert_header(table);
   for (let i = 0; i < deadline_info.length; i++) {
     const d = deadline_info[i]
     if (!inserted_sep && d.days < 0) {

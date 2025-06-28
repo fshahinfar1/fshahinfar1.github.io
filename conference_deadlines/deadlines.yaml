@@ -1,10 +1,19 @@
-- label: OSDI
+- label: ASPLOS
   type: conference
-  fullname: USENIX Symposium on Operating Systems Design and Implementation
-  conference_time: 2026
-  place:
-  abstract_submission: 3/12/2025
-  guess: true
+  link: https://www.asplos-conference.org/asplos2026/cfp/
+  fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
+  conference_time: 'March 22-26, 2026'
+  place: 'Pittsburg, USA'
+  abstract_submission: [05/03/2025, 13/08/2025]
+  guess: false
+- label: SoCC
+  type: conference
+  link: https://acmsocc.org/2025
+  fullname: ACM Symposium on Cloud Computing
+  conference_time: "November 19-21, 2025"
+  place: Online
+  abstract_submission: 07/07/2025
+  guess: false
 - label: NSDI
   type: conference
   link: https://www.usenix.org/conference/nsdi26
@@ -13,14 +22,6 @@
   place: Renton (WA), USA
   abstract_submission: [18/04/2025, 11/09/2025]
   guess: false
-- label: ASPLOS
-  type: conference
-  link: https://www.asplos-conference.org/asplos2026/cfp/
-  fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
-  conference_time: '??'
-  place: '??'
-  abstract_submission: [05/03/2025, 13/06/2025]
-  guess: true
 - label: EuroSys
   type: conference
   fullname: Euro/Sys
@@ -28,6 +29,13 @@
   place: Edinburgh
   abstract_submission: [08/05/2025, 18/09/2025]
   guess: false
+- label: OSDI
+  type: conference
+  fullname: USENIX Symposium on Operating Systems Design and Implementation
+  conference_time: 2026
+  place:
+  abstract_submission: 3/12/2025
+  guess: true
 # - label: CCR
 #   type: magazine
 #   fullname: Computer Communication Review
@@ -36,13 +44,6 @@
 #   type: journal
 #   fullname: Journal of Systems Research
 #   abstract_submission: [01/03/2026, 01/05/2025, 01/08/2025, 01/10/2025]
-- label: SoCC
-  type: conference
-  fullname: ACM Symposium on Cloud Computing
-  conference_time: "November 20-22, 2025"
-  place:
-  abstract_submission: 08/07/2025
-  guess: true
 - label: APSys
   type: conference
   link: https://apsys2025.github.io/
@@ -57,11 +58,11 @@
   place: Shanghai
   abstract_submission: 06/03/2025
   guess: false
-- label: PODC
-  type: conference
-  fullname: ACM Symposium on Principles of Distributed Computing
-  place:
-  abstract_submission: 11/02/2024
+# - label: PODC
+#   type: conference
+#   fullname: ACM Symposium on Principles of Distributed Computing
+#   place:
+#   abstract_submission: 11/02/2024
 # - label: SEC
 #   type: conference
 #   fullname: ACM/IEEE Symposium on Edge Computing
@@ -123,4 +124,12 @@
   place: "Coimbra, Portugal"
   conference_time: 4/08/2025
   abstract_submission: 08/05/2025
+  guess: false
+- label: NINES
+  type: conference
+  link: https://nines-conference.org/
+  fullname: New Ideas in Networked Systems
+  place: Online
+  conference_time: 10/02/2026
+  abstract_submission: 01/10/2025
   guess: false
