@@ -52,8 +52,16 @@ const newslist = [
     date: '2025-06-15',
   },
   {
-    text: '"Performance Implications at the Intersection of AF_XDP and  Programmable NICs " was accepted in eBPF workshop. This work was lead by <a href="https://github.com/marcomole00/">Marco Molè</a>.',
+    text: '<b><i>Performance Implications at the Intersection of AF_XDP and  Programmable NICs</i></b> was accepted in <a href="https://conferences.sigcomm.org/sigcomm/2025/workshop/ebpf/">eBPF workshop</a>. This work was led by <a href="https://marcomole00.github.io/">Marco Molè</a>.',
     date: '2025-06-23',
+  },
+  {
+    text: '<b><i>Demystifying Performance of ebpf Network Applications</i></b> was accepted in <a href="https://conferences.sigcomm.org/co-next/2025/#!/home">CoNEXT\'25</a>. We discuss trade-offs for improving performance of end-host networked applications benefit with eBPF and point out improvement opportunities.',
+    date: '2025-06-24',
+  },
+  {
+    text: 'There is a new <b>networked systems</b> coference around! Have a look at <a href="https://nines-conference.org/">"New Ideas in Networked Systems (NINeS)"</a>. Many <a href="https://nines-conference.org/orgs">great people</a> are supporting it.',
+    date: '2025-06-24',
   },
 ];
 
