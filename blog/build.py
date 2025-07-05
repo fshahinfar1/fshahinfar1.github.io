@@ -70,9 +70,29 @@ color: gray;
 padding-left: 2em;
 }
 '''
+    head_section = f'''
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farbod's Blog Index </title>
+    <link rel="stylesheet" type="text/css" href="/styles/main.css"/>
+    <style>\n{css}\n</style>
+</head>
+    '''
+    navbar = '''
+<!-- Navigation bar -->
+<div class="navbar">
+    <a href="/"><span>Home</span></a>
+    <a href="/blog/index.html"><span>Blog</span></a>
+    <a
+        href="https://github.com/fshahinfar1/my-resume/raw/master/resume.pdf"
+        target="_blank"><span>CV</span></a>
+</div>
+    '''
     with open('index.html', 'w') as f:
-        f.write(f'<head>\n<style>\n{css}\n</style>\n</head>\n')
+        f.write(head_section)
         f.write('<body>\n')
+        f.write(navbar)
         f.write('<ol>\n')
         for dir_name in dirs:
             href=f'{dir_name}/build/blog.html'

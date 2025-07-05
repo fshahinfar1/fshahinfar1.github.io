@@ -370,7 +370,7 @@ around the situation. It showcases the flexibility that kfunc has brought to
 eBPF ecosystem.
 
 \textcolor{gray}{\textit{note: The idea of having a dummy helper was suggested
-by my lab-mate \href{https://github.com/marcomole00/}{Marco Mole}.}}
+by my lab-mate \href{https://marcomole00.github.io/}{Marco Mole}.}}
 
 
 \subsection{User-space managed data-structures}
@@ -430,6 +430,10 @@ looking at the verifier and x86 JIT code.
 
 \subsection{Updates}
 \begin{itemize}
+  \item $5^{th}$ July, 2025:
+    \begin{enumerate}
+      \item In Linux version 6.14 there is the possibility to associate a MAP to a program when using \myC{BPF_PROG_LOAD}, so there is no need to have the dummy helper function~\cite{associate_map_with_bpf}.
+    \end{enumerate}
   \item $1^{st}$ March, 2025:
     \begin{enumerate}
       \item Correction: Some \emph{atomic} instructions available to eBPF programs to access Arena~\cite{arena_atomic} and others can be supported in the future by the JIT

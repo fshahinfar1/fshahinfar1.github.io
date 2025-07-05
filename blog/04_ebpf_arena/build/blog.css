@@ -22,11 +22,23 @@ td center { margin-top:0em; margin-bottom:0em; }
 .Canvas { position:relative; }
 img.math{vertical-align:middle;}
 div.par-math-display, div.math-display{text-align:center;}
+body{ margin:1em auto; max-width:80ch; padding:0 .62em; }
+h1,h2,h3,h4,h5 { line-height:1.2; }
+@media print{ body{ max-width:none } }
+.partHead, .likepartHead { font-size: 2em; }
+.chapterHead, .likechapterHead { font-size: 1.7411em; }
+.sectionHead, .likesectionHead { font-size: 1.5157em; }
+.subsectionHead, .likesubsectionHead { font-size: 1.3195em; }
+.subsubsectionHead, .likesubsubsectionHead { font-size: 1.1487em; }
+ @media (prefers-color-scheme: dark) { img[src^="blog"]{filter: invert(1); } } 
+ body { background-color: Canvas; color: CanvasText; color-scheme: light dark; } 
 li p.indent { text-indent: 0em }
 li p:first-child{ margin-top:0em; }
 li p:last-child, li div:last-child { margin-bottom:0.5em; }
 li p:first-child{ margin-bottom:0; }
 li p~ul:last-child, li p~ol:last-child{ margin-bottom:0.5em; }
+ul.itemize1,ol.enumerate1{padding-left: 0;}
+ul li.itemize,ol li.enumerate{margin-left: 1rem;}
 .enumerate1 {list-style-type:decimal;}
 .enumerate2 {list-style-type:lower-alpha;}
 .enumerate3 {list-style-type:lower-roman;}
@@ -58,6 +70,7 @@ div.flushleft {text-align: left;}
 .framebox-r {text-align:right;}
 span.thank-mark{ vertical-align: super }
 span.footnote-mark sup.textsuperscript, span.footnote-mark a sup.textsuperscript{ font-size:80%; }
+code.verb{font-family:monospace,monospace;}
 div.tabular, div.center div.tabular {text-align: center; margin-top:0.5em; margin-bottom:0.5em; }
 table.tabular td p{margin-top:0em;}
 table.tabular {margin-left: auto; margin-right: auto;}
@@ -77,6 +90,7 @@ table[rules] {border-left:solid black 0.4pt; border-right:solid black 0.4pt; }
 .hline td, .cline td{ padding: 0; }
 .hline hr, .cline hr{border:none;border-top:1px solid black;}
 .hline {border-top: 1px solid black;}
+.hline + .vspace:last-child{display:none;}
 .tabbing-right {text-align:right;}
 div.float, div.figure {margin-left: auto; margin-right: auto;}
 div.float img {text-align:center;}
@@ -102,11 +116,12 @@ span.bar-css {text-decoration:overline;}
 img.cdots{vertical-align:middle;}
 .partToc a, .partToc, .likepartToc a, .likepartToc {line-height: 200%; font-weight:bold; font-size:110%;}
 .index-item, .index-subitem, .index-subsubitem {display:block}
-div.caption {text-indent:-2em; margin-left:3em; margin-right:1em; text-align:left;}
+div.caption {text-indent:-2em; margin-left:3em; margin-right:1em; text-align:center; margin-top: 0.5rem;}
 div.caption span.id{font-weight: bold; white-space: nowrap; }
 h1.partHead{text-align: center}
 p.bibitem { text-indent: -2em; margin-left: 2em; margin-top:0.6em; margin-bottom:0.6em; }
 p.bibitem-p { text-indent: 0em; margin-left: 2em; margin-top:0.6em; margin-bottom:0.6em; }
+.subsubsectionHead, .likesubsubsectionHead { font-size: 1em; }
 .paragraphHead, .likeparagraphHead { margin-top:2em; font-weight: bold;}
 .subparagraphHead, .likesubparagraphHead { font-weight: bold;}
 .verse{white-space:nowrap; margin-left:2em}
@@ -119,404 +134,32 @@ div.author{white-space: nowrap;}
 div.abstract p {margin-left:5%; margin-right:5%;}
 div.abstract {width:100%;}
 .abstracttitle{text-align:center;margin-bottom:1em;}
+.subsectionToc, .likesubsectionToc {margin-left:1em;}
+.subsubsectionToc, .likesubsubsectionToc {margin-left:2em;}
+.paragraphToc, .likeparagraphToc {margin-left:3em;}
+.subparagraphToc, .likesubparagraphToc {margin-left:4em;}
 figure.float, div.figure {margin-left: auto; margin-right: auto;}
 figure.figure {text-align:center;}
 figcaption.caption {text-indent:-2em; margin-left:3em; margin-right:1em; text-align:center;}
 figcaption.caption span.id{font-weight: bold; white-space: nowrap; }
 p + figcaption, img + figcaption{margin-top: 1em;}
+.thebibliography dl { display: grid; grid-auto-columns: min-content 1fr; grid-auto-flow: column; }
+.thebibliography dt { grid-column: 1; margin-bottom: 0.5em; }
 .abstract{margin:1em;}
 .rotatebox{display: inline-block;}
+code.minted-inline{font-family:monospace,monospace;}
 pre.fancyvrb {white-space: pre-wrap; margin:0em;font-family:monospace,monospace;}
-.framedenv{border: 1px solid black;}
-.uline{ text-decoration:underline; }
-.uuline{ text-decoration:underline; }
-span.sout {text-decoration: line-through }
-span.xout {text-decoration: line-through }
-span.uwave {text-decoration:underline }
-span#textcolor1{color:#808080}
+.uline,.uline-math{ text-decoration:underline; }
+.uuline,.uuline-math{ text-decoration:underline double; }
+span.sout, .sout-math {text-decoration: line-through }
+span.xout, .xout-math {text-decoration: line-through underline }
+span.uwave, .uwave-math {text-decoration:underline wavy; }
+span.dashuline, .dashuline-math {text-decoration:underline dashed;}
+span.dotuline, .dotuline-math {text-decoration:underline dotted;}
  body{ max-width: 18cm; margin: auto; display: flex; flex-direction: column; adjust-contenct: center; justify-content: center; font-size: 18pt; } 
  pre { font-size: 14pt; } 
  p { text-align: justify; line-height: 1.5; } 
  li { text-align: justify; line-height: 1.5; } 
  @media screen and (max-width: 1000px) { html { width: 100vw; } body { width: 95%; margin: auto; font-size: 12pt; } figure { max-width: 100%; overflow: scroll; } pre { font-size: 11pt; } } 
-span#textcolor2{color:#808080}
-span#textcolor3{color:rgb(0,127,0)}
-span#textcolor4{color:rgb(186,186,186)}
-span#textcolor5{color:rgb(186,186,186)}
-span#textcolor6{color:rgb(186,186,186)}
-span#textcolor7{color:rgb(186,186,186)}
-span#textcolor8{color:rgb(186,186,186)}
-span#textcolor9{color:rgb(186,186,186)}
-span#textcolor10{color:rgb(186,186,186)}
-span#textcolor11{color:rgb(101,101,101)}
-span#textcolor12{color:rgb(186,186,186)}
-span#textcolor13{color:rgb(61,122,122)}
-span#textcolor14{color:rgb(186,186,186)}
-span#textcolor15{color:rgb(186,186,186)}
-span#textcolor16{color:rgb(186,33,33)}
-span#textcolor17{color:rgb(175,0,63)}
-span#textcolor18{color:rgb(186,186,186)}
-span#textcolor19{color:rgb(101,101,101)}
-span#textcolor20{color:rgb(186,186,186)}
-span#textcolor21{color:rgb(0,0,255)}
-span#textcolor22{color:rgb(175,0,63)}
-span#textcolor23{color:rgb(186,186,186)}
-span#textcolor24{color:rgb(101,101,101)}
-span#textcolor25{color:rgb(186,186,186)}
-span#textcolor26{color:rgb(175,0,63)}
-span#textcolor27{color:rgb(186,186,186)}
-span#textcolor28{color:rgb(186,186,186)}
-span#textcolor29{color:rgb(101,101,101)}
-span#textcolor30{color:rgb(186,186,186)}
-span#textcolor31{color:rgb(186,186,186)}
-span#textcolor32{color:rgb(186,186,186)}
-span#textcolor33{color:rgb(175,0,63)}
-span#textcolor34{color:rgb(186,186,186)}
-span#textcolor35{color:rgb(186,186,186)}
-span#textcolor36{color:rgb(186,186,186)}
-span#textcolor37{color:rgb(186,186,186)}
-span#textcolor38{color:rgb(175,0,63)}
-span#textcolor39{color:rgb(186,186,186)}
-span#textcolor40{color:rgb(0,0,255)}
-span#textcolor41{color:rgb(175,0,63)}
-span#textcolor42{color:rgb(186,186,186)}
-span#textcolor43{color:rgb(101,101,101)}
-span#textcolor44{color:rgb(186,186,186)}
-span#textcolor45{color:rgb(175,0,63)}
-span#textcolor46{color:rgb(186,186,186)}
-span#textcolor47{color:rgb(186,186,186)}
-span#textcolor48{color:rgb(101,101,101)}
-span#textcolor49{color:rgb(186,186,186)}
-span#textcolor50{color:rgb(186,186,186)}
-span#textcolor51{color:rgb(186,186,186)}
-span#textcolor52{color:#808080}
-span#textcolor53{color:#808080}
-span#textcolor54{color:rgb(61,122,122)}
-span#textcolor55{color:rgb(0,127,0)}
-span#textcolor56{color:rgb(186,186,186)}
-span#textcolor57{color:rgb(175,0,63)}
-span#textcolor58{color:rgb(186,186,186)}
-span#textcolor59{color:rgb(186,186,186)}
-span#textcolor60{color:rgb(101,101,101)}
-span#textcolor61{color:rgb(186,186,186)}
-span#textcolor62{color:rgb(0,127,0)}
-span#textcolor63{color:rgb(186,186,186)}
-span#textcolor64{color:rgb(175,0,63)}
-span#textcolor65{color:rgb(186,186,186)}
-span#textcolor66{color:rgb(101,101,101)}
-span#textcolor67{color:rgb(186,186,186)}
-span#textcolor68{color:rgb(101,101,101)}
-span#textcolor69{color:rgb(186,186,186)}
-span#textcolor70{color:rgb(0,127,0)}
-span#textcolor71{color:rgb(186,33,33)}
-span#textcolor72{color:rgb(175,0,63)}
-span#textcolor73{color:rgb(186,186,186)}
-span#textcolor74{color:rgb(175,0,63)}
-span#textcolor75{color:rgb(186,186,186)}
-span#textcolor76{color:rgb(101,101,101)}
-span#textcolor77{color:rgb(186,186,186)}
-span#textcolor78{color:rgb(186,33,33)}
-span#textcolor79{color:rgb(170,91,30)}
-span#textcolor80{color:rgb(186,33,33)}
-span#textcolor81{color:rgb(186,186,186)}
-span#textcolor82{color:rgb(0,127,0)}
-span#textcolor83{color:rgb(186,186,186)}
-span#textcolor84{color:rgb(101,101,101)}
-span#textcolor85{color:rgb(186,186,186)}
-span#textcolor86{color:rgb(186,186,186)}
-span#textcolor87{color:rgb(186,186,186)}
-span#textcolor88{color:rgb(101,101,101)}
-span#textcolor89{color:rgb(186,186,186)}
-span#textcolor90{color:rgb(101,101,101)}
-span#textcolor91{color:rgb(186,186,186)}
-span#textcolor92{color:rgb(0,127,0)}
-span#textcolor93{color:rgb(186,186,186)}
-span#textcolor94{color:rgb(101,101,101)}
-span#textcolor95{color:rgb(186,186,186)}
-span#textcolor96{color:rgb(186,186,186)}
-span#textcolor97{color:rgb(101,101,101)}
-span#textcolor98{color:rgb(186,186,186)}
-span#textcolor99{color:rgb(0,127,0)}
-span#textcolor100{color:rgb(186,186,186)}
-span#textcolor101{color:rgb(186,186,186)}
-span#textcolor102{color:rgb(101,101,101)}
-span#textcolor103{color:rgb(186,186,186)}
-span#textcolor104{color:rgb(0,127,0)}
-span#textcolor105{color:rgb(186,186,186)}
-span#textcolor106{color:rgb(186,186,186)}
-span#textcolor107{color:rgb(186,33,33)}
-span#textcolor108{color:rgb(186,186,186)}
-span#textcolor109{color:rgb(0,127,0)}
-span#textcolor110{color:rgb(186,186,186)}
-span#textcolor111{color:rgb(101,101,101)}
-span#textcolor112{color:rgb(186,186,186)}
-span#textcolor113{color:rgb(186,186,186)}
-span#textcolor114{color:rgb(186,186,186)}
-span#textcolor115{color:rgb(101,101,101)}
-span#textcolor116{color:rgb(186,186,186)}
-span#textcolor117{color:rgb(0,127,0)}
-span#textcolor118{color:rgb(186,186,186)}
-span#textcolor119{color:rgb(186,186,186)}
-span#textcolor120{color:rgb(0,127,0)}
-span#textcolor121{color:rgb(186,186,186)}
-span#textcolor122{color:rgb(186,186,186)}
-span#textcolor123{color:rgb(101,101,101)}
-span#textcolor124{color:rgb(186,186,186)}
-span#textcolor125{color:rgb(0,127,0)}
-span#textcolor126{color:rgb(186,186,186)}
-span#textcolor127{color:rgb(186,186,186)}
-span#textcolor128{color:rgb(61,122,122)}
-span#textcolor129{color:rgb(186,186,186)}
-span#textcolor130{color:rgb(0,127,0)}
-span#textcolor131{color:rgb(186,186,186)}
-span#textcolor132{color:rgb(101,101,101)}
-span#textcolor133{color:rgb(186,186,186)}
-span#textcolor134{color:rgb(186,186,186)}
-span#textcolor135{color:rgb(186,186,186)}
-span#textcolor136{color:rgb(186,186,186)}
-span#textcolor137{color:rgb(101,101,101)}
-span#textcolor138{color:rgb(186,186,186)}
-span#textcolor139{color:rgb(101,101,101)}
-span#textcolor140{color:rgb(186,186,186)}
-span#textcolor141{color:rgb(186,186,186)}
-span#textcolor142{color:rgb(101,101,101)}
-span#textcolor143{color:rgb(186,186,186)}
-span#textcolor144{color:rgb(101,101,101)}
-span#textcolor145{color:rgb(186,186,186)}
-span#textcolor146{color:rgb(101,101,101)}
-span#textcolor147{color:rgb(186,186,186)}
-span#textcolor148{color:rgb(186,33,33)}
-span#textcolor149{color:rgb(170,91,30)}
-span#textcolor150{color:rgb(186,33,33)}
-span#textcolor151{color:rgb(186,186,186)}
-span#textcolor152{color:rgb(101,101,101)}
-span#textcolor153{color:rgb(186,186,186)}
-span#textcolor154{color:rgb(0,127,0)}
-span#textcolor155{color:rgb(186,186,186)}
-span#textcolor156{color:rgb(101,101,101)}
-span#textcolor157{color:rgb(61,122,122)}
-span#textcolor158{color:rgb(0,127,0)}
-span#textcolor159{color:rgb(186,186,186)}
-span#textcolor160{color:rgb(0,127,0)}
-span#textcolor161{color:rgb(186,186,186)}
-span#textcolor162{color:rgb(175,0,63)}
-span#textcolor163{color:rgb(186,186,186)}
-span#textcolor164{color:rgb(186,186,186)}
-span#textcolor165{color:rgb(101,101,101)}
-span#textcolor166{color:rgb(186,186,186)}
-span#textcolor167{color:rgb(101,101,101)}
-span#textcolor168{color:rgb(0,127,0)}
-span#textcolor169{color:rgb(186,186,186)}
-span#textcolor170{color:rgb(175,0,63)}
-span#textcolor171{color:rgb(186,186,186)}
-span#textcolor172{color:rgb(186,186,186)}
-span#textcolor173{color:rgb(101,101,101)}
-span#textcolor174{color:rgb(186,186,186)}
-span#textcolor175{color:rgb(101,101,101)}
-span#textcolor176{color:rgb(0,127,0)}
-span#textcolor177{color:rgb(186,186,186)}
-span#textcolor178{color:rgb(0,127,0)}
-span#textcolor179{color:rgb(186,186,186)}
-span#textcolor180{color:rgb(0,0,255)}
-span#textcolor181{color:rgb(186,186,186)}
-span#textcolor182{color:rgb(101,101,101)}
-span#textcolor183{color:rgb(186,186,186)}
-span#textcolor184{color:rgb(101,101,101)}
-span#textcolor185{color:rgb(186,186,186)}
-span#textcolor186{color:rgb(0,127,0)}
-span#textcolor187{color:rgb(175,0,63)}
-span#textcolor188{color:rgb(186,186,186)}
-span#textcolor189{color:rgb(0,0,255)}
-span#textcolor190{color:rgb(175,0,63)}
-span#textcolor191{color:rgb(186,186,186)}
-span#textcolor192{color:rgb(186,186,186)}
-span#textcolor193{color:rgb(175,0,63)}
-span#textcolor194{color:rgb(186,186,186)}
-span#textcolor195{color:rgb(101,101,101)}
-span#textcolor196{color:rgb(186,186,186)}
-span#textcolor197{color:rgb(101,101,101)}
-span#textcolor198{color:rgb(186,186,186)}
-span#textcolor199{color:rgb(0,127,0)}
-span#textcolor200{color:rgb(186,186,186)}
-span#textcolor201{color:rgb(101,101,101)}
-span#textcolor202{color:rgb(186,186,186)}
-span#textcolor203{color:rgb(186,186,186)}
-span#textcolor204{color:rgb(186,186,186)}
-span#textcolor205{color:rgb(186,33,33)}
-span#textcolor206{color:rgb(170,91,30)}
-span#textcolor207{color:rgb(186,33,33)}
-span#textcolor208{color:rgb(186,186,186)}
-span#textcolor209{color:rgb(0,127,0)}
-span#textcolor210{color:rgb(186,186,186)}
-span#textcolor211{color:rgb(61,122,122)}
-span#textcolor212{color:rgb(101,101,101)}
-span#textcolor213{color:rgb(186,186,186)}
-span#textcolor214{color:rgb(0,127,0)}
-span#textcolor215{color:rgb(186,186,186)}
-span#textcolor216{color:rgb(186,186,186)}
-span#textcolor217{color:rgb(186,186,186)}
-span#textcolor218{color:rgb(186,186,186)}
-span#textcolor219{color:rgb(186,33,33)}
-span#textcolor220{color:rgb(170,91,30)}
-span#textcolor221{color:rgb(186,33,33)}
-span#textcolor222{color:rgb(186,186,186)}
-span#textcolor223{color:rgb(0,127,0)}
-span#textcolor224{color:rgb(186,186,186)}
-span#textcolor225{color:rgb(186,186,186)}
-span#textcolor226{color:rgb(101,101,101)}
-span#textcolor227{color:rgb(186,186,186)}
-span#textcolor228{color:rgb(101,101,101)}
-span#textcolor229{color:rgb(61,122,122)}
-span#textcolor230{color:rgb(101,101,101)}
-span#textcolor231{color:rgb(61,122,122)}
-span#textcolor232{color:rgb(186,186,186)}
-span#textcolor233{color:rgb(101,101,101)}
-span#textcolor234{color:rgb(186,186,186)}
-span#textcolor235{color:rgb(101,101,101)}
-span#textcolor236{color:rgb(186,186,186)}
-span#textcolor237{color:rgb(186,186,186)}
-span#textcolor238{color:rgb(186,186,186)}
-span#textcolor239{color:rgb(186,33,33)}
-span#textcolor240{color:rgb(170,91,30)}
-span#textcolor241{color:rgb(186,33,33)}
-span#textcolor242{color:rgb(186,33,33)}
-span#textcolor243{color:rgb(170,91,30)}
-span#textcolor244{color:rgb(186,33,33)}
-span#textcolor245{color:rgb(186,33,33)}
-span#textcolor246{color:rgb(170,91,30)}
-span#textcolor247{color:rgb(186,33,33)}
-span#textcolor248{color:rgb(170,91,30)}
-span#textcolor249{color:rgb(186,33,33)}
-span#textcolor250{color:rgb(0,127,0)}
-span#textcolor251{color:rgb(186,186,186)}
-span#textcolor252{color:rgb(186,186,186)}
-span#textcolor253{color:rgb(186,186,186)}
-span#textcolor254{color:rgb(186,186,186)}
-span#textcolor255{color:rgb(186,33,33)}
-span#textcolor256{color:rgb(170,91,30)}
-span#textcolor257{color:rgb(186,33,33)}
-span#textcolor258{color:rgb(0,127,0)}
-span#textcolor259{color:rgb(186,186,186)}
-span#textcolor260{color:rgb(101,101,101)}
-span#textcolor261{color:rgb(186,186,186)}
-span#textcolor262{color:rgb(101,101,101)}
-span#textcolor263{color:rgb(186,186,186)}
-span#textcolor264{color:rgb(101,101,101)}
-span#textcolor265{color:rgb(186,186,186)}
-span#textcolor266{color:rgb(101,101,101)}
-span#textcolor267{color:rgb(101,101,101)}
-span#textcolor268{color:rgb(0,127,0)}
-span#textcolor269{color:rgb(186,186,186)}
-span#textcolor270{color:rgb(186,186,186)}
-span#textcolor271{color:rgb(101,101,101)}
-span#textcolor272{color:rgb(186,186,186)}
-span#textcolor273{color:rgb(0,127,0)}
-span#textcolor274{color:rgb(186,186,186)}
-span#textcolor275{color:rgb(186,186,186)}
-span#textcolor276{color:rgb(186,33,33)}
-span#textcolor277{color:rgb(170,91,30)}
-span#textcolor278{color:rgb(186,33,33)}
-span#textcolor279{color:rgb(186,186,186)}
-span#textcolor280{color:rgb(0,127,0)}
-span#textcolor281{color:rgb(186,33,33)}
-span#textcolor282{color:rgb(170,91,30)}
-span#textcolor283{color:rgb(186,33,33)}
-span#textcolor284{color:rgb(186,186,186)}
-span#textcolor285{color:rgb(101,101,101)}
-span#textcolor286{color:rgb(61,122,122)}
-span#textcolor287{color:rgb(186,186,186)}
-span#textcolor288{color:rgb(175,0,63)}
-span#textcolor289{color:rgb(186,186,186)}
-span#textcolor290{color:rgb(101,101,101)}
-span#textcolor291{color:rgb(186,186,186)}
-span#textcolor292{color:rgb(101,101,101)}
-span#textcolor293{color:rgb(186,186,186)}
-span#textcolor294{color:rgb(0,127,0)}
-span#textcolor295{color:rgb(61,122,122)}
-span#textcolor296{color:rgb(175,0,63)}
-span#textcolor297{color:rgb(186,186,186)}
-span#textcolor298{color:rgb(0,0,255)}
-span#textcolor299{color:rgb(175,0,63)}
-span#textcolor300{color:rgb(186,186,186)}
-span#textcolor301{color:rgb(101,101,101)}
-span#textcolor302{color:rgb(186,186,186)}
-span#textcolor303{color:rgb(186,33,33)}
-span#textcolor304{color:rgb(175,0,63)}
-span#textcolor305{color:rgb(186,186,186)}
-span#textcolor306{color:rgb(175,0,63)}
-span#textcolor307{color:rgb(186,186,186)}
-span#textcolor308{color:rgb(101,101,101)}
-span#textcolor309{color:rgb(186,186,186)}
-span#textcolor310{color:rgb(101,101,101)}
-span#textcolor311{color:rgb(186,186,186)}
-span#textcolor312{color:rgb(0,127,0)}
-span#textcolor313{color:rgb(186,186,186)}
-span#textcolor314{color:rgb(186,186,186)}
-span#textcolor315{color:rgb(101,101,101)}
-span#textcolor316{color:rgb(186,186,186)}
-span#textcolor317{color:rgb(0,127,0)}
-span#textcolor318{color:rgb(186,186,186)}
-span#textcolor319{color:rgb(186,186,186)}
-span#textcolor320{color:rgb(186,33,33)}
-span#textcolor321{color:rgb(170,91,30)}
-span#textcolor322{color:rgb(186,33,33)}
-span#textcolor323{color:rgb(186,186,186)}
-span#textcolor324{color:rgb(0,127,0)}
-span#textcolor325{color:rgb(186,186,186)}
-span#textcolor326{color:rgb(101,101,101)}
-span#textcolor327{color:rgb(186,186,186)}
-span#textcolor328{color:rgb(186,186,186)}
-span#textcolor329{color:rgb(186,186,186)}
-span#textcolor330{color:rgb(186,186,186)}
-span#textcolor331{color:rgb(101,101,101)}
-span#textcolor332{color:rgb(186,186,186)}
-span#textcolor333{color:rgb(101,101,101)}
-span#textcolor334{color:rgb(186,186,186)}
-span#textcolor335{color:rgb(186,186,186)}
-span#textcolor336{color:rgb(186,33,33)}
-span#textcolor337{color:rgb(170,91,30)}
-span#textcolor338{color:rgb(186,33,33)}
-span#textcolor339{color:rgb(186,186,186)}
-span#textcolor340{color:rgb(101,101,101)}
-span#textcolor341{color:rgb(186,186,186)}
-span#textcolor342{color:rgb(101,101,101)}
-span#textcolor343{color:rgb(186,186,186)}
-span#textcolor344{color:rgb(101,101,101)}
-span#textcolor345{color:rgb(186,186,186)}
-span#textcolor346{color:rgb(101,101,101)}
-span#textcolor347{color:rgb(186,186,186)}
-span#textcolor348{color:rgb(0,127,0)}
-span#textcolor349{color:rgb(186,186,186)}
-span#textcolor350{color:rgb(101,101,101)}
-span#textcolor351{color:rgb(175,0,63)}
-span#textcolor352{color:rgb(186,186,186)}
-span#textcolor353{color:rgb(186,186,186)}
-span#textcolor354{color:rgb(101,101,101)}
-span#textcolor355{color:rgb(186,186,186)}
-span#textcolor356{color:rgb(101,101,101)}
-span#textcolor357{color:rgb(101,101,101)}
-span#textcolor358{color:rgb(186,186,186)}
-span#textcolor359{color:rgb(61,122,122)}
-span#textcolor360{color:rgb(101,101,101)}
-span#textcolor361{color:rgb(101,101,101)}
-span#textcolor362{color:rgb(186,186,186)}
-span#textcolor363{color:rgb(101,101,101)}
-span#textcolor364{color:rgb(186,186,186)}
-span#textcolor365{color:rgb(101,101,101)}
-span#textcolor366{color:rgb(101,101,101)}
-span#textcolor367{color:rgb(186,186,186)}
-span#textcolor368{color:rgb(186,186,186)}
-span#textcolor369{color:rgb(186,186,186)}
-span#textcolor370{color:rgb(186,186,186)}
-span#textcolor371{color:rgb(186,186,186)}
-span#textcolor372{color:rgb(186,186,186)}
-span#textcolor373{color:rgb(186,186,186)}
-span#textcolor374{color:rgb(186,186,186)}
-span#textcolor375{color:rgb(186,186,186)}
-span#textcolor376{color:rgb(186,186,186)}
-span#textcolor377{color:rgb(186,186,186)}
-span#textcolor378{color:rgb(186,186,186)}
-span#textcolor379{color:rgb(186,186,186)}
-span#textcolor380{color:#808080}
 /* end css.sty */
 

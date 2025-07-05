@@ -16,9 +16,9 @@
                                                                   
 
 <h2 class='titleHead'>eBPF Arena: A Tutorial</h2>
-<div class='author'><span class='cmr-12'>Farbod Shahinfar</span></div><br />
-<div class='date'><span class='cmr-12'>March 1, 2025</span></div>
-   </div> <p><span id='textcolor1'><span class='cmr-9'>Estimated reading time: 10 minutes</span></span></p>
+ <div class='author'><span class='cmr-12'>Farbod Shahinfar</span></div><br />
+<div class='date'><span class='cmr-12'>July 5, 2025</span></div>
+   </div> <p><span style='color:#808080;'><span class='cmr-9'>Estimated reading time: 10 minutes</span></span>
                                                                   
 
                                                                   
@@ -29,12 +29,13 @@
                                                                   
 
                                                                   
-<!-- l. 19 --><p class='indent'>   As part of my research, I spend time learning about eBPF. Recently, I have been
+<!-- l. 19 --></p><p class='indent'>   As part of my research, I spend time learning about eBPF. Recently, I have been
 busy exploring <span class='cmti-10'>Arena </span>— a new eBPF API that enables programs to allocate memory
-pages; similar functionality as <span class='cmtt-10'>mmap </span>and <span class='cmtt-10'>munmap</span> <span class='cite'>[<a href='#Xarenapatch'>12</a>]</span>.
+pages; similar functionality as <span class='cmtt-10'>mmap </span>and <span class='cmtt-10'>munmap</span> <span class='cite'>[<a href='#Xarenapatch'>13</a>]</span>.
 </p><!-- l. 24 --><p class='indent'>   The eBPF community is doing a great job documenting the system and
 writing tutorials. I felt I could contribute to this effort by writing about
 Arena.
+   
 </p>
    <h3 class='sectionHead' id='introduction'><span class='titlemark'>1   </span> <a id='x1-10001'></a>Introduction</h3>
 <!-- l. 35 --><p class='noindent'>The Arena is a new MAP type (<span class='cmtt-10'>BPF_MAP_TYPE_ARENA</span>) available to eBPF programs
@@ -43,7 +44,7 @@ data-structure MAPs (e.g., hash, array, bloom, stack, …) Arena provides a dire
 access to the kernel memory instead of abstracting it away. It increases the programs
 expressivity and enables them to implement their own data-structures on-demand
 (e.g, a specific type of tree).
-</p><!-- l. 43 --><p class='indent'>   Three use-cases have been named for the Arena in the introduction message <span class='cite'>[<a href='#Xarenapatch'>12</a>]</span>
+</p><!-- l. 43 --><p class='indent'>   Three use-cases have been named for the Arena in the introduction message <span class='cite'>[<a href='#Xarenapatch'>13</a>]</span>
 sent along its patch to the Linux mailing list. I summarize them below:
 </p>
      <ul class='itemize1'>
@@ -64,18 +65,17 @@ the operations to lookup and update.
 </p><!-- l. 61 --><p class='indent'>   In this tutorial, I explore Arena’s API, and provide some examples using it. I
 hope this document helps others explore Arena and facilitate its development. The
 example codes in this text are shared with you at <a href='https://github.com/bpf-endeavor/ebpf-arena-tutorial' target='_blank'>this GitHub repository</a>. I’ve only
-shared excerpts from the codes — The parts I thought was important. You may find
-and read the full examples in the repository.
                                                                   
 
                                                                   
-</p><!-- l. 69 --><p class='noindent'>
+shared excerpts from the codes — The parts I thought was important. You may find
+and read the full examples in the repository.
+   
 </p>
    <h3 class='sectionHead' id='arenas-api'><span class='titlemark'>2   </span> <a id='x1-20002'></a>Arena’s API</h3>
-<!-- l. 71 --><p class='noindent'>
-</p>
+   
    <h4 class='subsectionHead' id='declare-a-map'><span class='titlemark'>2.1   </span> <a id='x1-30002.1'></a>Declare a MAP</h4>
-<!-- l. 72 --><p class='noindent'>A program can declare the Arena MAP similar to other MAPs. See Listing <a href='#-example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a> for an
+<!-- l. 72 --><p class='noindent'>A program can declare the Arena MAP similar to other MAPs. See Listing <a href='#example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a> for an
 example. Here are some notes to keep in mind. The key size and value sizes must be
 zero. The “<span class='cmtt-10'>max_entries</span>” field defines the maximum number of pages for the map,
 and must be non-zero. As any other map, the maximum size is limited to 4 GB. At
@@ -92,24 +92,25 @@ the time of writing this text, Arena map declaration supports three flags <span
      <li class='itemize'><span class='cmtt-10'>BPF_F_NO_USER_CONV</span>: The memory region is private to the eBPF program
      and user-space program will not access it. This allows the JIT to perform
      optimizations avoiding address space casting (more about it later).</li></ul>
-<!-- l. 89 --><p class='noindent'><span id='textcolor2'>note: The <span class='cmitt-10'>BPF_F_MMAPABLE </span>must always be present.</span>
+<!-- l. 89 --><p class='noindent'><span style='color:#808080;'>note: The <span class='cmitt-10'>BPF_F_MMAPABLE </span>must always be present.</span>
                                                                   
 
                                                                   
-</p><!-- l. 93 --><p class='noindent' id='-example-of-using-arena-map'><a id='x1-3016r1'></a></p><figure class='float'>
+</p><!-- l. 93 --><p class='noindent' id='example-of-using-arena-map'><a id='x1-3016r1'></a></p><figure class='float'>
                                                                   
 
                                                                   
-<pre class='fancyvrb' id='fancyvrb1'><a id='x1-3007r1'></a><span id='textcolor3'><span class='cmtt-10'>struct</span></span><span id='textcolor4'><span class='cmtt-10'> </span></span><span class='cmtt-10'>{</span> 
-<a id='x1-3009r2'></a><span id='textcolor5'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>__uint(type,</span><span id='textcolor6'><span class='cmtt-10'> </span></span><span class='cmtt-10'>BPF_MAP_TYPE_ARENA);</span> 
-<a id='x1-3011r3'></a><span id='textcolor7'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>__uint(map_flags,</span><span id='textcolor8'><span class='cmtt-10'> </span></span><span class='cmtt-10'>BPF_F_MMAPABLE);</span> 
-<a id='x1-3013r4'></a><span id='textcolor9'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>__uint(max_entries,</span><span id='textcolor10'><span class='cmtt-10'> </span></span><span id='textcolor11'><span class='cmtt-10'>2</span></span><span class='cmtt-10'>);</span><span id='textcolor12'><span class='cmtt-10'> </span></span><span id='textcolor13'><span class='cmitt-10'>/* number of pages */</span></span> 
-<a id='x1-3015r5'></a><span class='cmtt-10'>}</span><span id='textcolor14'><span class='cmtt-10'> </span></span><span class='cmtt-10'>arena</span><span id='textcolor15'><span class='cmtt-10'> </span></span><span class='cmtt-10'>SEC(</span><span id='textcolor16'><span class='cmtt-10'>".maps"</span></span><span class='cmtt-10'>);</span></pre>
-<figcaption class='caption'><span class='id'>Listing 1:</span><span class='content'>Example of using Arena map.</span></figcaption><!-- tex4ht:label?: x1-3016r1  -->
+<pre class='fancyvrb' id='fancyvrb1'><a id='x1-3007r1'></a><span style='color:#008000;'><span class='cmtt-10'>struct</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>{</span> 
+<a id='x1-3009r2'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>__uint(type,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>BPF_MAP_TYPE_ARENA);</span> 
+<a id='x1-3011r3'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>__uint(map_flags,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>BPF_F_MMAPABLE);</span> 
+<a id='x1-3013r4'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>__uint(max_entries,</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>2</span></span><span class='cmtt-10'>);</span><span style='color:#BABABA;'> </span><span style='color:#3D7A7A;'><span class='cmitt-10'>/* number of pages */</span></span> 
+<a id='x1-3015r5'></a><span class='cmtt-10'>}</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>arena</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>SEC(</span><span style='color:#BA2121;'><span class='cmtt-10'>".maps"</span></span><span class='cmtt-10'>);</span></pre>
+<figcaption class='caption'><span class='id'>Listing 1: </span><span class='content'>Example of using Arena map.</span></figcaption><!-- tex4ht:label?: x1-3016r1  -->
                                                                   
 
                                                                   
 </figure>
+
 <h4 class='subsectionHead' id='helper-functions'><span class='titlemark'>2.2   </span> <a id='x1-40002.2'></a>Helper functions</h4>
 <!-- l. 105 --><p class='noindent'>Normal eBPF MAP helpers such as “<span class='cmtt-10'>bpf_map_lookup_elem</span>” are not defined for
 Arena <span class='cite'>[<a href='#Xarena_source'>5</a>]</span>. Instead the following pair of functions are available: </p>
@@ -123,15 +124,15 @@ functions.
                                                                   
 
                                                                   
-</p><!-- l. 117 --><p class='noindent' id='-functions-operating-on-arena-map'><a id='x1-4013r2'></a></p><figure class='float'>
+</p><!-- l. 117 --><p class='noindent' id='functions-operating-on-arena-map'><a id='x1-4013r2'></a></p><figure class='float'>
                                                                   
 
                                                                   
-<pre class='fancyvrb' id='fancyvrb2'><a id='x1-4006r1'></a><span id='textcolor17'><span class='cmtt-10'>void</span></span><span id='textcolor18'><span class='cmtt-10'> </span></span><span class='cmtt-10'>__arena</span><span id='textcolor19'><span class='cmtt-10'>*</span></span><span id='textcolor20'><span class='cmtt-10'> </span></span><span id='textcolor21'><span class='cmtt-10'>bpf_arena_alloc_pages</span></span><span class='cmtt-10'>(</span><span id='textcolor22'><span class='cmtt-10'>void</span></span><span id='textcolor23'><span class='cmtt-10'> </span></span><span id='textcolor24'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>map,</span><span id='textcolor25'><span class='cmtt-10'> </span></span><span id='textcolor26'><span class='cmtt-10'>void</span></span><span id='textcolor27'><span class='cmtt-10'> </span></span><span class='cmtt-10'>__arena</span><span id='textcolor28'><span class='cmtt-10'> </span></span><span id='textcolor29'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>addr,</span> 
-<a id='x1-4008r2'></a><span id='textcolor30'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>__u32</span><span id='textcolor31'><span class='cmtt-10'> </span></span><span class='cmtt-10'>page_cnt,</span><span id='textcolor32'><span class='cmtt-10'> </span></span><span id='textcolor33'><span class='cmtt-10'>int</span></span><span id='textcolor34'><span class='cmtt-10'> </span></span><span class='cmtt-10'>node_id,</span><span id='textcolor35'><span class='cmtt-10'> </span></span><span class='cmtt-10'>__u64</span><span id='textcolor36'><span class='cmtt-10'> </span></span><span class='cmtt-10'>flags)</span><span id='textcolor37'><span class='cmtt-10'> </span></span><span class='cmtt-10'>__ksym;</span> 
-<a id='x1-4010r3'></a><span id='textcolor38'><span class='cmtt-10'>void</span></span><span id='textcolor39'><span class='cmtt-10'> </span></span><span id='textcolor40'><span class='cmtt-10'>bpf_arena_free_pages</span></span><span class='cmtt-10'>(</span><span id='textcolor41'><span class='cmtt-10'>void</span></span><span id='textcolor42'><span class='cmtt-10'> </span></span><span id='textcolor43'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>map,</span><span id='textcolor44'><span class='cmtt-10'> </span></span><span id='textcolor45'><span class='cmtt-10'>void</span></span><span id='textcolor46'><span class='cmtt-10'> </span></span><span class='cmtt-10'>__arena</span><span id='textcolor47'><span class='cmtt-10'> </span></span><span id='textcolor48'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>ptr,</span> 
-<a id='x1-4012r4'></a><span id='textcolor49'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>__u32</span><span id='textcolor50'><span class='cmtt-10'> </span></span><span class='cmtt-10'>page_cnt)</span><span id='textcolor51'><span class='cmtt-10'> </span></span><span class='cmtt-10'>__ksym;</span></pre>
-<figcaption class='caption'><span class='id'>Listing 2:</span><span class='content'>Functions operating on Arena MAP.</span></figcaption><!-- tex4ht:label?: x1-4013r2  -->
+<pre class='fancyvrb' id='fancyvrb2'><a id='x1-4006r1'></a><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>__arena</span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span style='color:#BABABA;'> </span><span style='color:#0000FF;'><span class='cmtt-10'>bpf_arena_alloc_pages</span></span><span class='cmtt-10'>(</span><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>map,</span><span style='color:#BABABA;'> </span><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>__arena</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>addr,</span> 
+<a id='x1-4008r2'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>__u32</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>page_cnt,</span><span style='color:#BABABA;'> </span><span style='color:#B00040;'><span class='cmtt-10'>int</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>node_id,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>__u64</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>flags)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>__ksym;</span> 
+<a id='x1-4010r3'></a><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span style='color:#0000FF;'><span class='cmtt-10'>bpf_arena_free_pages</span></span><span class='cmtt-10'>(</span><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>map,</span><span style='color:#BABABA;'> </span><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>__arena</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>ptr,</span> 
+<a id='x1-4012r4'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>__u32</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>page_cnt)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>__ksym;</span></pre>
+<figcaption class='caption'><span class='id'>Listing 2: </span><span class='content'>Functions operating on Arena MAP.</span></figcaption><!-- tex4ht:label?: x1-4013r2  -->
                                                                   
 
                                                                   
@@ -139,11 +140,12 @@ functions.
 <!-- l. 127 --><p class='noindent'>Calling these functions may put the thread to sleep. For this reason the functions
 are marked with <span class='cmtt-10'>KF_SLEEPABLE</span> <span class='cite'>[<a href='#Xarena_source'>5</a>]</span>, and the verifier only allows sleepable
 eBPF programs to use them. An eBPF program has sleeping privilege if the
-<span class='cmtt-10'>BPF_F_SLEEPABLE </span>flag was set when loading it (see Listing <a href='#-user-space-program-loading-the-program'>4<!-- tex4ht:ref: lst:loader  --></a> for an example). Not all
+<span class='cmtt-10'>BPF_F_SLEEPABLE </span>flag was set when loading it (see Listing <a href='#user-space-program-loading-the-program'>4<!-- tex4ht:ref: lst:loader  --></a> for an example). Not all
 eBPF hooks support this flag. A list of sleepable hooks are provided in libbpf
 documentations <span class='cite'>[<a href='#Xlibbpf_sleepable'>9</a>]</span>.
-</p><!-- l. 136 --><p class='noindent'><span id='textcolor52'>note: The memory pages allocated use the following flags: <span class='cmitt-10'>GFP_KERNEL</span>, <span class='cmitt-10'>__GFP_ZERO</span>,
+</p><!-- l. 136 --><p class='noindent'><span style='color:#808080;'>note: The memory pages allocated use the following flags: <span class='cmitt-10'>GFP_KERNEL</span>, <span class='cmitt-10'>__GFP_ZERO</span>,
 <span class='cmitt-10'>__GFP_ACCOUNT</span>.</span>
+
 </p>
 <h4 class='subsectionHead' id='managing-two-address-spaces'><span class='titlemark'>2.3   </span> <a id='x1-50002.3'></a>Managing two address spaces</h4>
 <!-- l. 140 --><p class='noindent'>Clang compiler, the verifier, the JIT, and the runtime all work together to make sure
@@ -155,12 +157,12 @@ know about it and cause the generation of “<span class='cmtt-10'>bpf_arena_cas
 instructions. The “<span class='cmtt-10'>__arena</span>” tag used in the examples (and the accompanying
 repository), especially when declaring variables and parameters, serves this
 purpose.
-</p><!-- l. 153 --><p class='noindent'>
+
 </p>
 <h3 class='sectionHead' id='examples'><span class='titlemark'>3   </span> <a id='x1-60003'></a>Examples</h3>
 <!-- l. 155 --><p class='noindent'>I try to demonstrate how these APIs can be used to implement the use-cases named
 above.
-</p><!-- l. 158 --><p class='noindent'>
+
 </p>
 <h4 class='subsectionHead' id='memory-shared-among-ebpf-and-userspace'><span class='titlemark'>3.1   </span> <a id='x1-70003.1'></a>Memory shared among eBPF and user-space</h4>
 <!-- l. 160 --><p class='noindent'>As a first step, let us demonstrate how to share a counter between an eBPF and an
@@ -168,101 +170,101 @@ user-space program. For the sake of example, I used an eBPF program of type
 <span class='cmtt-10'>BPF_PROT_TYPE_SYSCALL</span> <span class='cite'>[<a href='#Xebpf_docs_prog_syscall'>11</a>]</span> which does not need to be attached to a hook and
 can simply be invoked using a system call (for more information search for
 <span class='cmtt-10'>BPF_PROG_TEST_RUN</span> <span class='cite'>[<a href='#Xebpf_docs_bpf_prog_run'>10</a>]</span>).
-</p><!-- l. 166 --><p class='noindent'>Listing <a href='#-an-ebpf-program-using-arena'>3<!-- tex4ht:ref: lst:mogu  --></a> shows the code for the example program. In this program, a global variable
+</p><!-- l. 166 --><p class='noindent'>Listing <a href='#an-ebpf-program-using-arena'>3<!-- tex4ht:ref: lst:mogu  --></a> shows the code for the example program. In this program, a global variable
 (“<span class='cmtt-10'>flag_initialized</span>”) tracks whether it is the first time the program is executed or
 not. In the first run, a page is allocated (using “<span class='cmtt-10'>bpf_arena_alloc_pages</span>”) and its
 address is kept in “<span class='cmtt-10'>mem</span>” global variable. The allocated memory will hold a counter
+                                                                  
+
+                                                                  
 keeping the number of invocations.
+</p><!-- l. 174 --><p class='noindent'><span style='color:#808080;'>note: The global variable support is available since kernel version 5.2 <span class='cite'>[<a href='#Xglb_var_post'>1</a>]</span>.</span>
                                                                   
 
                                                                   
-</p><!-- l. 174 --><p class='noindent'><span id='textcolor53'>note: The global variable support is available since kernel version 5.2 <span class='cite'>[<a href='#Xglb_var_post'>1</a>]</span>.</span>
+</p><!-- l. 177 --><p class='noindent' id='an-ebpf-program-using-arena'><a id='x1-7073r3'></a></p><figure class='float'>
                                                                   
 
                                                                   
-</p><!-- l. 177 --><p class='noindent' id='-an-ebpf-program-using-arena'><a id='x1-7073r3'></a></p><figure class='float'>
-                                                                  
-
-                                                                  
-<pre class='fancyvrb' id='fancyvrb3'><a id='x1-7026r1'></a><span id='textcolor54'><span class='cmitt-10'>/* Declaration of Arena MAP as in Listing 1 ... */</span></span> 
-<a id='x1-7028r2'></a><span id='textcolor55'><span class='cmtt-10'>static</span></span><span id='textcolor56'><span class='cmtt-10'> </span></span><span id='textcolor57'><span class='cmtt-10'>bool</span></span><span id='textcolor58'><span class='cmtt-10'> </span></span><span class='cmtt-10'>flag_initialized</span><span id='textcolor59'><span class='cmtt-10'> </span></span><span id='textcolor60'><span class='cmtt-10'>=</span></span><span id='textcolor61'><span class='cmtt-10'> </span></span><span id='textcolor62'><span class='cmtt-10'>false</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-7030r3'></a><span class='cmtt-10'>__arena</span><span id='textcolor63'><span class='cmtt-10'> </span></span><span id='textcolor64'><span class='cmtt-10'>void</span></span><span id='textcolor65'><span class='cmtt-10'> </span></span><span id='textcolor66'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>mem</span><span id='textcolor67'><span class='cmtt-10'> </span></span><span id='textcolor68'><span class='cmtt-10'>=</span></span><span id='textcolor69'><span class='cmtt-10'> </span></span><span id='textcolor70'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-7032r4'></a><span class='cmtt-10'>SEC(</span><span id='textcolor71'><span class='cmtt-10'>"syscall"</span></span><span class='cmtt-10'>)</span> 
-<a id='x1-7034r5'></a><span id='textcolor72'><span class='cmtt-10'>int</span></span><span id='textcolor73'><span class='cmtt-10'> </span></span><span class='cmtt-10'>mogu(</span><span id='textcolor74'><span class='cmtt-10'>void</span></span><span id='textcolor75'><span class='cmtt-10'> </span></span><span id='textcolor76'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>_)</span> 
+<pre class='fancyvrb' id='fancyvrb3'><a id='x1-7026r1'></a><span style='color:#3D7A7A;'><span class='cmitt-10'>/* Declaration of Arena MAP as in Listing 1 ... */</span></span> 
+<a id='x1-7028r2'></a><span style='color:#008000;'><span class='cmtt-10'>static</span></span><span style='color:#BABABA;'> </span><span style='color:#B00040;'><span class='cmtt-10'>bool</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>flag_initialized</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>false</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7030r3'></a><span class='cmtt-10'>__arena</span><span style='color:#BABABA;'> </span><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>mem</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7032r4'></a><span class='cmtt-10'>SEC(</span><span style='color:#BA2121;'><span class='cmtt-10'>"syscall"</span></span><span class='cmtt-10'>)</span> 
+<a id='x1-7034r5'></a><span style='color:#B00040;'><span class='cmtt-10'>int</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>mogu(</span><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>_)</span> 
 <a id='x1-7036r6'></a><span class='cmtt-10'>{</span> 
-<a id='x1-7038r7'></a><span id='textcolor77'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>bpf_printk(</span><span id='textcolor78'><span class='cmtt-10'>"mogu: hello</span></span><span id='textcolor79'><span class='cmtt-10'>\n</span></span><span id='textcolor80'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-7040r8'></a><span id='textcolor81'><span class='cmtt-10'>    </span></span><span id='textcolor82'><span class='cmtt-10'>if</span></span><span id='textcolor83'><span class='cmtt-10'> </span></span><span class='cmtt-10'>(</span><span id='textcolor84'><span class='cmtt-10'>!</span></span><span class='cmtt-10'>flag_initialized)</span><span id='textcolor85'><span class='cmtt-10'> </span></span><span class='cmtt-10'>{</span> 
-<a id='x1-7042r9'></a><span id='textcolor86'><span class='cmtt-10'>        </span></span><span class='cmtt-10'>mem</span><span id='textcolor87'><span class='cmtt-10'> </span></span><span id='textcolor88'><span class='cmtt-10'>=</span></span><span id='textcolor89'><span class='cmtt-10'> </span></span><span class='cmtt-10'>bpf_arena_alloc_pages(</span><span id='textcolor90'><span class='cmtt-10'>&amp;</span></span><span class='cmtt-10'>arena,</span><span id='textcolor91'><span class='cmtt-10'> </span></span><span id='textcolor92'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>,</span><span id='textcolor93'><span class='cmtt-10'> </span></span><span id='textcolor94'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>,</span><span id='textcolor95'><span class='cmtt-10'> </span></span><span class='cmtt-10'>NUMA_NO_NODE,</span><span id='textcolor96'><span class='cmtt-10'> </span></span><span id='textcolor97'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-7044r10'></a><span id='textcolor98'><span class='cmtt-10'>        </span></span><span id='textcolor99'><span class='cmtt-10'>if</span></span><span id='textcolor100'><span class='cmtt-10'> </span></span><span class='cmtt-10'>(mem</span><span id='textcolor101'><span class='cmtt-10'> </span></span><span id='textcolor102'><span class='cmtt-10'>==</span></span><span id='textcolor103'><span class='cmtt-10'> </span></span><span id='textcolor104'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>)</span><span id='textcolor105'><span class='cmtt-10'> </span></span><span class='cmtt-10'>{</span> 
-<a id='x1-7046r11'></a><span id='textcolor106'><span class='cmtt-10'>            </span></span><span class='cmtt-10'>bpf_printk(</span><span id='textcolor107'><span class='cmtt-10'>"Failed to allocate memory"</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-7048r12'></a><span id='textcolor108'><span class='cmtt-10'>            </span></span><span id='textcolor109'><span class='cmtt-10'>return</span></span><span id='textcolor110'><span class='cmtt-10'> </span></span><span id='textcolor111'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-7050r13'></a><span id='textcolor112'><span class='cmtt-10'>        </span></span><span class='cmtt-10'>}</span> 
-<a id='x1-7052r14'></a><span id='textcolor113'><span class='cmtt-10'>        </span></span><span class='cmtt-10'>flag_initialized</span><span id='textcolor114'><span class='cmtt-10'> </span></span><span id='textcolor115'><span class='cmtt-10'>=</span></span><span id='textcolor116'><span class='cmtt-10'> </span></span><span id='textcolor117'><span class='cmtt-10'>true</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-7054r15'></a><span id='textcolor118'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>}</span> 
-<a id='x1-7056r16'></a><span id='textcolor119'><span class='cmtt-10'>    </span></span><span id='textcolor120'><span class='cmtt-10'>if</span></span><span id='textcolor121'><span class='cmtt-10'> </span></span><span class='cmtt-10'>(mem</span><span id='textcolor122'><span class='cmtt-10'> </span></span><span id='textcolor123'><span class='cmtt-10'>==</span></span><span id='textcolor124'><span class='cmtt-10'> </span></span><span id='textcolor125'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>)</span><span id='textcolor126'><span class='cmtt-10'> </span></span><span class='cmtt-10'>{</span> 
-<a id='x1-7058r17'></a><span id='textcolor127'><span class='cmtt-10'>        </span></span><span id='textcolor128'><span class='cmitt-10'>/* this branch must never happen! */</span></span> 
-<a id='x1-7060r18'></a><span id='textcolor129'><span class='cmtt-10'>        </span></span><span id='textcolor130'><span class='cmtt-10'>return</span></span><span id='textcolor131'><span class='cmtt-10'> </span></span><span id='textcolor132'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-7062r19'></a><span id='textcolor133'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>}</span> 
-<a id='x1-7064r20'></a><span id='textcolor134'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>__arena</span><span id='textcolor135'><span class='cmtt-10'> </span></span><span class='cmtt-10'>entry_t</span><span id='textcolor136'><span class='cmtt-10'> </span></span><span id='textcolor137'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>e</span><span id='textcolor138'><span class='cmtt-10'> </span></span><span id='textcolor139'><span class='cmtt-10'>=</span></span><span id='textcolor140'><span class='cmtt-10'> </span></span><span class='cmtt-10'>mem;</span> 
-<a id='x1-7066r21'></a><span id='textcolor141'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>e</span><span id='textcolor142'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter</span><span id='textcolor143'><span class='cmtt-10'> </span></span><span id='textcolor144'><span class='cmtt-10'>+=</span></span><span id='textcolor145'><span class='cmtt-10'> </span></span><span id='textcolor146'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-7068r22'></a><span id='textcolor147'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>bpf_printk(</span><span id='textcolor148'><span class='cmtt-10'>"counter: %lld</span></span><span id='textcolor149'><span class='cmtt-10'>\n</span></span><span id='textcolor150'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>,</span><span id='textcolor151'><span class='cmtt-10'> </span></span><span class='cmtt-10'>e</span><span id='textcolor152'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter);</span> 
-<a id='x1-7070r23'></a><span id='textcolor153'><span class='cmtt-10'>    </span></span><span id='textcolor154'><span class='cmtt-10'>return</span></span><span id='textcolor155'><span class='cmtt-10'> </span></span><span id='textcolor156'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7038r7'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>bpf_printk(</span><span style='color:#BA2121;'><span class='cmtt-10'>"mogu: hello</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7040r8'></a><span style='color:#BABABA;'>    </span><span style='color:#008000;'><span class='cmtt-10'>if</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>(</span><span style='color:#666666;'><span class='cmtt-10'>!</span></span><span class='cmtt-10'>flag_initialized)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>{</span> 
+<a id='x1-7042r9'></a><span style='color:#BABABA;'>        </span><span class='cmtt-10'>mem</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>bpf_arena_alloc_pages(</span><span style='color:#666666;'><span class='cmtt-10'>&amp;</span></span><span class='cmtt-10'>arena,</span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>,</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>NUMA_NO_NODE,</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7044r10'></a><span style='color:#BABABA;'>        </span><span style='color:#008000;'><span class='cmtt-10'>if</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>(mem</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>==</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>{</span> 
+<a id='x1-7046r11'></a><span style='color:#BABABA;'>            </span><span class='cmtt-10'>bpf_printk(</span><span style='color:#BA2121;'><span class='cmtt-10'>"Failed to allocate memory"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7048r12'></a><span style='color:#BABABA;'>            </span><span style='color:#008000;'><span class='cmtt-10'>return</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7050r13'></a><span style='color:#BABABA;'>        </span><span class='cmtt-10'>}</span> 
+<a id='x1-7052r14'></a><span style='color:#BABABA;'>        </span><span class='cmtt-10'>flag_initialized</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>true</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7054r15'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>}</span> 
+<a id='x1-7056r16'></a><span style='color:#BABABA;'>    </span><span style='color:#008000;'><span class='cmtt-10'>if</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>(mem</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>==</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>{</span> 
+<a id='x1-7058r17'></a><span style='color:#BABABA;'>        </span><span style='color:#3D7A7A;'><span class='cmitt-10'>/* this branch must never happen! */</span></span> 
+<a id='x1-7060r18'></a><span style='color:#BABABA;'>        </span><span style='color:#008000;'><span class='cmtt-10'>return</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7062r19'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>}</span> 
+<a id='x1-7064r20'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>__arena</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>entry_t</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>e</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>mem;</span> 
+<a id='x1-7066r21'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>e</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>+=</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7068r22'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>bpf_printk(</span><span style='color:#BA2121;'><span class='cmtt-10'>"counter: %lld</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>e</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter);</span> 
+<a id='x1-7070r23'></a><span style='color:#BABABA;'>    </span><span style='color:#008000;'><span class='cmtt-10'>return</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>;</span> 
 <a id='x1-7072r24'></a><span class='cmtt-10'>}</span></pre>
-<figcaption class='caption'><span class='id'>Listing 3:</span><span class='content'>An eBPF program using Arena.</span></figcaption><!-- tex4ht:label?: x1-7073r3  -->
+<figcaption class='caption'><span class='id'>Listing 3: </span><span class='content'>An eBPF program using Arena.</span></figcaption><!-- tex4ht:label?: x1-7073r3  -->
                                                                   
 
                                                                   
 </figure>
-<!-- l. 207 --><p class='noindent'>Next, in Listing <a href='#-user-space-program-loading-the-program'>4<!-- tex4ht:ref: lst:loader  --></a>, we see how user-space program loads the eBPF program and
-Listing <a href='#-userspace-accessing-the-memory-page-allocated-from-arena'>5<!-- tex4ht:ref: lst:loader_read  --></a> shows it accessing the counter on the Arena memory page (The user-space
+<!-- l. 207 --><p class='noindent'>Next, in Listing <a href='#user-space-program-loading-the-program'>4<!-- tex4ht:ref: lst:loader  --></a>, we see how user-space program loads the eBPF program and
+Listing <a href='#userspace-accessing-the-memory-page-allocated-from-arena'>5<!-- tex4ht:ref: lst:loader_read  --></a> shows it accessing the counter on the Arena memory page (The user-space
 relies on libbpf and its skeleton framework <span class='cite'>[<a href='#Xlibbpf_skeleton'>6</a>]</span>).
                                                                   
 
                                                                   
-</p><!-- l. 213 --><p class='noindent' id='-user-space-program-loading-the-program'><a id='x1-7191r4'></a></p><figure class='float'>
+</p><!-- l. 213 --><p class='noindent' id='user-space-program-loading-the-program'><a id='x1-7191r4'></a></p><figure class='float'>
                                                                   
 
                                                                   
-<pre class='fancyvrb' id='fancyvrb4'><a id='x1-7114r1'></a><span id='textcolor157'><span class='cmitt-10'>/* Some global vars */</span></span> 
-<a id='x1-7116r2'></a><span id='textcolor158'><span class='cmtt-10'>static</span></span><span id='textcolor159'><span class='cmtt-10'> </span></span><span id='textcolor160'><span class='cmtt-10'>volatile</span></span><span id='textcolor161'><span class='cmtt-10'> </span></span><span id='textcolor162'><span class='cmtt-10'>int</span></span><span id='textcolor163'><span class='cmtt-10'> </span></span><span class='cmtt-10'>running</span><span id='textcolor164'><span class='cmtt-10'> </span></span><span id='textcolor165'><span class='cmtt-10'>=</span></span><span id='textcolor166'><span class='cmtt-10'> </span></span><span id='textcolor167'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-7118r3'></a><span id='textcolor168'><span class='cmtt-10'>static</span></span><span id='textcolor169'><span class='cmtt-10'> </span></span><span id='textcolor170'><span class='cmtt-10'>int</span></span><span id='textcolor171'><span class='cmtt-10'> </span></span><span class='cmtt-10'>ebpf_prog_fd</span><span id='textcolor172'><span class='cmtt-10'> </span></span><span id='textcolor173'><span class='cmtt-10'>=</span></span><span id='textcolor174'><span class='cmtt-10'> </span></span><span id='textcolor175'><span class='cmtt-10'>-1</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-7120r4'></a><span id='textcolor176'><span class='cmtt-10'>static</span></span><span id='textcolor177'><span class='cmtt-10'> </span></span><span id='textcolor178'><span class='cmtt-10'>struct</span></span><span id='textcolor179'><span class='cmtt-10'> </span></span><span id='textcolor180'><span class='cmtt-10'>mogu</span></span><span id='textcolor181'><span class='cmtt-10'> </span></span><span id='textcolor182'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>skel</span><span id='textcolor183'><span class='cmtt-10'> </span></span><span id='textcolor184'><span class='cmtt-10'>=</span></span><span id='textcolor185'><span class='cmtt-10'> </span></span><span id='textcolor186'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>;</span> 
+<pre class='fancyvrb' id='fancyvrb4'><a id='x1-7114r1'></a><span style='color:#3D7A7A;'><span class='cmitt-10'>/* Some global vars */</span></span> 
+<a id='x1-7116r2'></a><span style='color:#008000;'><span class='cmtt-10'>static</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>volatile</span></span><span style='color:#BABABA;'> </span><span style='color:#B00040;'><span class='cmtt-10'>int</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>running</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7118r3'></a><span style='color:#008000;'><span class='cmtt-10'>static</span></span><span style='color:#BABABA;'> </span><span style='color:#B00040;'><span class='cmtt-10'>int</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>ebpf_prog_fd</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>-1</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7120r4'></a><span style='color:#008000;'><span class='cmtt-10'>static</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>struct</span></span><span style='color:#BABABA;'> </span><span style='color:#0000FF;'><span class='cmtt-10'>mogu</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>skel</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>;</span> 
 <a id='x1-7122r5'></a> 
-<a id='x1-7124r6'></a><span id='textcolor187'><span class='cmtt-10'>int</span></span><span id='textcolor188'><span class='cmtt-10'> </span></span><span id='textcolor189'><span class='cmtt-10'>main</span></span><span class='cmtt-10'>(</span><span id='textcolor190'><span class='cmtt-10'>int</span></span><span id='textcolor191'><span class='cmtt-10'> </span></span><span class='cmtt-10'>argc,</span><span id='textcolor192'><span class='cmtt-10'> </span></span><span id='textcolor193'><span class='cmtt-10'>char</span></span><span id='textcolor194'><span class='cmtt-10'> </span></span><span id='textcolor195'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>argv[])</span> 
+<a id='x1-7124r6'></a><span style='color:#B00040;'><span class='cmtt-10'>int</span></span><span style='color:#BABABA;'> </span><span style='color:#0000FF;'><span class='cmtt-10'>main</span></span><span class='cmtt-10'>(</span><span style='color:#B00040;'><span class='cmtt-10'>int</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>argc,</span><span style='color:#BABABA;'> </span><span style='color:#B00040;'><span class='cmtt-10'>char</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>argv[])</span> 
 <a id='x1-7126r7'></a><span class='cmtt-10'>{</span> 
-<a id='x1-7128r8'></a><span class='cmtt-10'>skel</span><span id='textcolor196'><span class='cmtt-10'> </span></span><span id='textcolor197'><span class='cmtt-10'>=</span></span><span id='textcolor198'><span class='cmtt-10'> </span></span><span class='cmtt-10'>mogu__open();</span> 
-<a id='x1-7130r9'></a><span id='textcolor199'><span class='cmtt-10'>if</span></span><span id='textcolor200'><span class='cmtt-10'> </span></span><span class='cmtt-10'>(</span><span id='textcolor201'><span class='cmtt-10'>!</span></span><span class='cmtt-10'>skel)</span><span id='textcolor202'><span class='cmtt-10'> </span></span><span class='cmtt-10'>{</span> 
-<a id='x1-7132r10'></a><span id='textcolor203'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>fprintf(stderr,</span><span id='textcolor204'><span class='cmtt-10'> </span></span><span id='textcolor205'><span class='cmtt-10'>"Failed to open the skeleton</span></span><span id='textcolor206'><span class='cmtt-10'>\n</span></span><span id='textcolor207'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-7134r11'></a><span id='textcolor208'><span class='cmtt-10'>    </span></span><span id='textcolor209'><span class='cmtt-10'>return</span></span><span id='textcolor210'><span class='cmtt-10'> </span></span><span class='cmtt-10'>EXIT_FAILURE;</span> 
+<a id='x1-7128r8'></a><span class='cmtt-10'>skel</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>mogu__open();</span> 
+<a id='x1-7130r9'></a><span style='color:#008000;'><span class='cmtt-10'>if</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>(</span><span style='color:#666666;'><span class='cmtt-10'>!</span></span><span class='cmtt-10'>skel)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>{</span> 
+<a id='x1-7132r10'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>fprintf(stderr,</span><span style='color:#BABABA;'> </span><span style='color:#BA2121;'><span class='cmtt-10'>"Failed to open the skeleton</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7134r11'></a><span style='color:#BABABA;'>    </span><span style='color:#008000;'><span class='cmtt-10'>return</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>EXIT_FAILURE;</span> 
 <a id='x1-7136r12'></a><span class='cmtt-10'>}</span> 
-<a id='x1-7138r13'></a><span id='textcolor211'><span class='cmitt-10'>/* Set sleepable flag */</span></span> 
-<a id='x1-7140r14'></a><span class='cmtt-10'>bpf_program__set_flags(skel</span><span id='textcolor212'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>progs.mogu,</span><span id='textcolor213'><span class='cmtt-10'> </span></span><span class='cmtt-10'>BPF_F_SLEEPABLE);</span> 
-<a id='x1-7142r15'></a><span id='textcolor214'><span class='cmtt-10'>if</span></span><span id='textcolor215'><span class='cmtt-10'> </span></span><span class='cmtt-10'>(mogu__load(skel))</span><span id='textcolor216'><span class='cmtt-10'> </span></span><span class='cmtt-10'>{</span> 
-<a id='x1-7144r16'></a><span id='textcolor217'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>fprintf(stderr,</span><span id='textcolor218'><span class='cmtt-10'> </span></span><span id='textcolor219'><span class='cmtt-10'>"Failed to load eBPF program</span></span><span id='textcolor220'><span class='cmtt-10'>\n</span></span><span id='textcolor221'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-7146r17'></a><span id='textcolor222'><span class='cmtt-10'>    </span></span><span id='textcolor223'><span class='cmtt-10'>return</span></span><span id='textcolor224'><span class='cmtt-10'> </span></span><span class='cmtt-10'>EXIT_FAILURE;</span> 
+<a id='x1-7138r13'></a><span style='color:#3D7A7A;'><span class='cmitt-10'>/* Set sleepable flag */</span></span> 
+<a id='x1-7140r14'></a><span class='cmtt-10'>bpf_program__set_flags(skel</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>progs.mogu,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>BPF_F_SLEEPABLE);</span> 
+<a id='x1-7142r15'></a><span style='color:#008000;'><span class='cmtt-10'>if</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>(mogu__load(skel))</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>{</span> 
+<a id='x1-7144r16'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>fprintf(stderr,</span><span style='color:#BABABA;'> </span><span style='color:#BA2121;'><span class='cmtt-10'>"Failed to load eBPF program</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7146r17'></a><span style='color:#BABABA;'>    </span><span style='color:#008000;'><span class='cmtt-10'>return</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>EXIT_FAILURE;</span> 
 <a id='x1-7148r18'></a><span class='cmtt-10'>}</span> 
 <a id='x1-7150r19'></a> 
-<a id='x1-7152r20'></a><span class='cmtt-10'>ebpf_prog_fd</span><span id='textcolor225'><span class='cmtt-10'> </span></span><span id='textcolor226'><span class='cmtt-10'>=</span></span><span id='textcolor227'><span class='cmtt-10'> </span></span><span class='cmtt-10'>bpf_program__fd(skel</span><span id='textcolor228'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>progs.mogu);</span> 
-<a id='x1-7154r21'></a><span id='textcolor229'><span class='cmitt-10'>/* It will invoke the eBPF program for the first time */</span></span> 
-<a id='x1-7156r22'></a><span class='cmtt-10'>handle_invoke_signal(</span><span id='textcolor230'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7152r20'></a><span class='cmtt-10'>ebpf_prog_fd</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>bpf_program__fd(skel</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>progs.mogu);</span> 
+<a id='x1-7154r21'></a><span style='color:#3D7A7A;'><span class='cmitt-10'>/* It will invoke the eBPF program for the first time */</span></span> 
+<a id='x1-7156r22'></a><span class='cmtt-10'>handle_invoke_signal(</span><span style='color:#666666;'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>);</span> 
 <a id='x1-7158r23'></a> 
-<a id='x1-7160r24'></a><span id='textcolor231'><span class='cmitt-10'>/* Keep running and handle signals */</span></span> 
-<a id='x1-7162r25'></a><span class='cmtt-10'>running</span><span id='textcolor232'><span class='cmtt-10'> </span></span><span id='textcolor233'><span class='cmtt-10'>=</span></span><span id='textcolor234'><span class='cmtt-10'> </span></span><span id='textcolor235'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-7164r26'></a><span class='cmtt-10'>signal(SIGINT,</span><span id='textcolor236'><span class='cmtt-10'> </span></span><span class='cmtt-10'>handle_signal);</span> 
-<a id='x1-7166r27'></a><span class='cmtt-10'>signal(SIGHUP,</span><span id='textcolor237'><span class='cmtt-10'> </span></span><span class='cmtt-10'>handle_signal);</span> 
-<a id='x1-7168r28'></a><span class='cmtt-10'>signal(SIGUSR1,</span><span id='textcolor238'><span class='cmtt-10'> </span></span><span class='cmtt-10'>handle_invoke_signal);</span> 
-<a id='x1-7170r29'></a><span class='cmtt-10'>printf(</span><span id='textcolor239'><span class='cmtt-10'>"Hit Ctrl+C to terminate ...</span></span><span id='textcolor240'><span class='cmtt-10'>\n</span></span><span id='textcolor241'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-7172r30'></a><span class='cmtt-10'>printf(</span><span id='textcolor242'><span class='cmtt-10'>"Invoke eBPF program:</span></span><span id='textcolor243'><span class='cmtt-10'>\n</span></span><span id='textcolor244'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-7174r31'></a><span class='cmtt-10'>printf(</span><span id='textcolor245'><span class='cmtt-10'>"</span></span><span id='textcolor246'><span class='cmtt-10'>\t</span></span><span id='textcolor247'><span class='cmtt-10'>Mogu: pkill -SIGUSR1 mogu_loader</span></span><span id='textcolor248'><span class='cmtt-10'>\n</span></span><span id='textcolor249'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7160r24'></a><span style='color:#3D7A7A;'><span class='cmitt-10'>/* Keep running and handle signals */</span></span> 
+<a id='x1-7162r25'></a><span class='cmtt-10'>running</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7164r26'></a><span class='cmtt-10'>signal(SIGINT,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>handle_signal);</span> 
+<a id='x1-7166r27'></a><span class='cmtt-10'>signal(SIGHUP,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>handle_signal);</span> 
+<a id='x1-7168r28'></a><span class='cmtt-10'>signal(SIGUSR1,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>handle_invoke_signal);</span> 
+<a id='x1-7170r29'></a><span class='cmtt-10'>printf(</span><span style='color:#BA2121;'><span class='cmtt-10'>"Hit Ctrl+C to terminate ...</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7172r30'></a><span class='cmtt-10'>printf(</span><span style='color:#BA2121;'><span class='cmtt-10'>"Invoke eBPF program:</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7174r31'></a><span class='cmtt-10'>printf(</span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\t</span></span><span style='color:#BA2121;'><span class='cmtt-10'>Mogu: pkill -SIGUSR1 mogu_loader</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
 <a id='x1-7176r32'></a> 
-<a id='x1-7178r33'></a><span id='textcolor250'><span class='cmtt-10'>while</span></span><span id='textcolor251'><span class='cmtt-10'> </span></span><span class='cmtt-10'>(running)</span><span id='textcolor252'><span class='cmtt-10'> </span></span><span class='cmtt-10'>{</span><span id='textcolor253'><span class='cmtt-10'> </span></span><span class='cmtt-10'>pause();</span><span id='textcolor254'><span class='cmtt-10'> </span></span><span class='cmtt-10'>}</span> 
+<a id='x1-7178r33'></a><span style='color:#008000;'><span class='cmtt-10'>while</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>(running)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>{</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>pause();</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>}</span> 
 <a id='x1-7180r34'></a> 
 <a id='x1-7182r35'></a><span class='cmtt-10'>mogu__detach(skel);</span> 
 <a id='x1-7184r36'></a><span class='cmtt-10'>mogu__destroy(skel);</span> 
-<a id='x1-7186r37'></a><span class='cmtt-10'>printf(</span><span id='textcolor255'><span class='cmtt-10'>"Done!</span></span><span id='textcolor256'><span class='cmtt-10'>\n</span></span><span id='textcolor257'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-7188r38'></a><span id='textcolor258'><span class='cmtt-10'>return</span></span><span id='textcolor259'><span class='cmtt-10'> </span></span><span id='textcolor260'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-7186r37'></a><span class='cmtt-10'>printf(</span><span style='color:#BA2121;'><span class='cmtt-10'>"Done!</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7188r38'></a><span style='color:#008000;'><span class='cmtt-10'>return</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>;</span> 
 <a id='x1-7190r39'></a><span class='cmtt-10'>}</span></pre>
-<figcaption class='caption'><span class='id'>Listing 4:</span><span class='content'>User space program loading the program</span></figcaption><!-- tex4ht:label?: x1-7191r4  -->
+<figcaption class='caption'><span class='id'>Listing 4: </span><span class='content'>User space program loading the program</span></figcaption><!-- tex4ht:label?: x1-7191r4  -->
                                                                   
 
                                                                   
@@ -270,21 +272,22 @@ relies on libbpf and its skeleton framework <span class='cite'>[<a href='#Xlibb
                                                                   
 
                                                                   
-<!-- l. 259 --><p class='noindent' id='-userspace-accessing-the-memory-page-allocated-from-arena'><a id='x1-7210r5'></a></p><figure class='float'>
+<!-- l. 259 --><p class='noindent' id='userspace-accessing-the-memory-page-allocated-from-arena'><a id='x1-7210r5'></a></p><figure class='float'>
                                                                   
 
                                                                   
-<pre class='fancyvrb' id='fancyvrb5'><a id='x1-7199r1'></a><span class='cmtt-10'>entry_t</span><span id='textcolor261'><span class='cmtt-10'> </span></span><span id='textcolor262'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>e</span><span id='textcolor263'><span class='cmtt-10'> </span></span><span id='textcolor264'><span class='cmtt-10'>=</span></span><span id='textcolor265'><span class='cmtt-10'> </span></span><span class='cmtt-10'>skel</span><span id='textcolor266'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>bss</span><span id='textcolor267'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>mem;</span> 
-<a id='x1-7201r2'></a><span id='textcolor268'><span class='cmtt-10'>if</span></span><span id='textcolor269'><span class='cmtt-10'> </span></span><span class='cmtt-10'>(e</span><span id='textcolor270'><span class='cmtt-10'> </span></span><span id='textcolor271'><span class='cmtt-10'>==</span></span><span id='textcolor272'><span class='cmtt-10'> </span></span><span id='textcolor273'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>)</span><span id='textcolor274'><span class='cmtt-10'> </span></span><span class='cmtt-10'>{</span> 
-<a id='x1-7203r3'></a><span id='textcolor275'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>printf(</span><span id='textcolor276'><span class='cmtt-10'>"NOTE: the initialization was not successful!</span></span><span id='textcolor277'><span class='cmtt-10'>\n</span></span><span id='textcolor278'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-7205r4'></a><span id='textcolor279'><span class='cmtt-10'>    </span></span><span id='textcolor280'><span class='cmtt-10'>return</span></span><span class='cmtt-10'>;</span> 
+<pre class='fancyvrb' id='fancyvrb5'><a id='x1-7199r1'></a><span class='cmtt-10'>entry_t</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>e</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>skel</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>bss</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>mem;</span> 
+<a id='x1-7201r2'></a><span style='color:#008000;'><span class='cmtt-10'>if</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>(e</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>==</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>{</span> 
+<a id='x1-7203r3'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>printf(</span><span style='color:#BA2121;'><span class='cmtt-10'>"NOTE: the initialization was not successful!</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-7205r4'></a><span style='color:#BABABA;'>    </span><span style='color:#008000;'><span class='cmtt-10'>return</span></span><span class='cmtt-10'>;</span> 
 <a id='x1-7207r5'></a><span class='cmtt-10'>}</span> 
-<a id='x1-7209r6'></a><span class='cmtt-10'>printf(</span><span id='textcolor281'><span class='cmtt-10'>"user: counter=%lld</span></span><span id='textcolor282'><span class='cmtt-10'>\n</span></span><span id='textcolor283'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>,</span><span id='textcolor284'><span class='cmtt-10'> </span></span><span class='cmtt-10'>e</span><span id='textcolor285'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter);</span></pre>
-<figcaption class='caption'><span class='id'>Listing 5:</span><span class='content'>User-space accessing the memory page allocated from Arena</span></figcaption><!-- tex4ht:label?: x1-7210r5  -->
+<a id='x1-7209r6'></a><span class='cmtt-10'>printf(</span><span style='color:#BA2121;'><span class='cmtt-10'>"user: counter=%lld</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>e</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter);</span></pre>
+<figcaption class='caption'><span class='id'>Listing 5: </span><span class='content'>User-space accessing the memory page allocated from Arena</span></figcaption><!-- tex4ht:label?: x1-7210r5  -->
                                                                   
 
                                                                   
 </figure>
+
 <h4 class='subsectionHead' id='using-arena-in-xdp-or-other-hooks-that-can-not-sleep'><span class='titlemark'>3.2   </span> <a id='x1-80003.2'></a>Using Arena in XDP (or other hooks that can not sleep)</h4>
 <!-- l. 274 --><p class='noindent'>As was mentioned, Arena memory allocation helper functions may put the calling
 thread to sleep. This is not acceptable for programs attached to hooks such as XDP.
@@ -292,11 +295,11 @@ But, this limitation does not mean that XDP programs can not access the Arena
 memory. They just can not allocate or free the pages.
 </p><!-- l. 279 --><p class='noindent'>For the next step, Let us share the memory page allocated by the program from the
 previous example with another eBPF program. This allows the second program to
-use Arena backed memory pages without allocating memory itself. Listing <a href='#-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a> shows
+use Arena backed memory pages without allocating memory itself. Listing <a href='#an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a> shows
 the second eBPF program.
 </p><!-- l. 284 --><p class='noindent'>Here are some details that I like to bring to your attention:
      </p><ol class='enumerate1'>
-<li class='enumerate' id='x1-8002x1'>Notice that both eBPF programs declare an Arena (as shown in Listing <a href='#-example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a>).
+<li class='enumerate' id='x1-8002x1'>Notice that both eBPF programs declare an Arena (as shown in Listing <a href='#example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a>).
      The loader (will be discussed next) will make sure both are using the same
      MAP using the libbpf’s <span class='cmtt-10'>bpf_map__reuse_fd </span>helper.
      </li>
@@ -312,70 +315,71 @@ the second eBPF program.
                                                                   
 
                                                                   
-<!-- l. 302 --><p class='noindent' id='-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'><a id='x1-8064r6'></a></p><figure class='float'>
+<!-- l. 302 --><p class='noindent' id='an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'><a id='x1-8064r6'></a></p><figure class='float'>
                                                                   
 
                                                                   
-<pre class='fancyvrb' id='fancyvrb6'><a id='x1-8027r1'></a><span id='textcolor286'><span class='cmitt-10'>/* Declaration of Arena MAP as in Listing 1 ... */</span></span> 
-<a id='x1-8029r2'></a><span class='cmtt-10'>__arena</span><span id='textcolor287'><span class='cmtt-10'> </span></span><span id='textcolor288'><span class='cmtt-10'>void</span></span><span id='textcolor289'><span class='cmtt-10'> </span></span><span id='textcolor290'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>mem</span><span id='textcolor291'><span class='cmtt-10'> </span></span><span id='textcolor292'><span class='cmtt-10'>=</span></span><span id='textcolor293'><span class='cmtt-10'> </span></span><span id='textcolor294'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>;</span> 
+<pre class='fancyvrb' id='fancyvrb6'><a id='x1-8027r1'></a><span style='color:#3D7A7A;'><span class='cmitt-10'>/* Declaration of Arena MAP as in Listing 1 ... */</span></span> 
+<a id='x1-8029r2'></a><span class='cmtt-10'>__arena</span><span style='color:#BABABA;'> </span><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>mem</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>;</span> 
 <a id='x1-8031r3'></a> 
-<a id='x1-8033r4'></a><span id='textcolor295'><span class='cmitt-10'>/* Load the kernel module for adding this kfunc */</span></span> 
-<a id='x1-8035r5'></a><span id='textcolor296'><span class='cmtt-10'>long</span></span><span id='textcolor297'><span class='cmtt-10'> </span></span><span id='textcolor298'><span class='cmtt-10'>my_kfunc_reg_arena</span></span><span class='cmtt-10'>(</span><span id='textcolor299'><span class='cmtt-10'>void</span></span><span id='textcolor300'><span class='cmtt-10'> </span></span><span id='textcolor301'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>p__map)</span><span id='textcolor302'><span class='cmtt-10'> </span></span><span class='cmtt-10'>__ksym;</span> 
+<a id='x1-8033r4'></a><span style='color:#3D7A7A;'><span class='cmitt-10'>/* Load the kernel module for adding this kfunc */</span></span> 
+<a id='x1-8035r5'></a><span style='color:#B00040;'><span class='cmtt-10'>long</span></span><span style='color:#BABABA;'> </span><span style='color:#0000FF;'><span class='cmtt-10'>my_kfunc_reg_arena</span></span><span class='cmtt-10'>(</span><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>p__map)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>__ksym;</span> 
 <a id='x1-8037r6'></a> 
-<a id='x1-8039r7'></a><span class='cmtt-10'>SEC(</span><span id='textcolor303'><span class='cmtt-10'>"syscall"</span></span><span class='cmtt-10'>)</span> 
-<a id='x1-8041r8'></a><span id='textcolor304'><span class='cmtt-10'>int</span></span><span id='textcolor305'><span class='cmtt-10'> </span></span><span class='cmtt-10'>aloe_main(</span><span id='textcolor306'><span class='cmtt-10'>void</span></span><span id='textcolor307'><span class='cmtt-10'> </span></span><span id='textcolor308'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>_)</span> 
+<a id='x1-8039r7'></a><span class='cmtt-10'>SEC(</span><span style='color:#BA2121;'><span class='cmtt-10'>"syscall"</span></span><span class='cmtt-10'>)</span> 
+<a id='x1-8041r8'></a><span style='color:#B00040;'><span class='cmtt-10'>int</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>aloe_main(</span><span style='color:#B00040;'><span class='cmtt-10'>void</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>_)</span> 
 <a id='x1-8043r9'></a><span class='cmtt-10'>{</span> 
-<a id='x1-8045r10'></a><span id='textcolor309'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>my_kfunc_reg_arena(</span><span id='textcolor310'><span class='cmtt-10'>&amp;</span></span><span class='cmtt-10'>arena_map);</span> 
-<a id='x1-8047r11'></a><span id='textcolor311'><span class='cmtt-10'>    </span></span><span id='textcolor312'><span class='cmtt-10'>if</span></span><span id='textcolor313'><span class='cmtt-10'> </span></span><span class='cmtt-10'>(mem</span><span id='textcolor314'><span class='cmtt-10'> </span></span><span id='textcolor315'><span class='cmtt-10'>==</span></span><span id='textcolor316'><span class='cmtt-10'> </span></span><span id='textcolor317'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>)</span><span id='textcolor318'><span class='cmtt-10'> </span></span><span class='cmtt-10'>{</span> 
-<a id='x1-8049r12'></a><span id='textcolor319'><span class='cmtt-10'>        </span></span><span class='cmtt-10'>bpf_printk(</span><span id='textcolor320'><span class='cmtt-10'>"aloe: not seeing the memory!</span></span><span id='textcolor321'><span class='cmtt-10'>\n</span></span><span id='textcolor322'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
-<a id='x1-8051r13'></a><span id='textcolor323'><span class='cmtt-10'>        </span></span><span id='textcolor324'><span class='cmtt-10'>return</span></span><span id='textcolor325'><span class='cmtt-10'> </span></span><span id='textcolor326'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-8053r14'></a><span id='textcolor327'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>}</span> 
-<a id='x1-8055r15'></a><span id='textcolor328'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>__arena</span><span id='textcolor329'><span class='cmtt-10'> </span></span><span class='cmtt-10'>entry_t</span><span id='textcolor330'><span class='cmtt-10'> </span></span><span id='textcolor331'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>e</span><span id='textcolor332'><span class='cmtt-10'> </span></span><span id='textcolor333'><span class='cmtt-10'>=</span></span><span id='textcolor334'><span class='cmtt-10'> </span></span><span class='cmtt-10'>mem;</span> 
-<a id='x1-8057r16'></a><span id='textcolor335'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>bpf_printk(</span><span id='textcolor336'><span class='cmtt-10'>"aloe: counter=%lld</span></span><span id='textcolor337'><span class='cmtt-10'>\n</span></span><span id='textcolor338'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>,</span><span id='textcolor339'><span class='cmtt-10'> </span></span><span class='cmtt-10'>e</span><span id='textcolor340'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter);</span> 
-<a id='x1-8059r17'></a><span id='textcolor341'><span class='cmtt-10'>    </span></span><span class='cmtt-10'>e</span><span id='textcolor342'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter</span><span id='textcolor343'><span class='cmtt-10'> </span></span><span id='textcolor344'><span class='cmtt-10'>+=</span></span><span id='textcolor345'><span class='cmtt-10'> </span></span><span id='textcolor346'><span class='cmtt-10'>100</span></span><span class='cmtt-10'>;</span> 
-<a id='x1-8061r18'></a><span id='textcolor347'><span class='cmtt-10'>    </span></span><span id='textcolor348'><span class='cmtt-10'>return</span></span><span id='textcolor349'><span class='cmtt-10'> </span></span><span id='textcolor350'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-8045r10'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>my_kfunc_reg_arena(</span><span style='color:#666666;'><span class='cmtt-10'>&amp;</span></span><span class='cmtt-10'>arena_map);</span> 
+<a id='x1-8047r11'></a><span style='color:#BABABA;'>    </span><span style='color:#008000;'><span class='cmtt-10'>if</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>(mem</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>==</span></span><span style='color:#BABABA;'> </span><span style='color:#008000;'><span class='cmtt-10'>NULL</span></span><span class='cmtt-10'>)</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>{</span> 
+<a id='x1-8049r12'></a><span style='color:#BABABA;'>        </span><span class='cmtt-10'>bpf_printk(</span><span style='color:#BA2121;'><span class='cmtt-10'>"aloe: not seeing the memory!</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>);</span> 
+<a id='x1-8051r13'></a><span style='color:#BABABA;'>        </span><span style='color:#008000;'><span class='cmtt-10'>return</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>1</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-8053r14'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>}</span> 
+<a id='x1-8055r15'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>__arena</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>entry_t</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>*</span></span><span class='cmtt-10'>e</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>mem;</span> 
+<a id='x1-8057r16'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>bpf_printk(</span><span style='color:#BA2121;'><span class='cmtt-10'>"aloe: counter=%lld</span></span><span style='color:#AB5C1F;'><span class='cmtt-10'>\n</span></span><span style='color:#BA2121;'><span class='cmtt-10'>"</span></span><span class='cmtt-10'>,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>e</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter);</span> 
+<a id='x1-8059r17'></a><span style='color:#BABABA;'>    </span><span class='cmtt-10'>e</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>counter</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>+=</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>100</span></span><span class='cmtt-10'>;</span> 
+<a id='x1-8061r18'></a><span style='color:#BABABA;'>    </span><span style='color:#008000;'><span class='cmtt-10'>return</span></span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>0</span></span><span class='cmtt-10'>;</span> 
 <a id='x1-8063r19'></a><span class='cmtt-10'>}</span></pre>
-<figcaption class='caption'><span class='id'>Listing  6:</span><span class='content'>An  eBPF  program  that  uses  Arena  pages  allocated  from  another
+<figcaption class='caption'><span class='id'>Listing 6: </span><span class='content'>An eBPF program that uses Arena pages allocated from another
 program</span></figcaption><!-- tex4ht:label?: x1-8064r6  -->
                                                                   
 
                                                                   
 </figure>
-<!-- l. 327 --><p class='noindent'>To share the Arena from the first eBPF program (Listing <a href='#-an-ebpf-program-using-arena'>3<!-- tex4ht:ref: lst:mogu  --></a>) with the second one
-(Listing <a href='#-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a>), the loader (user-space) program has to mediate and pass the
-reference from first program to the second. Listing <a href='#-loader-program-assigning-the-arena-from-the-first-program-to-the-second-program'>7<!-- tex4ht:ref: lst:share-map-ref  --></a> shows an example of this
+<!-- l. 327 --><p class='noindent'>To share the Arena from the first eBPF program (Listing <a href='#an-ebpf-program-using-arena'>3<!-- tex4ht:ref: lst:mogu  --></a>) with the second one
+(Listing <a href='#an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a>), the loader (user-space) program has to mediate and pass the
+reference from first program to the second. Listing <a href='#loader-program-assigning-the-arena-from-the-first-program-to-the-second-program'>7<!-- tex4ht:ref: lst:share-map-ref  --></a> shows an example of this
 procedure.
                                                                   
 
                                                                   
-</p><!-- l. 333 --><p class='noindent' id='-loader-program-assigning-the-arena-from-the-first-program-to-the-second-program'><a id='x1-8077r7'></a></p><figure class='float'>
+</p><!-- l. 333 --><p class='noindent' id='loader-program-assigning-the-arena-from-the-first-program-to-the-second-program'><a id='x1-8077r7'></a></p><figure class='float'>
                                                                   
 
                                                                   
-<pre class='fancyvrb' id='fancyvrb7'><a id='x1-8070r1'></a><span id='textcolor351'><span class='cmtt-10'>int</span></span><span id='textcolor352'><span class='cmtt-10'> </span></span><span class='cmtt-10'>arena_fd</span><span id='textcolor353'><span class='cmtt-10'> </span></span><span id='textcolor354'><span class='cmtt-10'>=</span></span><span id='textcolor355'><span class='cmtt-10'> </span></span><span class='cmtt-10'>bpf_map__fd(skel1</span><span id='textcolor356'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>maps.arena);</span> 
-<a id='x1-8072r2'></a><span class='cmtt-10'>bpf_map__reuse_fd(skel2</span><span id='textcolor357'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>maps.arena_map,</span><span id='textcolor358'><span class='cmtt-10'> </span></span><span class='cmtt-10'>arena_fd);</span> 
-<a id='x1-8074r3'></a><span id='textcolor359'><span class='cmitt-10'>/* Pass the pointer to the  second program */</span></span> 
-<a id='x1-8076r4'></a><span class='cmtt-10'>skel2</span><span id='textcolor360'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>bss</span><span id='textcolor361'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>mem</span><span id='textcolor362'><span class='cmtt-10'> </span></span><span id='textcolor363'><span class='cmtt-10'>=</span></span><span id='textcolor364'><span class='cmtt-10'> </span></span><span class='cmtt-10'>skel1</span><span id='textcolor365'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>bss</span><span id='textcolor366'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>mem;</span></pre>
-<figcaption class='caption'><span class='id'>Listing 7:</span><span class='content'>Loader program assigning the Arena from the first program to the
+<pre class='fancyvrb' id='fancyvrb7'><a id='x1-8070r1'></a><span style='color:#B00040;'><span class='cmtt-10'>int</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>arena_fd</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>bpf_map__fd(skel1</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>maps.arena);</span> 
+<a id='x1-8072r2'></a><span class='cmtt-10'>bpf_map__reuse_fd(skel2</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>maps.arena_map,</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>arena_fd);</span> 
+<a id='x1-8074r3'></a><span style='color:#3D7A7A;'><span class='cmitt-10'>/* Pass the pointer to the  second program */</span></span> 
+<a id='x1-8076r4'></a><span class='cmtt-10'>skel2</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>bss</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>mem</span><span style='color:#BABABA;'> </span><span style='color:#666666;'><span class='cmtt-10'>=</span></span><span style='color:#BABABA;'> </span><span class='cmtt-10'>skel1</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>bss</span><span style='color:#666666;'><span class='cmtt-10'>-&gt;</span></span><span class='cmtt-10'>mem;</span></pre>
+<figcaption class='caption'><span class='id'>Listing 7: </span><span class='content'>Loader program assigning the Arena from the first program to the
 second program</span></figcaption><!-- tex4ht:label?: x1-8077r7  -->
                                                                   
 
                                                                   
 </figure>
+
 <h5 class='subsubsectionHead' id='why-do-we-need-a-custom-arena-function'><span class='titlemark'>3.2.1   </span> <a id='x1-90003.2.1'></a>Why do we need a custom Arena function?</h5>
-<!-- l. 345 --><p class='noindent'>If we remove the call to the non-standard <span class='cmtt-10'>my_kfunc_reg_arena </span>in Listing <a href='#-an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a>,
+<!-- l. 345 --><p class='noindent'>If we remove the call to the non-standard <span class='cmtt-10'>my_kfunc_reg_arena </span>in Listing <a href='#an-ebpf-program-that-uses-arena-pages-allocated-from-another-program'>6<!-- tex4ht:ref: lst:aloe  --></a>,
 although the program would compile, the verifier will complain that the program
 does not have any associated Arena map, but is trying to use Arena memory
 addressing. The error message from verifier is as follows:
                                                                   
 
                                                                   
-</p><!-- l. 351 --><p class='noindent' id='-verifier-error-message-when-the-arena-is-not-referenced-in-the-program'><a id='x1-9004r8'></a></p><figure class='float'>
+</p><!-- l. 351 --><p class='noindent' id='verifier-error-message-when-the-arena-is-not-referenced-in-the-program'><a id='x1-9004r8'></a></p><figure class='float'>
                                                                   
 
                                                                   
-<pre class='fancyvrb' id='fancyvrb8'><a id='x1-9003r1'></a><span class='cmtt-10'>addr_space_cast</span><span id='textcolor367'><span class='cmtt-10'> </span></span><span class='cmtt-10'>insn</span><span id='textcolor368'><span class='cmtt-10'> </span></span><span class='cmtt-10'>can</span><span id='textcolor369'><span class='cmtt-10'> </span></span><span class='cmtt-10'>only</span><span id='textcolor370'><span class='cmtt-10'> </span></span><span class='cmtt-10'>be</span><span id='textcolor371'><span class='cmtt-10'> </span></span><span class='cmtt-10'>used</span><span id='textcolor372'><span class='cmtt-10'> </span></span><span class='cmtt-10'>in</span><span id='textcolor373'><span class='cmtt-10'> </span></span><span class='cmtt-10'>a</span><span id='textcolor374'><span class='cmtt-10'> </span></span><span class='cmtt-10'>program</span><span id='textcolor375'><span class='cmtt-10'> </span></span><span class='cmtt-10'>that</span><span id='textcolor376'><span class='cmtt-10'> </span></span><span class='cmtt-10'>has</span><span id='textcolor377'><span class='cmtt-10'> </span></span><span class='cmtt-10'>an</span><span id='textcolor378'><span class='cmtt-10'> </span></span><span class='cmtt-10'>associated</span><span id='textcolor379'><span class='cmtt-10'> </span></span><span class='cmtt-10'>arena</span></pre>
-<figcaption class='caption'><span class='id'>Listing 8:</span><span class='content'>Verifier error message when the Arena is not referenced in the program</span></figcaption><!-- tex4ht:label?: x1-9004r8  -->
+<pre class='fancyvrb' id='fancyvrb8'><a id='x1-9003r1'></a><span class='cmtt-10'>addr_space_cast</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>insn</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>can</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>only</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>be</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>used</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>in</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>a</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>program</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>that</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>has</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>an</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>associated</span><span style='color:#BABABA;'> </span><span class='cmtt-10'>arena</span></pre>
+<figcaption class='caption'><span class='id'>Listing 8: </span><span class='content'>Verifier error message when the Arena is not referenced in the program</span></figcaption><!-- tex4ht:label?: x1-9004r8  -->
                                                                   
 
                                                                   
@@ -392,8 +396,9 @@ my test it complained due to attempting a zero byte read). Defining a new
 helper that does nothing but still satisfies the verifier is a smart hack around
 the situation. It showcases the flexibility that kfunc has brought to eBPF
 ecosystem.
-</p><!-- l. 373 --><p class='noindent'><span id='textcolor380'>note: The idea of having a dummy helper was suggested by my lab-mate <a href='https://github.com/marcomole00/' target='_blank'>Marco
+</p><!-- l. 373 --><p class='noindent'><span style='color:#808080;'>note: The idea of having a dummy helper was suggested by my lab-mate <a href='https://marcomole00.github.io/' target='_blank'>Marco
 Mole</a>.</span>
+
 </p>
 <h4 class='subsectionHead' id='userspace-managed-datastructures'><span class='titlemark'>3.3   </span> <a id='x1-100003.3'></a>User-space managed data-structures</h4>
 <!-- l. 378 --><p class='noindent'>In the third example, I demonstrate how user-space program can allocate pages of
@@ -408,20 +413,20 @@ user-space program memory address), also the 64-bit variable will be set to the 
 the currently allocated memory <span class='cite'>[<a href='#Xlibbpf_initial_value'>8</a>]</span>.
 </p><!-- l. 391 --><p class='noindent'>To allocate memory pages, the user-space can cause page-faults by accessing memory
 addresses in Arena. The page fault will notify the kernel to allocate the memory
-page. For example, in our previous examples the Arena has two pages (see Listing <a href='#-example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a>).
+page. For example, in our previous examples the Arena has two pages (see Listing <a href='#example-of-using-arena-map'>1<!-- tex4ht:ref: lst:map_ex  --></a>).
 Assuming size of each page is 4 KB, the program can access the Arena memory (the
 address we found using <span class='cmtt-10'>bpf_map__initial_value</span>) at offset 0 and 4096 to allocate
 the two pages. Accessing the memory outside of the Arena region will cause a
 <span class='cmtt-10'>SIGSEGV </span>(Address boundary error).
 </p><!-- l. 400 --><p class='noindent'>The user-space program can use these memory pages to implement its own
 data-structures in the Arena which is will be visible to eBPF programs.
-</p><!-- l. 404 --><p class='noindent'>
+
 </p>
 <h3 class='sectionHead' id='final-notes'><span class='titlemark'>4   </span> <a id='x1-110004'></a>Final Notes</h3>
-<!-- l. 406 --><p class='noindent'>The Arena feature is very new. It will probably change and improve. I am sure by the
                                                                   
 
                                                                   
+<!-- l. 406 --><p class='noindent'>The Arena feature is very new. It will probably change and improve. I am sure by the
 time it is mature, eBPF community has written good documentation and tutorials on
 it but meanwhile I hope this post fill the gap. It is important for me to say
 that although I tried my best to share correct information, I can not claim
@@ -434,7 +439,7 @@ at the verifier and x86 JIT code.
      </p><ol class='enumerate1'>
 <li class='enumerate' id='x1-11002x1'><span class='sout'>The  atomic  reads/writes  are  not  supported  in  Arena  memory  region.</span>
      At the moment, in Arena memory region, limited atomic operations are
-     support from eBPF side <span class='cite'>[<a href='#Xarena_atomic'>14</a>]</span>.
+     support from eBPF side <span class='cite'>[<a href='#Xarena_atomic'>15</a>]</span>.
      </li>
 <li class='enumerate' id='x1-11004x2'>Arena pointer arithmetics are converted to 32 bit operations.
      </li>
@@ -456,97 +461,92 @@ at the verifier and x86 JIT code.
      </li>
 <li class='enumerate' id='x1-11018x9'>x86 JIT uses the R12 register to track the start of Arena virtual address
      (it was unused before).</li></ol>
-<!-- l. 431 --><p class='noindent'>
-</p>
+
 <h4 class='subsectionHead' id='updates'><span class='titlemark'>4.1   </span> <a id='x1-120004.1'></a>Updates</h4>
      <ul class='itemize1'>
      <li class='itemize'>
-     <!-- l. 433 --><p class='noindent'>1<sup><span class='cmmi-7'>st</span></sup> March, 2025:
+     <!-- l. 433 --><p class='noindent'>5<sup><span class='cmmi-7'>th</span></sup> July, 2025:
          </p><ol class='enumerate1'>
-<li class='enumerate' id='x1-12002x1'>Correction: Some atomic instructions available to eBPF programs to
-         access Arena <span class='cite'>[<a href='#Xarena_atomic'>14</a>]</span> and others can be supported in the future by the
+<li class='enumerate' id='x1-12002x1'>In Linux version 6.14 there is the possibility to associate a MAP to
+         a program when using <span class='cmtt-10'>BPF_PROG_LOAD</span>, so there is no need to have
+         the dummy helper function <span class='cite'>[<a href='#Xassociate_map_with_bpf'>12</a>]</span>.</li></ol>
+     </li>
+     <li class='itemize'>
+     <!-- l. 437 --><p class='noindent'>1<sup><span class='cmmi-7'>st</span></sup> March, 2025:
+         </p><ol class='enumerate1'>
+<li class='enumerate' id='x1-12004x1'>Correction: Some atomic instructions available to eBPF programs to
+         access Arena <span class='cite'>[<a href='#Xarena_atomic'>15</a>]</span> and others can be supported in the future by the
          JIT
          </li>
-<li class='enumerate' id='x1-12004x2'>New  information:  There  are  on  going  work  to  support  memory
-         allocation in non-sleepable programs (e.g., XDP) <span class='cite'>[<a href='#Xslub'>3</a>, <a href='#Xtry_alloc'>13</a>]</span>. Thanks to
+<li class='enumerate' id='x1-12006x2'>New  information:  There  are  on  going  work  to  support  memory
+         allocation in non-sleepable programs (e.g., XDP) <span class='cite'>[<a href='#Xslub'>3</a>, <a href='#Xtry_alloc'>14</a>]</span>. Thanks to
          <a href='https://kkdwivedi.in/' target='_blank'>Kumar Kartikeya Dwivedi</a></li></ol>
      </li></ul>
-<!-- l. 1 --><p class='noindent'>
-</p>
-<h3 class='likesectionHead' id='references'><a id='x1-130004.1'></a>References</h3>
-<!-- l. 1 --><p class='noindent'>
+<section class='thebibliography' role='doc-bibliography'>
                                                                   
 
                                                                   
-    </p><div class='thebibliography'>
-    <p class='bibitem'><span class='biblabel'>
-  [1]<span class='bibsp'>   </span></span><a id='Xglb_var_post'></a>Johannes     Bechberger.            Hello     ebpf:     Global     variables.
-    <a class='url' href='https://mostlynerdless.de/blog/2024/05/21/hello-ebpf-global-variables-10/'><span class='cmtt-10'>https://mostlynerdless.de/blog/2024/05/21/hello-ebpf-global-variables-10/</span></a>,
+<h3 class='likesectionHead' id='references'><a id='x1-13000'></a>References</h3>
+<!-- l. 1 --><p class='noindent'>
+    </p><dl><dt>
+  [1]</dt><dd><a id='Xglb_var_post'></a>Johannes    Bechberger.          Hello    ebpf:    Global    variables.          
+<a class='url' href='https://mostlynerdless.de/blog/2024/05/21/hello-ebpf-global-variables-10/'><span class='cmtt-10'>https://mostlynerdless.de/blog/2024/05/21/hello-ebpf-global-variables-10/</span></a>,
     2024.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
-  [2]<span class='bibsp'>   </span></span><a id='Xebpf_docs_kfunc'></a>Silvano Cirujano Cuesta and Dylan Reimerink.  ebpf documentations:
-    kfuncs.     <a class='url' href='https://docs.ebpf.io/linux/concepts/kfuncs/'><span class='cmtt-10'>https://docs.ebpf.io/linux/concepts/kfuncs/</span></a>, 2024.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
-  [3]<span class='bibsp'>   </span></span><a id='Xslub'></a>Jonathan    Corbet.         What’s    next    for    the    slub    allocator.
-    <a class='url' href='https://lwn.net/Articles/974138/'><span class='cmtt-10'>https://lwn.net/Articles/974138/</span></a>, 2024.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
-  [4]<span class='bibsp'>   </span></span><a id='Xeunomia_kfunc'></a>Extending ebpf beyond its limits: Custom kfuncs in kernel modules.
-    <a class='url' href='https://eunomia.dev/tutorials/43-kfuncs/'><span class='cmtt-10'>https://eunomia.dev/tutorials/43-kfuncs/</span></a>, 2024.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
-  [5]<span class='bibsp'>   </span></span><a id='Xarena_source'></a>Linux       source       tree:       Arena       map       implementation.
-    <a class='url' href='https://elixir.bootlin.com/linux/v6.13.1/source/kernel/bpf/arena.c'><span class='cmtt-10'>https://elixir.bootlin.com/linux/v6.13.1/source/kernel/bpf/arena.c</span></a>.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
-  [6]<span class='bibsp'>   </span></span><a id='Xlibbpf_skeleton'></a>Kernel  documentations:  Libbpf  overview:  Bpf  object  skeleton  file.
-    <a class='url' href='https://docs.kernel.org/bpf/libbpf/libbpf_overview.html#bpf-object-skeleton-file'><span class='cmtt-10'>https://docs.kernel.org/bpf/libbpf/libbpf_overview.html#bpf-object-skeleton-file</span></a>,
+    </dd><dt>
+  [2]</dt><dd><a id='Xebpf_docs_kfunc'></a>Silvano  Cirujano Cuesta  and  Dylan  Reimerink.   ebpf  documentations:
+    kfuncs. <a class='url' href='https://docs.ebpf.io/linux/concepts/kfuncs/'><span class='cmtt-10'>https://docs.ebpf.io/linux/concepts/kfuncs/</span></a>, 2024.
+    </dd><dt>
+  [3]</dt><dd><a id='Xslub'></a>Jonathan   Corbet.        What’s   next   for   the   slub   allocator.        
+<a class='url' href='https://lwn.net/Articles/974138/'><span class='cmtt-10'>https://lwn.net/Articles/974138/</span></a>, 2024.
+    </dd><dt>
+  [4]</dt><dd><a id='Xeunomia_kfunc'></a>Extending  ebpf  beyond  its  limits:  Custom  kfuncs  in  kernel  modules.   
+<a class='url' href='https://eunomia.dev/tutorials/43-kfuncs/'><span class='cmtt-10'>https://eunomia.dev/tutorials/43-kfuncs/</span></a>, 2024.
+    </dd><dt>
+  [5]</dt><dd><a id='Xarena_source'></a>Linux     source     tree:     Arena     map     implementation.              
+<a class='url' href='https://elixir.bootlin.com/linux/v6.13.1/source/kernel/bpf/arena.c'><span class='cmtt-10'>https://elixir.bootlin.com/linux/v6.13.1/source/kernel/bpf/arena.c</span></a>.
+    </dd><dt>
+  [6]</dt><dd><a id='Xlibbpf_skeleton'></a>Kernel  documentations:  Libbpf  overview:  Bpf  object  skeleton  file.    
+<a class='url' href='https://docs.kernel.org/bpf/libbpf/libbpf_overview.html#bpf-object-skeleton-file'><span class='cmtt-10'>https://docs.kernel.org/bpf/libbpf/libbpf_overview.html#bpf-object-skeleton-file</span></a>,
     2024.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
-  [7]<span class='bibsp'>   </span></span><a id='Xverifier_arena_not_set'></a>Linux   source   tree:   ebpf   verifier:   Checking   for   arena   map.
-    <a class='url' href='https://elixir.bootlin.com/linux/v6.13.2/source/kernel/bpf/verifier.c#L14569'><span class='cmtt-10'>https://elixir.bootlin.com/linux/v6.13.2/source/kernel/bpf/verifier.c#L14569</span></a>.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
-  [8]<span class='bibsp'>   </span></span><a id='Xlibbpf_initial_value'></a>Libbpf                      source:                      bpf_map__initial_value.
-    <a class='url' href='https://github.com/libbpf/libbpf/blob/444f3c0e7a0fbfeeac4b3809a184c6640ce10306/src/libbpf.c#L10365'><span class='cmtt-10'>https://github.com/libbpf/libbpf/blob/444f3c0e7a0fbfeeac4b3809a184c6640ce10306/src/libbpf.c#L10365</span></a>,
+    </dd><dt>
+  [7]</dt><dd><a id='Xverifier_arena_not_set'></a>Linux   source   tree:   ebpf   verifier:   Checking   for   arena   map.       
+<a class='url' href='https://elixir.bootlin.com/linux/v6.13.2/source/kernel/bpf/verifier.c#L14569'><span class='cmtt-10'>https://elixir.bootlin.com/linux/v6.13.2/source/kernel/bpf/verifier.c#L14569</span></a>.
+    </dd><dt>
+  [8]</dt><dd><a id='Xlibbpf_initial_value'></a>Libbpf          source:          bpf_map__initial_value.                            
+<a class='url' href='https://github.com/libbpf/libbpf/blob/444f3c0e7a0fbfeeac4b3809a184c6640ce10306/src/libbpf.c#L10365'><span class='cmtt-10'>https://github.com/libbpf/libbpf/blob/444f3c0e7a0fbfeeac4b3809a184c6640ce10306/src/libbpf.c#L10365</span></a>,
     2024.
-    </p>
-                                                                  
-
-                                                                  
-    <p class='bibitem'><span class='biblabel'>
-  [9]<span class='bibsp'>   </span></span><a id='Xlibbpf_sleepable'></a>Andrii    Nakryiko,    Donald    Hunter,    and    Daan    De Meyer.
-    libbpf     documentation:     Program     types     and     elf     sections.
-    <a class='url' href='https://github.com/libbpf/libbpf/blob/master/docs/program_types.rst'><span class='cmtt-10'>https://github.com/libbpf/libbpf/blob/master/docs/program_types.rst</span></a>.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
- [10]<span class='bibsp'>   </span></span><a id='Xebpf_docs_bpf_prog_run'></a>Dylan Reimerink. ebpf documentations: Bpf syscall bpf_prog_test_run
-    command.
+    </dd><dt>
+  [9]</dt><dd><a id='Xlibbpf_sleepable'></a>Andrii     Nakryiko,     Donald     Hunter,     and     Daan     De Meyer.
+    libbpf    documentation:    Program    types    and    elf    sections.          
+<a class='url' href='https://github.com/libbpf/libbpf/blob/master/docs/program_types.rst'><span class='cmtt-10'>https://github.com/libbpf/libbpf/blob/master/docs/program_types.rst</span></a>.
+    </dd><dt>
+ [10]</dt><dd><a id='Xebpf_docs_bpf_prog_run'></a>Dylan
+    Reimerink. ebpf documentations: Bpf syscall bpf_prog_test_run command.
     <a class='url' href='https://docs.ebpf.io/linux/syscall/BPF_PROG_TEST_RUN/'><span class='cmtt-10'>https://docs.ebpf.io/linux/syscall/BPF_PROG_TEST_RUN/</span></a>, 2023.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
- [11]<span class='bibsp'>   </span></span><a id='Xebpf_docs_prog_syscall'></a>Dylan  Reimerink.      ebpf  documentations:  Bpf_prog_type_syscall.
-    <a class='url' href='https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_SYSCALL/'><span class='cmtt-10'>https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_SYSCALL/</span></a>,
+                                                                  
+
+                                                                  
+    </dd><dt>
+ [11]</dt><dd><a id='Xebpf_docs_prog_syscall'></a>Dylan  Reimerink.     ebpf  documentations:  Bpf_prog_type_syscall.     
+<a class='url' href='https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_SYSCALL/'><span class='cmtt-10'>https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_SYSCALL/</span></a>,
     2023.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
- [12]<span class='bibsp'>   </span></span><a id='Xarenapatch'></a>Alex        Starovoitov.                      Introduce        bpf        arena.
-    <a class='url' href='https://lwn.net/Articles/961594/'><span class='cmtt-10'>https://lwn.net/Articles/961594/</span></a>, 2024.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
- [13]<span class='bibsp'>   </span></span><a id='Xtry_alloc'></a>Alex        Starovoitov.                       [patch        bpf-next        v9
-    0/6]            bpf,            mm:            Introduce            try˙alloc˙pages().
-    <a class='url' href='https://lore.kernel.org/bpf/20250222024427.30294-1-alexei.starovoitov@gmail.com/'><span class='cmtt-10'>https://lore.kernel.org/bpf/20250222024427.30294-1-alexei.starovoitov@gmail.com/</span></a>,
+    </dd><dt>
+ [12]</dt><dd><a id='Xassociate_map_with_bpf'></a>Dylan Reimerink. Stackoverflow: addr˙space˙cast insn can only be used in
+    a      program      that      has      an      associated      arena.                
+<a class='url' href='https://stackoverflow.com/a/79564455/7510824'><span class='cmtt-10'>https://stackoverflow.com/a/79564455/7510824</span></a>, 2025.
+    </dd><dt>
+ [13]</dt><dd><a id='Xarenapatch'></a>Alex      Starovoitov.                Introduce      bpf      arena.                
+<a class='url' href='https://lwn.net/Articles/961594/'><span class='cmtt-10'>https://lwn.net/Articles/961594/</span></a>, 2024.
+    </dd><dt>
+ [14]</dt><dd><a id='Xtry_alloc'></a>Alex       Starovoitov.                    [patch       bpf-next       v9       0/6]
+    bpf,         mm:         Introduce         try˙alloc˙pages().                         
+<a class='url' href='https://lore.kernel.org/bpf/20250222024427.30294-1-alexei.starovoitov@gmail.com/'><span class='cmtt-10'>https://lore.kernel.org/bpf/20250222024427.30294-1-alexei.starovoitov@gmail.com/</span></a>,
     2025.
-    </p>
-    <p class='bibitem'><span class='biblabel'>
- [14]<span class='bibsp'>   </span></span><a id='Xarena_atomic'></a>Alexei Starovoitov.  bpf: Add support for certain atomics in bpf˙arena
-    to x86 jit.     <a class='url' href='https://lwn.net/Articles/968703/'><span class='cmtt-10'>https://lwn.net/Articles/968703/</span></a>, 2024.
-</p>
-    </div>
+    </dd><dt>
+ [15]</dt><dd><a id='Xarena_atomic'></a>Alexei Starovoitov.  bpf: Add support for certain atomics in bpf˙arena to
+    x86 jit. <a class='url' href='https://lwn.net/Articles/968703/'><span class='cmtt-10'>https://lwn.net/Articles/968703/</span></a>, 2024.
+    </dd></dl>
+</section>
  
 </body> 
 </html>
