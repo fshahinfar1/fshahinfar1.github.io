@@ -59,31 +59,7 @@
             <!-- Publications -->
             <div class="section">
                 <h2>Publications</h2><hr/>
-                <div class="center">
-                    <div class="cardbox">
-                        <div class="card">
-                            <img src="./resources/poster.png" width="100" height="100"/>
-                            <p>Automatic kernel offload using BPF
-                              [<a href="https://sigops.org/s/conferences/hotos/2023/papers/shahinfar.pdf">Link</a>]
-                            </p>
-                            <p>HotOS'23</p>
-                        </div>
-                        <div class="card">
-                            <img src="./resources/bkdrft.png" width="100" height="100"/>
-                            <p>Backdraft: a Lossless Virtual Switch that Prevents the Slow Receiver Problem
-                              [<a href="https://www.usenix.org/conference/nsdi22/presentation/sanaee">Link</a>]
-                            </p>
-                            <p>NSDI'22</p>
-                        </div>
-                        <div class="card">
-                            <img src="./resources/poster.png" width="100" height="100"/>
-                            <p>Poster: The Case for Network Functions Decomposition
-                              [<a href="https://dl.acm.org/doi/abs/10.1145/3485983.3493349">Link</a>]
-                            </p>
-                            <p>CoNEXT'21</p>
-                        </div>
-                    </div>
-                </div>
+                <div id="pubdiv"> </div>
             </div>
             <!-- Education -->
             <div class="section">
@@ -144,8 +120,10 @@
     </body>
     <script type="module" src="js/fantastic.js"></script>
     <script type"module" src="js/news.js"></script>
-    <script>load_news(5);</script>
     <!-- <script>load_gallery(3);</script> -->
     <script src="js/mad_triangles.js"></script>
+    <script src="js/publications.js"></script>
+    <!-- -->
+    <script>load_news(5);load_pubs(6)</script>
 </html>
 <!-- vim: set et ts=4 sw=4: -->

@@ -296,3 +296,21 @@ a {
 	  display: none;
   }
 }
+
+#pubdiv {
+  background: white;
+}
+
+#pubdiv button {
+  margin-right: 0.5em;
+  margin-bottom: 1.5em;
+  font-size: 1em;
+}
+
+.pubdiv {
+  padding-bottom: 1em;
+}
+
+.pubtitle {
+  padding-bottom: 0.5em;
+}
