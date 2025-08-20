@@ -133,3 +133,9 @@
   conference_time: 10/02/2026
   abstract_submission: 01/10/2025
   guess: false
+- label: MLSys
+  type: conference
+  link: https://mlsys.org/Conferences/2026/CallForPapers
+  place:
+  conference_time: "May 17-22, 2026"
+  abstract_submission: 29/10/2025
