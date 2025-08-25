@@ -31,11 +31,12 @@
   guess: false
 - label: OSDI
   type: conference
+  link: https://www.usenix.org/conference/osdi26/call-for-papers
   fullname: USENIX Symposium on Operating Systems Design and Implementation
   conference_time: 2026
-  place:
+  place: Seattle, WA, USA
   abstract_submission: 3/12/2025
-  guess: true
+  guess: false
 # - label: CCR
 #   type: magazine
 #   fullname: Computer Communication Review
@@ -78,13 +79,13 @@
 #   fullname: International Symposium on Memory Management
 #   place: Copenhagen, Denmark
 #   abstract_submission: 25/05/2024
-- label: ATC
-  fullname: Annual Technical Conference
-  type: conference
-  place:
-  conference_time: "July 7-9, 2026"
-  abstract_submission: 01/01/2026
-  guess: true
+# - label: ATC
+#   fullname: Annual Technical Conference
+#   type: conference
+#   place:
+#   conference_time: "July 7-9, 2026"
+#   abstract_submission: 01/01/2026
+#   guess: true
 - label: CoNEXT
   fullname: International Conference on Emerging Networking Experiments and Technologies
   place:
