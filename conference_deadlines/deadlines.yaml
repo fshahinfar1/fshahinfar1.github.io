@@ -112,11 +112,11 @@
   guess: true
 - label: SOSP
   type: conference
-  link: https://sigops.org/s/conferences/sosp/2025/
+  link: https://sigops.org/s/conferences/sosp/2026/cfp.html
   fullname: Symposium on Operating Systems Principles
-  place: Seoul, Republic of Korea
-  conference_time: "October 13–16, 2025"
-  abstract_submission: 10/04/2025
+  place: Prague, Czechia
+  conference_time: "29 September –2 October, 2026"
+  abstract_submission: 26/03/2026
   guess: false
 - label: eBPF
   type: workshop
