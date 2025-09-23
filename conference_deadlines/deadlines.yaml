@@ -87,9 +87,12 @@
 #   abstract_submission: 01/01/2026
 #   guess: true
 - label: CoNEXT
+  link: https://conferences.sigcomm.org/co-next/2026
+  type: conference
   fullname: International Conference on Emerging Networking Experiments and Technologies
-  place:
-  abstract_submission: [08/12/2024, 29/05/2025]
+  place: Utrecht, Netherlands
+  abstract_submission: [12/12/2025, 05/05/2026]
+  guess: false
 # - label: HotCarbon
 #   type: workshop
 #   fullname: 'HotCarbon: workshop on sustainable computing'
