@@ -3,6 +3,7 @@ const now = new Date();
 function make_a_link(el, link) {
   const a = document.createElement('a')
   a.href = link
+  a.target = '_blank'
   a.appendChild(el)
   return a
 }

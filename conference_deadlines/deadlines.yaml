@@ -4,31 +4,32 @@
   fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
   conference_time: 'March 22-26, 2026'
   place: 'Pittsburg, USA'
-  abstract_submission: [05/03/2025, 13/08/2025]
-  guess: false
+  abstract_submission: [05/03/2026, 13/08/2026]
+  guess: true
 - label: SoCC
   type: conference
   link: https://acmsocc.org/2025
   fullname: ACM Symposium on Cloud Computing
   conference_time: "November 19-21, 2025"
   place: Online
-  abstract_submission: 07/07/2025
-  guess: false
+  abstract_submission: 07/07/2026
+  guess: true
 - label: NSDI
   type: conference
   link: https://www.usenix.org/conference/nsdi26
   fullname: USENIX Symposium on Networked Systems Design and Implementation
   conference_time: "May 4-6, 2026"
   place: Renton (WA), USA
-  abstract_submission: [18/04/2025, 11/09/2025]
-  guess: false
+  abstract_submission: [18/04/2026, 11/09/2026]
+  guess: true
 - label: EuroSys
   type: conference
+  link: https://2026.eurosys.org/
   fullname: Euro/Sys
-  conference_time: "April 13-16, 2026"
+  conference_time: "April 27-30, 2026"
   place: Edinburgh
-  abstract_submission: [08/05/2025, 18/09/2025]
-  guess: false
+  abstract_submission: [08/05/2026, 18/09/2026]
+  guess: true
 - label: OSDI
   type: conference
   link: https://www.usenix.org/conference/osdi26/call-for-papers
