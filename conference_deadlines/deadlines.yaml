@@ -144,3 +144,11 @@
   place:
   conference_time: "May 17-22, 2026"
   abstract_submission: 29/10/2025
+- label: ICML
+  type: conference
+  link: https://icml.cc/Conferences/2026
+  place: ''
+  conference_time:  ''
+  abstract_submission: 23/01/2026
+  guess: true
+
