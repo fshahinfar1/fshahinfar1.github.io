@@ -102,11 +102,12 @@
 #   abstract_submission: 08/05/2024
 - label: SIGCOMM
   type: conference
+  link: https://conferences.sigcomm.org/sigcomm/2026/
   fullname: 'ACM Special Interest Group on Data Communication'
   place: ''
   conference_time: "September 8-11, 2026"
-  abstract_submission: 24/01/2026
-  guess: true
+  abstract_submission: 30/01/2026
+  guess: false
 - label: DEBS
   type: conference
   link: https://2026.debs.org/
