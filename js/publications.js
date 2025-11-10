@@ -2,7 +2,8 @@ const pubs = [
   {
     title: 'Demystifying Performance of eBPF Network Applications',
     authors: 'Farbod Shahinfar, Sebastiano Miano, Aurojit Panda, Gianni Antichi',
-    link: '',
+    link: 'https://dl.acm.org/doi/10.1145/3749216',
+    pdf: 'https://dl.acm.org/doi/pdf/10.1145/3749216',
     abrv: 'CoNEXT',
     year: 2025,
     tag: 'conference',
@@ -10,7 +11,8 @@ const pubs = [
   {
     title: 'Performance Implications at the Intersection of AF_XDP and Programmable NICs',
     authors: 'Marco Mole, Farbod Shahinfar, Francesco Maria Tranquillo, Davide Zoni, Aurojit Panda, Gianni Antichi',
-    link: '',
+    link: 'https://dl.acm.org/doi/10.1145/3748355.3748359',
+    pdf: 'https://dl.acm.org/doi/pdf/10.1145/3748355.3748359',
     abrv: 'eBPF',
     year: 2025,
     tag: 'workshop',
@@ -18,7 +20,8 @@ const pubs = [
   {
     title: 'POSTER: Software Prefetching for eBPF Programs',
     authors: 'Farbod Shahinfar, Aurojit Panda, Gianni Antichi',
-    link: '',
+    link: 'https://dl.acm.org/doi/10.1145/3744969.3748421',
+    pdf: 'https://dl.acm.org/doi/pdf/10.1145/3744969.3748421',
     abrv: 'SIGCOMM',
     year: 2025,
     tag: 'poster',
@@ -27,6 +30,7 @@ const pubs = [
     title: 'Automatic kernel offload using BPF',
     authors: 'Farbod Shahinfar, Sebastiano Miano, Giuseppe Siracusano, Roberto Bifulco, Aurojit Panda, Gianni Antichi',
     link: 'https://sigops.org/s/conferences/hotos/2023/papers/shahinfar.pdf',
+    pdf: 'https://dl.acm.org/doi/pdf/10.1145/3593856.3595888',
     abrv: 'HotOS',
     year: 2023,
     tag: 'workshop',
@@ -35,6 +39,7 @@ const pubs = [
     title: 'Backdraft: a Lossless Virtual Switch that Prevents the Slow Receiver Problem',
     authors: 'Alireza Sanaee, Farbod Shahinfar, Gianni Antichi, Brent E. Stephens',
     link: 'https://www.usenix.org/conference/nsdi22/presentation/sanaee',
+    pdf: 'https://www.usenix.org/system/files/nsdi22-paper-sanaee.pdf',
     abrv: 'NSDI',
     year: 2022,
     tag: 'conference',
@@ -43,6 +48,7 @@ const pubs = [
     title: 'Poster: The Case for Network Functions Decomposition',
     authors: 'Farbod Shahinfar, Sebastiano Miano, Alireza Sanaee, Giuseppe Siracusano, Roberto Bifulco, Gianni Antichi',
     link: 'https://dl.acm.org/doi/abs/10.1145/3485983.3493349',
+    pdf: 'papers/poster_the_case_for_network_function_decomposition.pdf',
     abrv: 'CoNEXT',
     year: 2021,
     tag: 'poster',
@@ -57,6 +63,23 @@ function create_pub_elem(p) {
   title.innerHTML = p.title;
   title.className = 'pubtitle'
   div.appendChild(title)
+
+  if (p.link !== undefined && p.link !== null && p.link !== '') {
+    const link = document.createElement('a')
+    link.innerHTML = '[Link]'
+    link.href = p.link
+    link.target = '_blank'
+    link.style = 'padding-left: 1em;'
+    div.appendChild(link)
+  }
+
+  if (p.pdf !== undefined && p.pdf !== null && p.pdf !== '') {
+    const link = document.createElement('a')
+    link.innerHTML = '[PDF]'
+    link.href = p.pdf
+    link.target = '_blank'
+    div.appendChild(link)
+  }
 
   const authors = document.createElement('div');
   const tmp1 = document.createElement('span');
@@ -115,5 +138,4 @@ function load_pubs(count) {
     }
   }
   container.appendChild(tmpdiv);
-  
 }
