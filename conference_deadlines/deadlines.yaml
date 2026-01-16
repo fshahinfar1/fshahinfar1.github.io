@@ -56,9 +56,10 @@
   guess: false
 - label: APNet
   type: conference
+  link: https://conferences.sigcomm.org/events/apnet2026/
   fullname: Asia-Pacific Workshop on Networking
   place: Shanghai
-  abstract_submission: 06/03/2025
+  abstract_submission: 06/03/2026
   guess: false
 # - label: PODC
 #   type: conference
@@ -146,11 +147,4 @@
   place:
   conference_time: "May 17-22, 2026"
   abstract_submission: 29/10/2025
-- label: ICML
-  type: conference
-  link: https://icml.cc/Conferences/2026
-  place: ''
-  conference_time:  ''
-  abstract_submission: 23/01/2026
-  guess: true
 
