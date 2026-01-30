@@ -16,12 +16,12 @@
   guess: true
 - label: NSDI
   type: conference
-  link: https://www.usenix.org/conference/nsdi26
+  link: https://www.usenix.org/conference/nsdi27
   fullname: USENIX Symposium on Networked Systems Design and Implementation
   conference_time: "May 4-6, 2026"
-  place: Renton (WA), USA
-  abstract_submission: [18/04/2026, 11/09/2026]
-  guess: true
+  place: Providence (RI), USA
+  abstract_submission: [16/04/2026, 10/09/2026]
+  guess: false
 - label: EuroSys
   type: conference
   link: https://2026.eurosys.org/
