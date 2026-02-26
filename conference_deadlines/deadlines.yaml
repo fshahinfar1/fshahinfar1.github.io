@@ -1,11 +1,11 @@
 - label: ASPLOS
   type: conference
-  link: https://www.asplos-conference.org/asplos2026/cfp/
+  link: https://www.asplos-conference.org/asplos2026/call-for-papers-asplos27/
   fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
-  conference_time: 'March 22-26, 2026'
-  place: 'Pittsburg, USA'
-  abstract_submission: [05/03/2026, 13/08/2026]
-  guess: true
+  conference_time: '???'
+  place: '???'
+  abstract_submission: [15/04/2026, 09/09/2026]
+  guess: false
 - label: SoCC
   type: conference
   link: https://acmsocc.org/2025
@@ -32,12 +32,12 @@
   guess: true
 - label: OSDI
   type: conference
-  link: https://www.usenix.org/conference/osdi26/call-for-papers
+  link:
   fullname: USENIX Symposium on Operating Systems Design and Implementation
   conference_time: 2026
   place: Seattle, WA, USA
-  abstract_submission: 3/12/2025
-  guess: false
+  abstract_submission: 3/12/2026
+  guess: true
 # - label: CCR
 #   type: magazine
 #   fullname: Computer Communication Review
@@ -48,11 +48,11 @@
 #   abstract_submission: [01/03/2026, 01/05/2025, 01/08/2025, 01/10/2025]
 - label: APSys
   type: conference
-  link: https://apsys2025.github.io/
+  link: https://ap-sys.org/
   fullname: ACM SIGOPS Asia-Pacific Workshop on Systems
   conference_time: "September 4-5, 2025"
   place:
-  abstract_submission: 29/04/2025
+  abstract_submission: 13/05/2026
   guess: false
 - label: APNet
   type: conference
@@ -103,12 +103,12 @@
 #   abstract_submission: 08/05/2024
 - label: SIGCOMM
   type: conference
-  link: https://conferences.sigcomm.org/sigcomm/2026/
+  link:
   fullname: 'ACM Special Interest Group on Data Communication'
   place: ''
-  conference_time: "September 8-11, 2026"
-  abstract_submission: 30/01/2026
-  guess: false
+  conference_time: "???, 2027"
+  abstract_submission: 20/12/2026
+  guess: true
 - label: DEBS
   type: conference
   link: https://2026.debs.org/
@@ -127,20 +127,20 @@
   guess: false
 - label: eBPF
   type: workshop
-  link: https://conferences.sigcomm.org/sigcomm/2025/workshop/ebpf/
+  link: https://ebpf.github.io/2026/cfp.html
   fullname: Workshop on eBPF and Kernel Extensions Program
   place: "Coimbra, Portugal"
-  conference_time: 4/08/2025
-  abstract_submission: 08/05/2025
+  conference_time: 29/09/2025
+  abstract_submission: 19/06/2026
   guess: false
-- label: NINES
+- label: NINeS
   type: conference
   link: https://nines-conference.org/
   fullname: New Ideas in Networked Systems
   place: Online
   conference_time: 10/02/2026
-  abstract_submission: 01/10/2025
-  guess: false
+  abstract_submission: 01/10/2026
+  guess: true
 - label: MLSys
   type: conference
   link: https://mlsys.org/Conferences/2026/CallForPapers
