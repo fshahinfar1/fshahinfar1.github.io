@@ -1,5 +1,12 @@
 const pubs = [
   {
+    title: 'Enabling fast networking in the public cloud',
+    authors: 'Alireza Sanaee, Vahab Jabrayilov, Ilias Marinos, Farbod Shahinfar, Divyanshu Saxena, Kostis Kaffes, Gianni Antichi',
+    abrv: 'ASPLOS',
+    year: 2026,
+    tag: 'conference',
+  },
+  {
     title: 'Demystifying Performance of eBPF Network Applications',
     authors: 'Farbod Shahinfar, Sebastiano Miano, Aurojit Panda, Gianni Antichi',
     link: 'https://dl.acm.org/doi/10.1145/3749216',

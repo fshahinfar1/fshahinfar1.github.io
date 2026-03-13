@@ -63,6 +63,10 @@ const newslist = [
     text: 'There is a new <b>networked systems</b> coference around! Have a look at <a href="https://nines-conference.org/">"New Ideas in Networked Systems (NINeS)"</a>. Many <a href="https://nines-conference.org/orgs">great people</a> are supporting it.',
     date: '2025-06-24',
   },
+  {
+    text: 'Our work, led by <a href="https://sarsanaee.github.io/">Alireza Sanaee</a>, <a href="https://www.asplos-conference.org/asplos2026/program/"><q>Enabling fast networking in the public cloud</q></a> has been accepted at ASPLOS\'26',
+    date: '2026-03-13',
+  }
 ];
 
 // console.log('load news!');
