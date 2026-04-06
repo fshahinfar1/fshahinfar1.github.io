@@ -138,9 +138,9 @@
   link: https://nines-conference.org/
   fullname: New Ideas in Networked Systems
   place: Online
-  conference_time: 10/02/2026
-  abstract_submission: 01/10/2026
-  guess: true
+  conference_time: ??
+  abstract_submission: 06/08/2026
+  guess: false
 - label: MLSys
   type: conference
   link: https://mlsys.org/Conferences/2026/CallForPapers
