@@ -37,7 +37,7 @@ a {
 .intro {
     display: flex;
     flex-direction: row;
-    align-items: end;
+    align-items: start;
     justify-content: center;
 	margin-top: 1em;
 }
