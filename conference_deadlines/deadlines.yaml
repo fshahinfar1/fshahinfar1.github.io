@@ -24,12 +24,12 @@
   guess: false
 - label: EuroSys
   type: conference
-  link: https://2026.eurosys.org/
+  link: https://2027.eurosys.org/
   fullname: Euro/Sys
-  conference_time: "April 27-30, 2026"
-  place: Edinburgh
-  abstract_submission: [08/05/2026, 18/09/2026]
-  guess: true
+  conference_time: "April 19-24, 2027"
+  place: Rabat, Morocco
+  abstract_submission: [07/05/2026, 17/09/2026]
+  guess: false
 - label: OSDI
   type: conference
   link:
