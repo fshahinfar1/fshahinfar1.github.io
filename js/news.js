@@ -66,6 +66,10 @@ const newslist = [
   {
     text: 'Our work, led by <a href="https://sarsanaee.github.io/">Alireza Sanaee</a>, <a href="https://www.asplos-conference.org/asplos2026/program/"><q>Enabling fast networking in the public cloud</q></a> has been accepted at ASPLOS\'26',
     date: '2026-03-13',
+  }, 
+  {
+    text: 'Accepted in SIGCOMM\'26! -- <i>Don\'t Stall Me Now: Hiding Memory Latency in eBPF</i>',
+    date: '2026-05-12',
   }
 ];
 
