@@ -81,13 +81,14 @@
 #   fullname: International Symposium on Memory Management
 #   place: Copenhagen, Denmark
 #   abstract_submission: 25/05/2024
-# - label: ATC
-#   fullname: Annual Technical Conference
-#   type: conference
-#   place:
-#   conference_time: "July 7-9, 2026"
-#   abstract_submission: 01/01/2026
-#   guess: true
+- label: ATC
+  fullname: ACM Annual Technical Conference
+  link: https://atc.sigops.org/2026/cfp.html
+  type: conference
+  place: Hong Kong
+  conference_time: "15-18, Nov, 2026"
+  abstract_submission: 10/06/2026
+  guess: false
 - label: CoNEXT
   link: https://conferences.sigcomm.org/co-next/2026
   type: conference
