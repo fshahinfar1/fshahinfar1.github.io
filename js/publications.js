@@ -2,6 +2,8 @@ const pubs = [
   {
     title: 'Enabling fast networking in the public cloud',
     authors: 'Alireza Sanaee, Vahab Jabrayilov, Ilias Marinos, Farbod Shahinfar, Divyanshu Saxena, Kostis Kaffes, Gianni Antichi',
+    link: 'https://dl.acm.org/doi/10.1145/3779212.3790158',
+    pdf: 'papers/machnet.pdf',
     abrv: 'ASPLOS',
     year: 2026,
     tag: 'conference',
