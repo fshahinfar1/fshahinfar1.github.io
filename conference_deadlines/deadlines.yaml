@@ -32,7 +32,7 @@
   guess: false
 - label: OSDI
   type: conference
-  link:
+    # link:
   fullname: USENIX Symposium on Operating Systems Design and Implementation
   conference_time: 2026
   place: Seattle, WA, USA
@@ -48,19 +48,19 @@
 #   abstract_submission: [01/03/2026, 01/05/2025, 01/08/2025, 01/10/2025]
 - label: APSys
   type: conference
-  link: https://ap-sys.org/
+    # link: https://ap-sys.org/
   fullname: ACM SIGOPS Asia-Pacific Workshop on Systems
   conference_time: "September 4-5, 2025"
   place:
-  abstract_submission: 13/05/2026
-  guess: false
+  abstract_submission: 13/05/2027
+  guess: true
 - label: APNet
   type: conference
-  link: https://conferences.sigcomm.org/events/apnet2026/
+    # link: https://conferences.sigcomm.org/events/apnet2026/
   fullname: Asia-Pacific Workshop on Networking
-  place: Shanghai
-  abstract_submission: 06/03/2026
-  guess: false
+  place:
+  abstract_submission: 11/03/2027
+  guess: true
 # - label: PODC
 #   type: conference
 #   fullname: ACM Symposium on Principles of Distributed Computing
@@ -83,19 +83,19 @@
 #   abstract_submission: 25/05/2024
 - label: ATC
   fullname: ACM Annual Technical Conference
-  link: https://atc.sigops.org/2026/cfp.html
+    # link: https://atc.sigops.org/2026/cfp.html
   type: conference
-  place: Hong Kong
+  place:
   conference_time: "15-18, Nov, 2026"
-  abstract_submission: 10/06/2026
-  guess: false
+  abstract_submission: 10/06/2027
+  guess: true
 - label: CoNEXT
-  link: https://conferences.sigcomm.org/co-next/2026
+  # link: https://conferences.sigcomm.org/co-next/2026
   type: conference
   fullname: International Conference on Emerging Networking Experiments and Technologies
-  place: Utrecht, Netherlands
-  abstract_submission: [12/12/2025, 29/05/2026]
-  guess: false
+  place: 
+  abstract_submission: [12/12/2026, 29/05/2027]
+  guess: true
 # - label: HotCarbon
 #   type: workshop
 #   fullname: 'HotCarbon: workshop on sustainable computing'
@@ -104,7 +104,7 @@
 #   abstract_submission: 08/05/2024
 - label: SIGCOMM
   type: conference
-  link:
+    # link:
   fullname: 'ACM Special Interest Group on Data Communication'
   place: ''
   conference_time: "???, 2027"
@@ -120,12 +120,12 @@
   guess: true
 - label: SOSP
   type: conference
-  link: https://sigops.org/s/conferences/sosp/2026/cfp.html
+    # link: https://sigops.org/s/conferences/sosp/2026/cfp.html
   fullname: Symposium on Operating Systems Principles
-  place: Prague, Czechia
+  place:
   conference_time: "29 September –2 October, 2026"
-  abstract_submission: 26/03/2026
-  guess: false
+  abstract_submission: 26/03/2027
+  guess: true
 - label: eBPF
   type: workshop
   link: https://ebpf.github.io/2026/cfp.html

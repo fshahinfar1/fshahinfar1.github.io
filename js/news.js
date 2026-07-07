@@ -70,6 +70,10 @@ const newslist = [
   {
     text: 'Accepted in SIGCOMM\'26! -- <i>Don\'t Stall Me Now: Hiding Memory Latency in eBPF</i>',
     date: '2026-05-12',
+  },
+  {
+    text: 'I\'m attending Netdev 0xA1. I will be happy to meet and chat if you\'re around!',
+    date: '2026-07-7',
   }
 ];
 

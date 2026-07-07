@@ -1,5 +1,13 @@
 const pubs = [
   {
+    title: 'Don\'t Stall Me Now: Hiding Memory Latency in eBPF',
+    authors: 'Farbod Shahinfar, Marco Molè, Aurojit Panda, Gianni Antichi',
+    link: 'https://doi.org/10.1145/3789240.3829175',
+    abrv: 'SIGCOMM',
+    year: 2026,
+    tag: 'conference',
+  },
+  {
     title: 'Enabling fast networking in the public cloud',
     authors: 'Alireza Sanaee, Vahab Jabrayilov, Ilias Marinos, Farbod Shahinfar, Divyanshu Saxena, Kostis Kaffes, Gianni Antichi',
     link: 'https://dl.acm.org/doi/10.1145/3779212.3790158',
