@@ -3,6 +3,7 @@ const pubs = [
     title: 'Don\'t Stall Me Now: Hiding Memory Latency in eBPF',
     authors: 'Farbod Shahinfar, Marco Molè, Aurojit Panda, Gianni Antichi',
     link: 'https://doi.org/10.1145/3789240.3829175',
+    pdf: 'papers/dont_stall_me_now_hiding_memory_latency_in_ebpf.pdf',
     abrv: 'SIGCOMM',
     year: 2026,
     tag: 'conference',
