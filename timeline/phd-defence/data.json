@@ -1,0 +1,254 @@
+{
+  "title": "PhD Defense Timeline",
+  "subtitle": "Road to January 15, 2027",
+  "steps": [
+    {
+      "no": 1,
+      "date": "2026-09-01",
+      "task": "Prepare draft dissertation (~90% complete)",
+      "responsible": "Student",
+      "status": "in-progress",
+      "note": ""
+    },
+    {
+      "no": 2,
+      "date": "2026-09-01",
+      "task": "Run Turnitin plagiarism check, obtain approval document",
+      "responsible": "Student",
+      "status": "upcoming",
+      "note": "Required attachment to Final Report"
+    },
+    {
+      "no": 3,
+      "date": "2026-09-15",
+      "task": "Submit Final Report + advanced thesis draft",
+      "responsible": "Student",
+      "status": "upcoming",
+      "note": "Hard deadline (45 days before end date)"
+    },
+    {
+      "no": 4,
+      "date": "2026-09-24",
+      "task": "Approve Final Report",
+      "responsible": "Advisor + Tutor",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 5,
+      "date": "2026-10-16",
+      "task": "Evaluation Board reviews report, decides admission",
+      "responsible": "Evaluation Board",
+      "status": "upcoming",
+      "note": "No public presentation unless requested"
+    },
+    {
+      "no": 6,
+      "date": "2026-10-20",
+      "task": "Faculty Board ratifies Evaluation Board's decision",
+      "responsible": "Faculty Board",
+      "status": "upcoming",
+      "note": "Must occur before end of programme"
+    },
+    {
+      "no": 7,
+      "date": "2026-10-16",
+      "task": "Finish and finalize dissertation writing",
+      "responsible": "Student",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 8,
+      "date": "2026-10-16",
+      "task": "Indicate confidentiality restriction status",
+      "responsible": "Advisor",
+      "status": "upcoming",
+      "note": "Determines if confidentiality agreement is needed"
+    },
+    {
+      "no": 9,
+      "date": "2026-10-16",
+      "task": "Inform reviewer names/contacts to PhD Office",
+      "responsible": "Advisor",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 10,
+      "date": "2026-10-16",
+      "task": "Upload dissertation title + draft PDF",
+      "responsible": "Student",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 11,
+      "date": "2026-10-28",
+      "task": "Faculty Board nominates reviewers",
+      "responsible": "Faculty Board",
+      "status": "upcoming",
+      "note": "Bottleneck: depends on meeting cadence"
+    },
+    {
+      "no": 12,
+      "date": "2026-11-02",
+      "task": "PhD Office contacts reviewers, confirms availability",
+      "responsible": "PhD Office",
+      "status": "upcoming",
+      "note": "Naturally requires a bit of time"
+    },
+    {
+      "no": 13,
+      "date": "2026-11-05",
+      "task": "Reviewers complete registration + ID verification",
+      "responsible": "Reviewers",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 14,
+      "date": "2026-11-06",
+      "task": "PhD Office confirms reviewers in system",
+      "responsible": "PhD Office",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 15,
+      "date": "2026-11-06",
+      "task": "Upload admission grade for final exam",
+      "responsible": "Coordinator / PhD Office",
+      "status": "upcoming",
+      "note": "Triggers automatic 7-day upload window"
+    },
+    {
+      "no": 16,
+      "date": "2026-11-01",
+      "task": "Upload final definitive dissertation",
+      "responsible": "Student",
+      "status": "critical",
+      "note": "MANDATORY - review will not start otherwise"
+    },
+    {
+      "no": 17,
+      "date": "2026-11-01",
+      "task": "30-day external review period",
+      "responsible": "Reviewers",
+      "status": "upcoming",
+      "note": "Fixed duration, cannot be compressed"
+    },
+    {
+      "no": 18,
+      "date": "2026-12-01",
+      "task": "Coordinator validates received materials",
+      "responsible": "Coordinator",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 19,
+      "date": "2026-12-01",
+      "task": "Coordinator confirms revision request, if any",
+      "responsible": "Coordinator",
+      "status": "upcoming",
+      "note": "Major revision risk: up to 6 months delay"
+    },
+    {
+      "no": 20,
+      "date": "2026-12-02",
+      "task": "Exam session created",
+      "responsible": "PhD Office",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 21,
+      "date": "2026-12-01",
+      "task": "Defense Committee appointed",
+      "responsible": "Faculty Board",
+      "status": "critical",
+      "note": "45 days before defense; Faculty Board meets 2nd half of month only"
+    },
+    {
+      "no": 22,
+      "date": "2026-12-10",
+      "task": "Candidate associated with committee",
+      "responsible": "PhD Office",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 23,
+      "date": "2026-12-10",
+      "task": "Candidate registers for final exam",
+      "responsible": "Student",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 24,
+      "date": "2026-12-10",
+      "task": "Defense date communicated to PhD Office",
+      "responsible": "Advisor / Student / Vice Coordinator",
+      "status": "upcoming",
+      "note": ""
+    },
+    {
+      "no": 25,
+      "date": "2026-12-16",
+      "task": "Enrollment to final discussion + tax payment",
+      "responsible": "Student",
+      "status": "upcoming",
+      "note": "30 days before defense"
+    },
+    {
+      "no": 26,
+      "date": "2026-12-26",
+      "task": "Official thesis deposit (Politesi)",
+      "responsible": "Student",
+      "status": "upcoming",
+      "note": "20 days before defense"
+    },
+    {
+      "no": 27,
+      "date": "2026-12-31",
+      "task": "Advisor approves thesis on Online Services",
+      "responsible": "Advisor",
+      "status": "upcoming",
+      "note": "15 days before defense \u2014 last formal deadline"
+    },
+    {
+      "no": 28,
+      "date": "2027-01-15",
+      "task": "30-minute thesis presentation",
+      "responsible": "Student",
+      "status": "milestone",
+      "note": ""
+    },
+    {
+      "no": 29,
+      "date": "2027-01-15",
+      "task": "30-40 minute Q&A / discussion",
+      "responsible": "Examining Committee + Student",
+      "status": "milestone",
+      "note": ""
+    },
+    {
+      "no": 30,
+      "date": "2027-01-15",
+      "task": "Committee deliberates on grade / cum laude",
+      "responsible": "Examining Committee",
+      "status": "milestone",
+      "note": "Cum laude needs unanimity + grade A/B"
+    },
+    {
+      "no": 31,
+      "date": "2027-01-15",
+      "task": "Formal proclamation of Ph.D. title",
+      "responsible": "Faculty Board / University",
+      "status": "milestone",
+      "note": ""
+    }
+  ]
+}
