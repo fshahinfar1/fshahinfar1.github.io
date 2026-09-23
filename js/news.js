@@ -74,7 +74,15 @@ const newslist = [
   {
     text: 'I\'m attending Netdev 0xA1. I will be happy to meet and chat if you\'re around!',
     date: '2026-07-7',
-  }
+  },
+  {
+    text: 'Accepted in eBPF and Kernel Extension workshop! -- <a href="https://dl.acm.org/doi/abs/10.1145/3837779.3838161"><i>Fun Optimizations for eBPF Programs and How to Enable Them</i></a>.',
+    date: '2026-09-23',
+  },
+  {
+    text: 'I\'m attending <i>eBPF Workshop</i> and <i>SOSP 2026</i> in Prague, Czech Republic. If you\'re around I will be happy to talk about your research and experience.',
+    date: '2026-09-23',
+  },
 ];
 
 // console.log('load news!');

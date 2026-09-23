@@ -1,5 +1,14 @@
 const pubs = [
   {
+    title: 'Fun Optimizations for eBPF Programs and How To Enable Them',
+    authors: 'Farbod Shahinfar, Aurojit Panda, Gianni Antichi',
+    link: 'https://dl.acm.org/doi/10.1145/3837779.3838161',
+    pdf: 'papers/Fun_Optimizations_for_eBPF_Programs_and_How_to_Enable_Them-1.pdf',
+    abrv: 'eBPF',
+    year: 2026,
+    tag: 'workshop',
+  },
+  {
     title: 'Don\'t Stall Me Now: Hiding Memory Latency in eBPF',
     authors: 'Farbod Shahinfar, Marco Molè, Aurojit Panda, Gianni Antichi',
     link: 'https://doi.org/10.1145/3789240.3829175',
