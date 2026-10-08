@@ -1,11 +1,11 @@
 - label: ASPLOS
   type: conference
-  link: https://www.asplos-conference.org/asplos2026/call-for-papers-asplos27/
+  link: '' #https://www.asplos-conference.org/asplos2026/call-for-papers-asplos27/
   fullname: the ACM International Conference on Architectural Support for Programming Languages and Operating Systems
   conference_time: '???'
   place: '???'
-  abstract_submission: [15/04/2026, 09/09/2026]
-  guess: false
+  abstract_submission: [15/04/2027, 09/09/2027]
+  guess: true
 - label: SoCC
   type: conference
   link: https://acmsocc.org/2025
@@ -16,20 +16,20 @@
   guess: true
 - label: NSDI
   type: conference
-  link: https://www.usenix.org/conference/nsdi27
+  link: '' # https://www.usenix.org/conference/nsdi27
   fullname: USENIX Symposium on Networked Systems Design and Implementation
   conference_time: "May 4-6, 2026"
   place: Providence (RI), USA
-  abstract_submission: [16/04/2026, 10/09/2026]
-  guess: false
+  abstract_submission: [16/04/2027, 10/09/2027]
+  guess: true
 - label: EuroSys
   type: conference
-  link: https://2027.eurosys.org/
+  link: '' # https://2027.eurosys.org/
   fullname: Euro/Sys
   conference_time: "April 19-24, 2027"
   place: Rabat, Morocco
-  abstract_submission: [07/05/2026, 17/09/2026]
-  guess: false
+  abstract_submission: [07/05/2027, 17/09/2027]
+  guess: true
 - label: OSDI
   type: conference
     # link:
@@ -128,24 +128,24 @@
   guess: true
 - label: eBPF
   type: workshop
-  link: https://ebpf.github.io/2026/cfp.html
+  link: '' # https://ebpf.github.io/2026/cfp.html
   fullname: Workshop on eBPF and Kernel Extensions Program
   place: "Coimbra, Portugal"
   conference_time: 29/09/2025
-  abstract_submission: 19/06/2026
-  guess: false
+  abstract_submission: 19/06/2027
+  guess: true
 - label: NINeS
   type: conference
   link: https://nines-conference.org/
   fullname: New Ideas in Networked Systems
   place: Online
   conference_time: ??
-  abstract_submission: 06/08/2026
-  guess: false
+  abstract_submission: 06/08/2027
+  guess: true
 - label: MLSys
   type: conference
-  link: https://mlsys.org/Conferences/2026/CallForPapers
+  link: https://mlsys.org/Conferences/2027/CallForResearchPapers
   place:
   conference_time: "May 17-22, 2026"
-  abstract_submission: 29/10/2025
+  abstract_submission: 30/10/2026
 
