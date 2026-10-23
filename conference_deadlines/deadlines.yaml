@@ -32,12 +32,12 @@
   guess: true
 - label: OSDI
   type: conference
-    # link:
+  link: https://www.usenix.org/conference/osdi27/call-for-papers
   fullname: USENIX Symposium on Operating Systems Design and Implementation
   conference_time: 2026
   place: Seattle, WA, USA
-  abstract_submission: 3/12/2026
-  guess: true
+  abstract_submission: 1/12/2026
+  guess: false
 # - label: CCR
 #   type: magazine
 #   fullname: Computer Communication Review
@@ -104,12 +104,12 @@
 #   abstract_submission: 08/05/2024
 - label: SIGCOMM
   type: conference
-    # link:
+  link: https://conferences.sigcomm.org/sigcomm/2027/submission/
   fullname: 'ACM Special Interest Group on Data Communication'
   place: ''
   conference_time: "???, 2027"
-  abstract_submission: 20/12/2026
-  guess: true
+  abstract_submission: 2/02/2027
+  guess: false
 - label: DEBS
   type: conference
   link: https://2026.debs.org/
