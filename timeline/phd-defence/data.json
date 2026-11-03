@@ -15,7 +15,7 @@
       "date": "2026-09-14",
       "task": "Approve Final Report",
       "responsible": "Advisor + Tutor",
-      "status": "in-progress",
+      "status": "done",
       "note": ""
     },
     {
@@ -23,16 +23,8 @@
       "date": "2026-10-16",
       "task": "Evaluation Board reviews report, decides admission",
       "responsible": "Evaluation Board",
-      "status": "upcoming",
+      "status": "done",
       "note": "No public presentation unless requested"
-    },
-    {
-      "no": 4,
-      "date": "2026-10-20",
-      "task": "Faculty Board ratifies Evaluation Board's decision",
-      "responsible": "Faculty Board",
-      "status": "upcoming",
-      "note": "Must occur before end of programme"
     },
     {
       "no": 5,
@@ -55,7 +47,7 @@
       "date": "2026-10-16",
       "task": "Upload dissertation title + draft PDF",
       "responsible": "Student",
-      "status": "upcoming",
+      "status": "in-progress",
       "note": ""
     },
     {
